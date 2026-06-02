@@ -3,13 +3,14 @@ import { Link } from 'react-router-dom';
 import {
   Bookmark, Eye, CheckCircle, XCircle, List,
   SlidersHorizontal, Film, Tv, Sparkles, Star,
-  ChevronDown, X, Trash2, ArrowUpDown, BarChart3
+  ChevronDown, Trash2, ArrowUpDown
 } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 import { useUserData } from '../context/UserDataContext';
 import { MEDIA_TYPES, LIST_TYPES } from '../utils/constants';
 import MediaCard from '../components/common/MediaCard';
 import LoadingSkeleton from '../components/common/LoadingSkeleton';
+import GuestPrompt from '../components/common/GuestPrompt';
 
 const LIST_TABS = [
   { key: 'watchlist', label: 'Watchlist', icon: Bookmark },
@@ -34,8 +35,8 @@ const MEDIA_FILTERS = [
 ];
 
 function Watchlist() {
-  const { user, loading: authLoading } = useAuth();
-  const { items, removeItem, moveItem, loading: dataLoading } = useUserData();
+  const { user, isLoading: authLoading } = useAuth();
+  const { items, removeItem, moveItem, isLoading: dataLoading } = useUserData();
 
   const [activeTab, setActiveTab] = useState('watchlist');
   const [sortBy, setSortBy] = useState('date_added');
@@ -111,16 +112,15 @@ function Watchlist() {
     return { totalItems, avgRating, watchlistCount, completedCount, watchingCount };
   }, [items]);
 
-  // Not logged in
+  // Not logged in — show beautiful guest prompt
   if (!authLoading && !user) {
     return (
       <div className="page watchlist-page">
-        <div className="auth-prompt">
-          <Bookmark size={48} />
-          <h2>Track Your Entertainment</h2>
-          <p>Sign in to build your watchlist, track what you're watching, and rate your favorites.</p>
-          <Link to="/login" className="btn btn-primary">Sign In to Get Started</Link>
-        </div>
+        <GuestPrompt
+          title="Track Your Entertainment"
+          description="Sign in to build your watchlist, track what you're watching, and rate your favorites."
+          feature="watchlist"
+        />
       </div>
     );
   }

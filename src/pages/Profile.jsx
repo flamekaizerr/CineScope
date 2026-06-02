@@ -3,16 +3,16 @@ import { Link } from 'react-router-dom';
 import {
   User, LogOut, RefreshCw, Moon, Sun, HardDrive,
   Film, Tv, Sparkles, Star, BarChart3, Clock,
-  CheckCircle, Shield, Info, ExternalLink
+  CheckCircle, Shield, Info
 } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 import { useUserData } from '../context/UserDataContext';
-import { formatNumber } from '../utils/helpers';
 import LoadingSkeleton from '../components/common/LoadingSkeleton';
+import GuestPrompt from '../components/common/GuestPrompt';
 
 function Profile() {
-  const { user, loading: authLoading, logout } = useAuth();
-  const { items, syncStatus, lastSyncTime, syncToCloud, loading: dataLoading } = useUserData();
+  const { user, isLoading: authLoading, logout } = useAuth();
+  const { items, syncStatus, lastSyncTime, syncToCloud, isLoading: dataLoading } = useUserData();
   const [syncing, setSyncing] = useState(false);
   const [theme, setTheme] = useState(() => {
     try {
@@ -94,16 +94,15 @@ function Profile() {
     };
   }, [items]);
 
-  // Not logged in
+  // Not logged in — show guest prompt
   if (!authLoading && !user) {
     return (
       <div className="page profile-page">
-        <div className="auth-prompt">
-          <User size={48} />
-          <h2>Your Profile</h2>
-          <p>Sign in to view your profile, stats, and sync your data across devices.</p>
-          <Link to="/login" className="btn btn-primary">Sign In</Link>
-        </div>
+        <GuestPrompt
+          title="Your Profile"
+          description="Sign in to see your viewing stats, manage preferences, and sync your data across devices."
+          feature="profile"
+        />
       </div>
     );
   }
@@ -127,8 +126,8 @@ function Profile() {
         <section className="section profile-user-section">
           <div className="profile-user-card">
             <div className="profile-avatar">
-              {user.photoURL ? (
-                <img src={user.photoURL} alt={user.displayName} className="profile-avatar-img" />
+              {user.picture ? (
+                <img src={user.picture} alt={user.name} className="profile-avatar-img" />
               ) : (
                 <div className="profile-avatar-placeholder">
                   <User size={32} />
@@ -136,7 +135,7 @@ function Profile() {
               )}
             </div>
             <div className="profile-user-info">
-              <h2 className="profile-name">{user.displayName || 'CineScope User'}</h2>
+              <h2 className="profile-name">{user.name || 'CineScope User'}</h2>
               <p className="profile-email">{user.email}</p>
             </div>
           </div>

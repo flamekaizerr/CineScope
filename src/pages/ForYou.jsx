@@ -10,10 +10,11 @@ import MediaCard from '../components/common/MediaCard';
 import ContentRow from '../components/common/ContentRow';
 import LoadingSkeleton from '../components/common/LoadingSkeleton';
 import AiRecommendations from '../components/features/AiRecommendations';
+import GuestPrompt from '../components/common/GuestPrompt';
 
 function ForYou() {
-  const { user, loading: authLoading } = useAuth();
-  const { items, loading: dataLoading } = useUserData();
+  const { user, isLoading: authLoading } = useAuth();
+  const { items, isLoading: dataLoading } = useUserData();
   const [recommendations, setRecommendations] = useState(null);
   const [aiLoading, setAiLoading] = useState(false);
   const [aiError, setAiError] = useState(null);
@@ -67,18 +68,15 @@ function ForYou() {
     setRefreshKey((prev) => prev + 1);
   }, []);
 
-  // Not logged in
+  // Not logged in — show guest prompt
   if (!authLoading && !user) {
     return (
       <div className="page foryou-page">
-        <div className="auth-prompt">
-          <Sparkles size={48} />
-          <h2>Personalized Recommendations</h2>
-          <p>
-            Sign in and rate some titles to get AI-powered recommendations tailored to your taste.
-          </p>
-          <Link to="/login" className="btn btn-primary">Sign In to Get Started</Link>
-        </div>
+        <GuestPrompt
+          title="Your AI-Powered Recommendations"
+          description="Sign in and rate some titles to get personalized picks powered by Google Gemini."
+          feature="recommendations"
+        />
       </div>
     );
   }

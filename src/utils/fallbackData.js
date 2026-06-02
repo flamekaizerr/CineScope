@@ -5,6 +5,8 @@ export const FALLBACK_MOVIES = [
     media_type: 'movie',
     release_date: '1999-10-15',
     vote_average: 8.4,
+    poster_path: '/pB8BM7pdSp6B6Ih7QZ4DrQ3PmJK.jpg',
+    backdrop_path: '/hZkgoQYus5vegHoetLkCJzb17zJ.jpg',
     overview: 'A restless office worker and a soap maker build an underground movement that spirals into something much larger.',
   },
   {
@@ -13,6 +15,8 @@ export const FALLBACK_MOVIES = [
     media_type: 'movie',
     release_date: '1999-03-31',
     vote_average: 8.2,
+    poster_path: '/f89U3ADr1oiB1s9GkdPOEpXUk5H.jpg',
+    backdrop_path: '/fNG7i7RqMErkcqhohV2a6cV1Ehy.jpg',
     overview: 'A hacker discovers reality is a simulation and joins a rebellion against the machines controlling it.',
   },
   {
@@ -21,6 +25,8 @@ export const FALLBACK_MOVIES = [
     media_type: 'movie',
     release_date: '2010-07-16',
     vote_average: 8.4,
+    poster_path: '/oYuLEt3zVCKq57qu2F8dT7NIa6f.jpg',
+    backdrop_path: '/s3TBrRGB1iav7gFOCNx3H31MoES.jpg',
     overview: 'A thief who steals secrets through dream-sharing gets a chance at redemption with one impossible job.',
   },
   {
@@ -29,6 +35,8 @@ export const FALLBACK_MOVIES = [
     media_type: 'movie',
     release_date: '2014-11-07',
     vote_average: 8.5,
+    poster_path: '/gEU2QniE6E77NI6lCU6MxlNBvIx.jpg',
+    backdrop_path: '/xJHokMbljvjADYdit5fK5VQsXEG.jpg',
     overview: 'Explorers travel through a wormhole to find humanity a new home as Earth runs out of time.',
   },
   {
@@ -37,6 +45,8 @@ export const FALLBACK_MOVIES = [
     media_type: 'movie',
     release_date: '2008-07-18',
     vote_average: 8.5,
+    poster_path: '/qJ2tW6WMUDux911r6m7haRef0WH.jpg',
+    backdrop_path: '/hqkIcbrOHL86UncnHIsHVcVmzue.jpg',
     overview: 'Batman faces a criminal mastermind whose chaos pushes Gotham and its heroes to the edge.',
   },
   {
@@ -45,6 +55,8 @@ export const FALLBACK_MOVIES = [
     media_type: 'movie',
     release_date: '2019-05-30',
     vote_average: 8.5,
+    poster_path: '/7IiTTgloJzvGI1TAYymCfbfl3vT.jpg',
+    backdrop_path: '/ApiBzeaa95TNYliSbQ8pJv4Fje7.jpg',
     overview: 'A struggling family infiltrates a wealthy household in a darkly funny thriller about class and survival.',
   },
 ];

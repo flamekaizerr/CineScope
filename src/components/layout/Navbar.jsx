@@ -1,215 +1,176 @@
-import { useState, useCallback, useRef, useEffect, memo } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { memo, useCallback, useEffect, useRef, useState } from 'react';
+import { Link, NavLink, useNavigate } from 'react-router-dom';
+import { Bookmark, Compass, Film, LogIn, LogOut, Menu, Search, Sparkles, Telescope, Tv, User, Wand2, X } from 'lucide-react';
 import { useAuth } from '../../context/AuthContext';
-import {
-  Search,
-  Bell,
-  Menu,
-  LogIn,
-  LogOut,
-  User,
-  Settings,
-  Telescope,
-} from 'lucide-react';
 
-/**
- * Navbar – Top navigation bar.
- * Desktop: logo + search bar + notifications + user avatar/dropdown.
- * Mobile: hamburger + logo + search icon.
- */
-function Navbar({ onToggleMobileMenu }) {
+const NAV_ITEMS = [
+  { to: '/movies', label: 'Movies', icon: Film },
+  { to: '/tv', label: 'TV Shows', icon: Tv },
+  { to: '/anime', label: 'Anime', icon: Sparkles },
+  { to: '/buzz', label: 'Buzz', icon: Compass },
+  { to: '/for-you', label: 'For You', icon: Wand2 },
+];
+
+function Navbar() {
   const { user, isAuthenticated, logout } = useAuth();
   const navigate = useNavigate();
-  const [dropdownOpen, setDropdownOpen] = useState(false);
-  const [mobileSearchOpen, setMobileSearchOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
-  const dropdownRef = useRef(null);
-  const searchInputRef = useRef(null);
+  const [mobileOpen, setMobileOpen] = useState(false);
+  const [userMenuOpen, setUserMenuOpen] = useState(false);
+  const userMenuRef = useRef(null);
 
-  // Close dropdown on outside click
   useEffect(() => {
-    function handleClickOutside(e) {
-      if (dropdownRef.current && !dropdownRef.current.contains(e.target)) {
-        setDropdownOpen(false);
+    function handleClickOutside(event) {
+      if (userMenuRef.current && !userMenuRef.current.contains(event.target)) {
+        setUserMenuOpen(false);
       }
     }
-    if (dropdownOpen) {
+
+    if (userMenuOpen) {
       document.addEventListener('mousedown', handleClickOutside);
     }
     return () => document.removeEventListener('mousedown', handleClickOutside);
-  }, [dropdownOpen]);
+  }, [userMenuOpen]);
 
-  // Focus mobile search input when opened
-  useEffect(() => {
-    if (mobileSearchOpen && searchInputRef.current) {
-      searchInputRef.current.focus();
-    }
-  }, [mobileSearchOpen]);
-
-  const handleSearch = useCallback(
-    (e) => {
-      e.preventDefault();
-      const trimmed = searchQuery.trim();
-      if (trimmed) {
-        navigate(`/search?q=${encodeURIComponent(trimmed)}`);
-        setSearchQuery('');
-        setMobileSearchOpen(false);
-      }
-    },
-    [searchQuery, navigate]
-  );
-
-  const toggleDropdown = useCallback(() => {
-    setDropdownOpen((prev) => !prev);
-  }, []);
+  const handleSearch = useCallback((event) => {
+    event.preventDefault();
+    const query = searchQuery.trim();
+    if (!query) return;
+    navigate(`/search?q=${encodeURIComponent(query)}`);
+    setSearchQuery('');
+    setMobileOpen(false);
+  }, [navigate, searchQuery]);
 
   const handleLogout = useCallback(() => {
     logout();
-    setDropdownOpen(false);
+    setUserMenuOpen(false);
+    setMobileOpen(false);
   }, [logout]);
 
-  return (
-    <nav className="navbar" role="navigation" aria-label="Main navigation">
-      {/* Mobile: hamburger */}
-      <button
-        className="navbar-mobile-toggle"
-        onClick={onToggleMobileMenu}
-        aria-label="Toggle mobile menu"
-      >
-        <Menu size={22} />
-      </button>
-
-      {/* Logo */}
-      <Link to="/" className="navbar-logo" aria-label="CineScope Home">
-        <Telescope size={26} aria-hidden="true" />
-        <span className="navbar-logo-text">CineScope</span>
-      </Link>
-
-      {/* Desktop search bar */}
-      <form className="navbar-search" onSubmit={handleSearch} role="search">
-        <Search size={18} className="navbar-search-icon" aria-hidden="true" />
-        <input
-          type="text"
-          className="navbar-search-input"
-          placeholder="Search movies, TV shows, anime…"
-          value={searchQuery}
-          onChange={(e) => setSearchQuery(e.target.value)}
-          aria-label="Search"
-        />
-        <kbd className="navbar-search-shortcut" aria-hidden="true">
-          Ctrl+K
-        </kbd>
-      </form>
-
-      {/* Actions */}
-      <div className="navbar-actions">
-        {/* Mobile search icon */}
-        <button
-          className="navbar-mobile-search"
-          onClick={() => setMobileSearchOpen((prev) => !prev)}
-          aria-label="Toggle search"
+  const renderNavLinks = (className) => (
+    <div className={className}>
+      <NavLink to="/" className={({ isActive }) => `stream-nav-link ${isActive ? 'stream-nav-link-active' : ''}`} onClick={() => setMobileOpen(false)}>
+        Home
+      </NavLink>
+      {NAV_ITEMS.map(({ to, label, icon: Icon }) => (
+        <NavLink
+          key={to}
+          to={to}
+          className={({ isActive }) => `stream-nav-link ${isActive ? 'stream-nav-link-active' : ''}`}
+          onClick={() => setMobileOpen(false)}
         >
-          <Search size={20} />
-        </button>
+          <Icon size={16} aria-hidden="true" />
+          {label}
+        </NavLink>
+      ))}
+    </div>
+  );
 
-        {/* Notification bell */}
-        <button className="navbar-notification" aria-label="Notifications">
-          <Bell size={20} />
-        </button>
+  return (
+    <header className="navbar">
+      <div className="navbar-inner">
+        <Link to="/" className="navbar-logo" aria-label="CineScope Home" onClick={() => setMobileOpen(false)}>
+          <span className="navbar-logo-mark">
+            <Telescope size={20} aria-hidden="true" />
+          </span>
+          <span className="navbar-logo-text">CineScope</span>
+        </Link>
 
-        {/* User / Login */}
-        {isAuthenticated ? (
-          <div className="navbar-avatar-wrapper" ref={dropdownRef}>
-            <button
-              className="navbar-avatar"
-              onClick={toggleDropdown}
-              aria-haspopup="true"
-              aria-expanded={dropdownOpen}
-              aria-label="User menu"
-            >
-              {user?.avatar ? (
-                <img
-                  src={user.avatar}
-                  alt={user.name || 'User avatar'}
-                  className="navbar-avatar-img"
-                />
-              ) : (
-                <User size={20} aria-hidden="true" />
-              )}
-            </button>
-            {dropdownOpen && (
-              <div className="navbar-dropdown" role="menu">
-                <div className="navbar-dropdown-header">
-                  <span className="navbar-dropdown-name">
-                    {user?.name || 'User'}
-                  </span>
-                  <span className="navbar-dropdown-email">
-                    {user?.email || ''}
-                  </span>
-                </div>
-                <Link
-                  to="/profile"
-                  className="navbar-dropdown-item"
-                  role="menuitem"
-                  onClick={() => setDropdownOpen(false)}
-                >
-                  <User size={16} aria-hidden="true" />
-                  Profile
-                </Link>
-                <Link
-                  to="/settings"
-                  className="navbar-dropdown-item"
-                  role="menuitem"
-                  onClick={() => setDropdownOpen(false)}
-                >
-                  <Settings size={16} aria-hidden="true" />
-                  Settings
-                </Link>
-                <button
-                  className="navbar-dropdown-item"
-                  role="menuitem"
-                  onClick={handleLogout}
-                >
-                  <LogOut size={16} aria-hidden="true" />
-                  Log out
-                </button>
-              </div>
-            )}
-          </div>
-        ) : (
-          <Link to="/login" className="navbar-login-btn" aria-label="Log in">
-            <LogIn size={18} aria-hidden="true" />
-            <span className="navbar-login-text">Login</span>
+        {renderNavLinks('stream-nav-links')}
+
+        <form className="navbar-search" onSubmit={handleSearch} role="search">
+          <Search size={18} className="navbar-search-icon" aria-hidden="true" />
+          <input
+            type="search"
+            className="navbar-search-input"
+            placeholder="Search movies, shows, anime"
+            value={searchQuery}
+            onChange={(event) => setSearchQuery(event.target.value)}
+            aria-label="Search movies, TV shows, and anime"
+          />
+        </form>
+
+        <div className="navbar-actions">
+          <Link to="/watchlist" className="navbar-icon-btn" aria-label="Watchlist">
+            <Bookmark size={19} aria-hidden="true" />
           </Link>
-        )}
+
+          {isAuthenticated ? (
+            <div className="navbar-avatar-wrapper" ref={userMenuRef}>
+              <button
+                className="navbar-avatar"
+                onClick={() => setUserMenuOpen((open) => !open)}
+                aria-haspopup="true"
+                aria-expanded={userMenuOpen}
+                aria-label="User menu"
+              >
+                {user?.avatar ? (
+                  <img src={user.avatar} alt={user.name || 'User'} className="navbar-avatar-img" />
+                ) : (
+                  <User size={18} aria-hidden="true" />
+                )}
+              </button>
+              {userMenuOpen && (
+                <div className="navbar-dropdown" role="menu">
+                  <div className="navbar-dropdown-header">
+                    <span className="navbar-dropdown-name">{user?.name || 'User'}</span>
+                    <span className="navbar-dropdown-email">{user?.email || 'Signed in'}</span>
+                  </div>
+                  <Link to="/profile" className="navbar-dropdown-item" role="menuitem" onClick={() => setUserMenuOpen(false)}>
+                    <User size={16} aria-hidden="true" />
+                    Profile
+                  </Link>
+                  <button className="navbar-dropdown-item" role="menuitem" onClick={handleLogout}>
+                    <LogOut size={16} aria-hidden="true" />
+                    Log out
+                  </button>
+                </div>
+              )}
+            </div>
+          ) : (
+            <Link to="/login" className="navbar-login-btn">
+              <LogIn size={17} aria-hidden="true" />
+              Login
+            </Link>
+          )}
+
+          <button
+            className="navbar-mobile-toggle"
+            onClick={() => setMobileOpen((open) => !open)}
+            aria-label="Toggle navigation"
+            aria-expanded={mobileOpen}
+          >
+            {mobileOpen ? <X size={22} aria-hidden="true" /> : <Menu size={22} aria-hidden="true" />}
+          </button>
+        </div>
       </div>
 
-      {/* Mobile search overlay */}
-      {mobileSearchOpen && (
-        <form
-          className="navbar-mobile-search-overlay"
-          onSubmit={handleSearch}
-          role="search"
-        >
-          <Search size={18} aria-hidden="true" />
-          <input
-            ref={searchInputRef}
-            type="text"
-            placeholder="Search…"
-            value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)}
-            aria-label="Search"
-          />
-          <button
-            type="button"
-            onClick={() => setMobileSearchOpen(false)}
-            aria-label="Close search"
-          >
-            ✕
-          </button>
-        </form>
+      {mobileOpen && (
+        <div className="navbar-mobile-panel">
+          <form className="navbar-mobile-search-form" onSubmit={handleSearch} role="search">
+            <Search size={18} aria-hidden="true" />
+            <input
+              type="search"
+              placeholder="Search everything"
+              value={searchQuery}
+              onChange={(event) => setSearchQuery(event.target.value)}
+              aria-label="Search movies, TV shows, and anime"
+            />
+          </form>
+          {renderNavLinks('stream-nav-links-mobile')}
+          <div className="navbar-mobile-actions">
+            <Link to="/watchlist" onClick={() => setMobileOpen(false)}>
+              <Bookmark size={17} aria-hidden="true" />
+              Watchlist
+            </Link>
+            <Link to="/profile" onClick={() => setMobileOpen(false)}>
+              <User size={17} aria-hidden="true" />
+              Profile
+            </Link>
+          </div>
+        </div>
       )}
-    </nav>
+    </header>
   );
 }
 

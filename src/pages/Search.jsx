@@ -1,6 +1,6 @@
 import { useState, useEffect, useCallback, useMemo } from 'react';
 import { useSearchParams } from 'react-router-dom';
-import { Search as SearchIcon, X, Clock, TrendingUp, Film, Tv, Sparkles } from 'lucide-react';
+import { Search as SearchIcon, Clock, TrendingUp, Film, Tv, Sparkles } from 'lucide-react';
 import { useDebouncedSearch } from '../hooks/useDebouncedSearch';
 import { useApi } from '../hooks/useApi';
 import * as tmdb from '../services/tmdb';
@@ -114,11 +114,6 @@ function Search() {
     setQuery(searchTerm);
   }, [setQuery]);
 
-  const handleClearQuery = useCallback(() => {
-    setQuery('');
-    setSearchParams({});
-  }, [setQuery, setSearchParams]);
-
   // Combine and filter results
   const results = useMemo(() => {
     const combined = [];
@@ -164,29 +159,30 @@ function Search() {
         <div className="search-input-wrapper">
           <SearchBar
             value={query}
-            onChange={setQuery}
+            onChange={(nextQuery) => {
+              setQuery(nextQuery);
+              if (!nextQuery) setSearchParams({});
+            }}
             placeholder="Search movies, TV shows, anime..."
           />
-          {query && (
-            <button className="search-clear-btn" onClick={handleClearQuery}>
-              <X size={18} />
-            </button>
-          )}
         </div>
 
         {/* Filter Tabs */}
         {hasQuery && (
           <div className="tabs">
-            {FILTER_TABS.map((tab) => (
-              <button
-                key={tab.key}
-                className={`tab ${activeFilter === tab.key ? 'tab-active' : ''}`}
-                onClick={() => setActiveFilter(tab.key)}
-              >
-                {tab.icon && <tab.icon size={14} />}
-                {tab.label}
-              </button>
-            ))}
+            {FILTER_TABS.map((tab) => {
+              const Icon = tab.icon;
+              return (
+                <button
+                  key={tab.key}
+                  className={`tab ${activeFilter === tab.key ? 'tab-active' : ''}`}
+                  onClick={() => setActiveFilter(tab.key)}
+                >
+                  {Icon && <Icon size={14} aria-hidden="true" />}
+                  {tab.label}
+                </button>
+              );
+            })}
           </div>
         )}
       </div>

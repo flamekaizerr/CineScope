@@ -23,8 +23,11 @@ import { SEARCH_DEBOUNCE_MS } from '../utils/constants.js';
  *   clearResults: () => void,
  * }}
  */
-export function useDebouncedSearch(searchFn, delay = SEARCH_DEBOUNCE_MS) {
-  const [query, setQuery] = useState('');
+export function useDebouncedSearch(searchFnOrInitialValue = '', delay = SEARCH_DEBOUNCE_MS) {
+  const hasSearchFn = typeof searchFnOrInitialValue === 'function';
+  const initialValue = hasSearchFn ? '' : String(searchFnOrInitialValue || '');
+  const [query, setQuery] = useState(initialValue);
+  const [debouncedQuery, setDebouncedQuery] = useState(initialValue);
   const [results, setResults] = useState(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
@@ -40,10 +43,20 @@ export function useDebouncedSearch(searchFn, delay = SEARCH_DEBOUNCE_MS) {
 
     // If query is empty, reset results immediately
     if (!query || !query.trim()) {
+      setDebouncedQuery('');
       setResults(null);
       setLoading(false);
       setError(null);
       return;
+    }
+
+    if (!hasSearchFn) {
+      timerRef.current = setTimeout(() => {
+        setDebouncedQuery(query.trim());
+      }, delay);
+      return () => {
+        if (timerRef.current) clearTimeout(timerRef.current);
+      };
     }
 
     setLoading(true);
@@ -57,8 +70,9 @@ export function useDebouncedSearch(searchFn, delay = SEARCH_DEBOUNCE_MS) {
       const gen = ++genRef.current;
 
       try {
-        const data = await searchFn(query.trim());
+        const data = await searchFnOrInitialValue(query.trim());
         if (gen !== genRef.current) return; // stale
+        setDebouncedQuery(query.trim());
         setResults(data);
         setError(null);
       } catch (err) {
@@ -73,7 +87,7 @@ export function useDebouncedSearch(searchFn, delay = SEARCH_DEBOUNCE_MS) {
     return () => {
       if (timerRef.current) clearTimeout(timerRef.current);
     };
-  }, [query, delay, searchFn]);
+  }, [query, delay, hasSearchFn, searchFnOrInitialValue]);
 
   // Clean up on unmount
   useEffect(() => {
@@ -90,7 +104,7 @@ export function useDebouncedSearch(searchFn, delay = SEARCH_DEBOUNCE_MS) {
     setLoading(false);
   }, []);
 
-  return { query, setQuery, results, loading, error, clearResults };
+  return { query, setQuery, debouncedQuery, results, loading, error, clearResults };
 }
 
 export default useDebouncedSearch;

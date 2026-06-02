@@ -7,6 +7,7 @@ import { MEDIA_TYPES } from '../utils/constants';
 import MediaCard from '../components/common/MediaCard';
 import GenrePill from '../components/common/GenrePill';
 import LoadingSkeleton from '../components/common/LoadingSkeleton';
+import { FALLBACK_TV } from '../utils/fallbackData';
 
 const TABS = [
   { key: 'airing_today', label: 'Airing Today' },
@@ -44,7 +45,7 @@ function TvShows() {
     loading: showsLoading,
     error: showsError,
   } = useApi(
-    () => tmdb.getTvShows(activeTab, { page: 1, with_genres: selectedGenres.join(','), sort_by: sortBy }),
+    () => tmdb.getTvShows(activeTab, { page: 1, genreId: selectedGenres.join(','), sortBy }),
     [activeTab, selectedGenres, sortBy]
   );
 
@@ -91,8 +92,8 @@ function TvShows() {
     try {
       const data = await tmdb.getTvShows(activeTab, {
         page: nextPage,
-        with_genres: selectedGenres.join(','),
-        sort_by: sortBy,
+        genreId: selectedGenres.join(','),
+        sortBy,
       });
       if (data?.results) {
         setAllShows((prev) => [...prev, ...data.results]);
@@ -106,8 +107,9 @@ function TvShows() {
   }, [page, activeTab, selectedGenres, sortBy]);
 
   const totalPages = showsData?.total_pages || 1;
-  const genreList = genres?.genres || [];
+  const genreList = Array.isArray(genres) ? genres : (genres?.genres || []);
   const currentSortLabel = SORT_OPTIONS.find((s) => s.key === sortBy)?.label || 'Sort';
+  const displayShows = allShows.length > 0 ? allShows : FALLBACK_TV;
 
   return (
     <div className="page tv-page">
@@ -205,14 +207,14 @@ function TvShows() {
               <LoadingSkeleton key={i} type="card" />
             ))}
           </div>
-        ) : showsError ? (
+        ) : showsError && displayShows.length === 0 ? (
           <div className="error-state">
             <p>Something went wrong loading TV shows. Please try again.</p>
           </div>
-        ) : allShows.length > 0 ? (
+        ) : displayShows.length > 0 ? (
           <>
             <div className="media-grid">
-              {allShows.map((show) => (
+              {displayShows.map((show) => (
                 <MediaCard
                   key={show.id}
                   item={show}

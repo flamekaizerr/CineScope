@@ -2,13 +2,13 @@ import { useState, useCallback } from 'react';
 import { Link } from 'react-router-dom';
 import {
   TrendingUp, Eye, Calendar, DollarSign, Film, Tv,
-  Users, Trophy, ChevronRight, Hash
+  Users, ChevronRight, Hash
 } from 'lucide-react';
 import { useApi } from '../hooks/useApi';
 import * as trakt from '../services/trakt';
+import * as tmdb from '../services/tmdb';
 import { formatNumber } from '../utils/helpers';
 import MediaCard from '../components/common/MediaCard';
-import ContentRow from '../components/common/ContentRow';
 import LoadingSkeleton from '../components/common/LoadingSkeleton';
 
 const CONTENT_TYPES = [
@@ -43,6 +43,31 @@ function Buzz() {
     error: boxOfficeError,
   } = useApi(() => trakt.getBoxOffice(), []);
 
+  const tmdbType = contentType === 'movies' ? 'movie' : 'tv';
+
+  const {
+    data: fallbackTrending,
+    loading: fallbackTrendingLoading,
+  } = useApi(() => tmdb.getTrending(tmdbType, 'week'), [tmdbType]);
+
+  const {
+    data: fallbackPopular,
+    loading: fallbackPopularLoading,
+  } = useApi(() => tmdb.getPopular(tmdbType), [tmdbType]);
+
+  const {
+    data: fallbackAnticipated,
+    loading: fallbackAnticipatedLoading,
+  } = useApi(
+    () => (contentType === 'movies' ? tmdb.getUpcoming() : tmdb.getOnTheAir()),
+    [contentType]
+  );
+
+  const {
+    data: fallbackBoxOffice,
+    loading: fallbackBoxOfficeLoading,
+  } = useApi(() => tmdb.getNowPlaying(), []);
+
   const normalizeItem = useCallback((item, type) => {
     const media = type === 'movies' ? item.movie : item.show;
     return {
@@ -56,10 +81,17 @@ function Buzz() {
     };
   }, []);
 
-  const watchedItems = mostWatched?.map((item) => normalizeItem(item, contentType)) || [];
-  const trendingItems = trending?.map((item) => normalizeItem(item, contentType)) || [];
-  const anticipatedItems = anticipated?.map((item) => normalizeItem(item, contentType)) || [];
+  const watchedItems = mostWatched?.length
+    ? mostWatched.map((item) => normalizeItem(item, contentType)).filter((item) => item.id)
+    : (fallbackPopular?.results || []).map((item) => ({ ...item, media_type: tmdbType, watchers: item.popularity }));
+  const trendingItems = trending?.length
+    ? trending.map((item) => normalizeItem(item, contentType)).filter((item) => item.id)
+    : (fallbackTrending?.results || []).map((item) => ({ ...item, media_type: tmdbType, watchers: item.popularity }));
+  const anticipatedItems = anticipated?.length
+    ? anticipated.map((item) => normalizeItem(item, contentType)).filter((item) => item.id)
+    : (fallbackAnticipated?.results || []).map((item) => ({ ...item, media_type: tmdbType, watchers: item.popularity }));
   const boxOfficeItems = boxOffice || [];
+  const fallbackBoxOfficeItems = fallbackBoxOffice?.results || [];
 
   const renderError = (section) => (
     <div className="section-error">
@@ -102,7 +134,7 @@ function Buzz() {
               <h2>Most Watched This Week</h2>
             </div>
           </div>
-          {watchedLoading ? (
+          {watchedLoading || fallbackPopularLoading ? (
             <LoadingSkeleton type="row" count={6} />
           ) : watchedError ? (
             renderError('most watched')
@@ -133,7 +165,7 @@ function Buzz() {
               <h2>Trending in Community</h2>
             </div>
           </div>
-          {trendingLoading ? (
+          {trendingLoading || fallbackTrendingLoading ? (
             <LoadingSkeleton type="row" count={6} />
           ) : trendingError ? (
             renderError('community trends')
@@ -164,7 +196,7 @@ function Buzz() {
               <h2>Most Anticipated</h2>
             </div>
           </div>
-          {anticipatedLoading ? (
+          {anticipatedLoading || fallbackAnticipatedLoading ? (
             <LoadingSkeleton type="row" count={6} />
           ) : anticipatedError ? (
             renderError('anticipated titles')
@@ -195,7 +227,7 @@ function Buzz() {
               <h2>Weekend Box Office</h2>
             </div>
           </div>
-          {boxOfficeLoading ? (
+          {boxOfficeLoading || fallbackBoxOfficeLoading ? (
             <LoadingSkeleton type="list" count={10} />
           ) : boxOfficeError ? (
             renderError('box office')
@@ -224,6 +256,29 @@ function Buzz() {
                   </Link>
                 );
               })}
+            </div>
+          ) : fallbackBoxOfficeItems.length > 0 ? (
+            <div className="box-office-list">
+              {fallbackBoxOfficeItems.slice(0, 10).map((movie, index) => (
+                <Link
+                  key={movie.id}
+                  to={`/movie/${movie.id}`}
+                  className="box-office-item"
+                >
+                  <span className="box-office-rank">
+                    <Hash size={14} />{index + 1}
+                  </span>
+                  <div className="box-office-info">
+                    <span className="box-office-title">{movie.title}</span>
+                    <span className="box-office-year">{movie.release_date?.slice(0, 4)}</span>
+                  </div>
+                  <div className="box-office-revenue">
+                    <DollarSign size={14} />
+                    <span>Hot in theaters</span>
+                  </div>
+                  <ChevronRight size={16} className="box-office-arrow" />
+                </Link>
+              ))}
             </div>
           ) : (
             <p className="empty-message">No box office data available for this week.</p>

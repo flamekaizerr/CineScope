@@ -1,11 +1,10 @@
-import { useState, useEffect, useMemo } from 'react';
+import { useState, useEffect } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import {
   Star, Play, Users, Heart, Trophy, TrendingUp, Tv,
-  Calendar, Clock, BookOpen, ExternalLink, ChevronDown, ChevronUp
+  Calendar, Clock, BookOpen, ChevronDown, ChevronUp
 } from 'lucide-react';
 import { useApi } from '../hooks/useApi';
-import { useAuth } from '../context/AuthContext';
 import { useUserData } from '../context/UserDataContext';
 import * as jikan from '../services/jikan';
 import { formatNumber, truncateText } from '../utils/helpers';
@@ -17,8 +16,7 @@ import WatchlistButton from '../components/features/WatchlistButton';
 
 function AnimeDetail() {
   const { id } = useParams();
-  const { user } = useAuth();
-  const { addItem, updateRating, getItem } = useUserData();
+  const { updateRating, getItem } = useUserData();
 
   const [userRating, setUserRating] = useState(0);
   const [hoverRating, setHoverRating] = useState(0);
@@ -42,31 +40,21 @@ function AnimeDetail() {
     loading: recommendationsLoading,
   } = useApi(() => jikan.getAnimeRecommendations(id), [id]);
 
-  const {
-    data: statistics,
-    loading: statsLoading,
-  } = useApi(() => jikan.getAnimeStatistics(id), [id]);
-
-  const animeData = anime?.data;
-  const characterList = characters?.data || [];
-  const recommendationList = recommendations?.data || [];
-  const statsData = statistics?.data;
+  const animeData = anime;
+  const characterList = Array.isArray(characters) ? characters : [];
+  const recommendationList = Array.isArray(recommendations) ? recommendations : [];
 
   // Load user's existing rating
   useEffect(() => {
-    if (user && animeData) {
+    if (animeData) {
       const savedItem = getItem(animeData.mal_id, 'anime');
-      if (savedItem?.rating) {
-        setUserRating(savedItem.rating);
-      }
+      setUserRating(savedItem?.rating || 0);
     }
-  }, [user, animeData, getItem]);
+  }, [animeData, getItem]);
 
   const handleRating = (rating) => {
     setUserRating(rating);
-    if (user) {
-      updateRating(animeData.mal_id, 'anime', rating);
-    }
+    updateRating(animeData.mal_id, 'anime', rating);
   };
 
   const trailerUrl = animeData?.trailer?.youtube_id

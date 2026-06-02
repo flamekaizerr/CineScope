@@ -1,15 +1,12 @@
 import { useState, useEffect, useCallback, useMemo } from 'react';
-import { useParams, Link } from 'react-router-dom';
+import { useLocation, useParams, Link } from 'react-router-dom';
 import {
   Star, Clock, Calendar, Play, ChevronDown, ChevronUp,
-  ExternalLink, Heart, Bookmark, Eye, XCircle, Check
 } from 'lucide-react';
 import { useApi } from '../hooks/useApi';
-import { useAuth } from '../context/AuthContext';
 import { useUserData } from '../context/UserDataContext';
 import * as tmdb from '../services/tmdb';
 import { formatDate, formatRuntime, formatRating, formatNumber, getYearFromDate, truncateText } from '../utils/helpers';
-import { MEDIA_TYPES, LIST_TYPES } from '../utils/constants';
 import RatingBadge from '../components/common/RatingBadge';
 import LoadingSkeleton from '../components/common/LoadingSkeleton';
 import ContentRow from '../components/common/ContentRow';
@@ -21,8 +18,8 @@ import TrailerModal from '../components/features/TrailerModal';
 
 function Detail() {
   const { mediaType, id } = useParams();
-  const { user } = useAuth();
-  const { addItem, removeItem, updateRating, getItem } = useUserData();
+  const location = useLocation();
+  const { updateRating, getItem } = useUserData();
 
   const [userRating, setUserRating] = useState(0);
   const [hoverRating, setHoverRating] = useState(0);
@@ -36,7 +33,6 @@ function Detail() {
   const {
     data: details,
     loading: detailsLoading,
-    error: detailsError,
   } = useApi(() => tmdb.getDetails(type, id), [type, id]);
 
   const {
@@ -46,7 +42,6 @@ function Detail() {
 
   const {
     data: videos,
-    loading: videosLoading,
   } = useApi(() => tmdb.getVideos(type, id), [type, id]);
 
   const {
@@ -69,23 +64,52 @@ function Detail() {
     loading: providersLoading,
   } = useApi(() => tmdb.getWatchProviders(type, id), [type, id]);
 
+  const storedDetails = useMemo(() => {
+    if (location.state?.fallback) {
+      const fallback = location.state.fallback;
+      return {
+        ...fallback,
+        title: fallback.title || fallback.name,
+        name: fallback.name || fallback.title,
+        release_date: fallback.release_date || fallback.first_air_date,
+        first_air_date: fallback.first_air_date || fallback.release_date,
+        genres: fallback.genres || [],
+      };
+    }
+    try {
+      const raw = sessionStorage.getItem(`cinescope_media_${type}_${id}`);
+      if (!raw) return null;
+      const parsed = JSON.parse(raw);
+      return {
+        ...parsed,
+        title: parsed.title || parsed.name,
+        name: parsed.name || parsed.title,
+        release_date: parsed.release_date || parsed.first_air_date,
+        first_air_date: parsed.first_air_date || parsed.release_date,
+        genres: parsed.genres || [],
+      };
+    } catch {
+      return null;
+    }
+  }, [id, type, location.state]);
+
+  const detailsForPage = details || storedDetails;
+
   const {
     data: seasonData,
     loading: seasonLoading,
   } = useApi(
-    () => (type === 'tv' && details ? tmdb.getSeasonDetails(id, selectedSeason) : Promise.resolve(null)),
-    [id, selectedSeason, type, details]
+    () => (type === 'tv' && detailsForPage ? tmdb.getSeasonDetails(id, selectedSeason) : Promise.resolve(null)),
+    [id, selectedSeason, type, detailsForPage]
   );
 
   // Load user's existing rating
   useEffect(() => {
-    if (user && details) {
-      const savedItem = getItem(id, type);
-      if (savedItem?.rating) {
-        setUserRating(savedItem.rating);
-      }
+    if (detailsForPage) {
+      const savedItem = getItem(Number(id), type) || getItem(id, type);
+      setUserRating(savedItem?.rating || 0);
     }
-  }, [user, details, id, type, getItem]);
+  }, [detailsForPage, id, type, getItem]);
 
   const trailer = useMemo(() => {
     const videoList = videos?.results || [];
@@ -98,10 +122,8 @@ function Detail() {
 
   const handleRating = useCallback((rating) => {
     setUserRating(rating);
-    if (user) {
-      updateRating(id, type, rating);
-    }
-  }, [user, id, type, updateRating]);
+    updateRating(Number(id), type, rating);
+  }, [id, type, updateRating]);
 
   const cast = credits?.cast || [];
   const crew = credits?.crew || [];
@@ -110,9 +132,9 @@ function Detail() {
   const recommendationList = recommendations?.results || [];
   const similarList = similar?.results || [];
   const episodes = seasonData?.episodes || [];
-  const seasons = details?.seasons?.filter((s) => s.season_number > 0) || [];
+  const seasons = detailsForPage?.seasons?.filter((s) => s.season_number > 0) || [];
 
-  if (detailsLoading) {
+  if (detailsLoading && !storedDetails) {
     return (
       <div className="page detail-page">
         <LoadingSkeleton type="detail" />
@@ -120,7 +142,7 @@ function Detail() {
     );
   }
 
-  if (detailsError || !details) {
+  if (!detailsForPage) {
     return (
       <div className="page detail-page">
         <div className="error-state">
@@ -132,15 +154,17 @@ function Detail() {
     );
   }
 
-  const title = details.title || details.name;
-  const releaseDate = details.release_date || details.first_air_date;
+  const title = detailsForPage.title || detailsForPage.name;
+  const releaseDate = detailsForPage.release_date || detailsForPage.first_air_date;
   const year = getYearFromDate(releaseDate);
-  const runtime = details.runtime || details.episode_run_time?.[0];
-  const backdropUrl = details.backdrop_path
-    ? `https://image.tmdb.org/t/p/original${details.backdrop_path}`
+  const runtime = detailsForPage.runtime || detailsForPage.episode_run_time?.[0];
+  const backdropUrl = detailsForPage.backdrop_path
+    ? `https://image.tmdb.org/t/p/original${detailsForPage.backdrop_path}`
     : null;
-  const posterUrl = details.poster_path
-    ? `https://image.tmdb.org/t/p/w500${details.poster_path}`
+  const posterUrl = detailsForPage.poster_path
+    ? (String(detailsForPage.poster_path).startsWith('http')
+      ? detailsForPage.poster_path
+      : `https://image.tmdb.org/t/p/w500${detailsForPage.poster_path}`)
     : null;
 
   return (
@@ -180,23 +204,23 @@ function Detail() {
                     <Clock size={14} /> {formatRuntime(runtime)}
                   </span>
                 )}
-                {details.status && (
-                  <span className="detail-meta-item detail-status">{details.status}</span>
+                {detailsForPage.status && (
+                  <span className="detail-meta-item detail-status">{detailsForPage.status}</span>
                 )}
               </div>
 
               {/* Genres */}
               <div className="detail-genres">
-                {details.genres?.map((genre) => (
+                {detailsForPage.genres?.map((genre) => (
                   <GenrePill key={genre.id} genre={genre} />
                 ))}
               </div>
 
               {/* Rating Badge */}
               <div className="detail-rating-row">
-                <RatingBadge rating={details.vote_average} />
+                <RatingBadge rating={detailsForPage.vote_average} />
                 <span className="detail-vote-count">
-                  {formatNumber(details.vote_count)} votes
+                  {formatNumber(detailsForPage.vote_count)} votes
                 </span>
               </div>
 
@@ -227,7 +251,7 @@ function Detail() {
 
               {/* Action Buttons */}
               <div className="detail-actions">
-                <WatchlistButton item={details} mediaType={type} />
+                <WatchlistButton item={detailsForPage} mediaType={type} />
                 {trailer && (
                   <button className="btn btn-trailer" onClick={() => setShowTrailer(true)}>
                     <Play size={16} /> Watch Trailer
@@ -249,10 +273,10 @@ function Detail() {
 
       <div className="page-content">
         {/* Overview */}
-        {details.overview && (
+        {detailsForPage.overview && (
           <section className="section">
             <h2 className="section-title">Overview</h2>
-            <p className="detail-overview">{details.overview}</p>
+            <p className="detail-overview">{detailsForPage.overview}</p>
           </section>
         )}
 

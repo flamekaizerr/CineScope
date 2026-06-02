@@ -1,17 +1,15 @@
 import { useState, useMemo, useCallback } from 'react';
-import { Link } from 'react-router-dom';
 import {
-  User, LogOut, RefreshCw, Moon, Sun, HardDrive,
+  User, RefreshCw, Moon, Sun, HardDrive,
   Film, Tv, Sparkles, Star, BarChart3, Clock,
   CheckCircle, Shield, Info
 } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 import { useUserData } from '../context/UserDataContext';
 import LoadingSkeleton from '../components/common/LoadingSkeleton';
-import GuestPrompt from '../components/common/GuestPrompt';
 
 function Profile() {
-  const { user, isLoading: authLoading, logout } = useAuth();
+  const { user, isLoading: authLoading } = useAuth();
   const { items, syncStatus, lastSyncTime, syncToCloud, isLoading: dataLoading } = useUserData();
   const [syncing, setSyncing] = useState(false);
   const [theme, setTheme] = useState(() => {
@@ -43,14 +41,6 @@ function Profile() {
       // Silently fail
     }
   }, [theme]);
-
-  const handleLogout = useCallback(async () => {
-    try {
-      await logout();
-    } catch (err) {
-      console.error('Logout failed:', err);
-    }
-  }, [logout]);
 
   // Viewing Statistics
   const stats = useMemo(() => {
@@ -94,19 +84,6 @@ function Profile() {
     };
   }, [items]);
 
-  // Not logged in — show guest prompt
-  if (!authLoading && !user) {
-    return (
-      <div className="page profile-page">
-        <GuestPrompt
-          title="Your Profile"
-          description="Sign in to see your viewing stats, manage preferences, and sync your data across devices."
-          feature="profile"
-        />
-      </div>
-    );
-  }
-
   if (authLoading || dataLoading) {
     return (
       <div className="page profile-page">
@@ -126,7 +103,7 @@ function Profile() {
         <section className="section profile-user-section">
           <div className="profile-user-card">
             <div className="profile-avatar">
-              {user.picture ? (
+              {user?.picture ? (
                 <img src={user.picture} alt={user.name} className="profile-avatar-img" />
               ) : (
                 <div className="profile-avatar-placeholder">
@@ -135,8 +112,8 @@ function Profile() {
               )}
             </div>
             <div className="profile-user-info">
-              <h2 className="profile-name">{user.name || 'CineScope User'}</h2>
-              <p className="profile-email">{user.email}</p>
+              <h2 className="profile-name">{user?.name || 'Guest Explorer'}</h2>
+              <p className="profile-email">{user?.email || 'Local profile. Google sync is planned for later.'}</p>
             </div>
           </div>
         </section>
@@ -299,19 +276,12 @@ function Profile() {
             <div className="app-info-row">
               <span>Storage</span>
               <span>
-                <Shield size={12} /> Google Drive (encrypted)
+                <Shield size={12} /> Local first; Google Drive planned
               </span>
             </div>
           </div>
         </section>
 
-        {/* Logout */}
-        <section className="section">
-          <button className="btn btn-danger btn-full-width logout-btn" onClick={handleLogout}>
-            <LogOut size={18} />
-            Sign Out
-          </button>
-        </section>
       </div>
     </div>
   );

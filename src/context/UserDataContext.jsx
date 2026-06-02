@@ -20,13 +20,14 @@ import { LIST_TYPES, SYNC_DEBOUNCE_MS } from '../utils/constants.js';
 
 /** @type {React.Context} */
 const UserDataContext = createContext(null);
+const STORAGE_KEY = 'cinescope_user_data_v2';
 
 // ---------------------------------------------------------------------------
 // Initial state factory
 // ---------------------------------------------------------------------------
 
 function createInitialState() {
-  return {
+  const initial = {
     watchlist: [],
     watching: [],
     completed: [],
@@ -38,6 +39,19 @@ function createInitialState() {
       preferredThemes: [],
     },
   };
+
+  try {
+    const saved = localStorage.getItem(STORAGE_KEY);
+    if (!saved) return initial;
+    const parsed = JSON.parse(saved);
+    return {
+      ...initial,
+      ...parsed,
+      preferences: { ...initial.preferences, ...(parsed.preferences || {}) },
+    };
+  } catch {
+    return initial;
+  }
 }
 
 // ---------------------------------------------------------------------------
@@ -56,6 +70,14 @@ export function UserDataProvider({ children }) {
   const [isSyncing, setIsSyncing] = useState(false);
   const [lastSyncedAt, setLastSyncedAt] = useState(null);
   const syncRef = useRef(null);
+
+  useEffect(() => {
+    try {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
+    } catch (error) {
+      console.error('[UserData] Local save failed:', error.message);
+    }
+  }, [data]);
 
   // -----------------------------------------------------------------------
   // Google Drive sync (debounced)
@@ -134,10 +156,17 @@ export function UserDataProvider({ children }) {
    */
   const normaliseItem = useCallback((rawItem) => ({
     id: rawItem.id,
-    type: rawItem.type || rawItem.mediaType || 'movie',
+    type: rawItem.type || rawItem.mediaType || rawItem.media_type || 'movie',
+    media_type: rawItem.media_type || rawItem.mediaType || rawItem.type || 'movie',
     title: rawItem.title || rawItem.name || 'Untitled',
     poster: rawItem.poster || rawItem.poster_path || null,
+    poster_path: rawItem.poster_path || rawItem.poster || null,
+    backdrop_path: rawItem.backdrop_path || null,
+    release_date: rawItem.release_date || rawItem.first_air_date || rawItem.aired?.from || null,
+    vote_average: rawItem.vote_average || rawItem.score || null,
+    genres: rawItem.genres || [],
     addedAt: rawItem.addedAt || new Date().toISOString(),
+    added_at: rawItem.added_at || rawItem.addedAt || new Date().toISOString(),
     _uid: rawItem._uid || generateId(),
   }), []);
 
@@ -324,6 +353,110 @@ export function UserDataProvider({ children }) {
     }));
   }, []);
 
+  const addToList = useCallback((listType, item) => {
+    if (!Object.values(LIST_TYPES).includes(listType)) return;
+    const normalised = { ...normaliseItem(item), list: listType };
+
+    setData((prev) => {
+      const next = { ...prev };
+      for (const key of [LIST_TYPES.WATCHLIST, LIST_TYPES.WATCHING, LIST_TYPES.COMPLETED, LIST_TYPES.DROPPED]) {
+        next[key] = prev[key].filter(
+          (i) => !(i.id === normalised.id && i.type === normalised.type),
+        );
+      }
+      next[listType] = [...next[listType], normalised];
+      return next;
+    });
+  }, [normaliseItem]);
+
+  const removeFromList = useCallback((listType, itemId, itemType) => {
+    if (!Object.values(LIST_TYPES).includes(listType)) return;
+    setData((prev) => ({
+      ...prev,
+      [listType]: prev[listType].filter(
+        (i) => !(i.id === itemId && (i.type === itemType || i.media_type === itemType)),
+      ),
+    }));
+  }, []);
+
+  const removeItem = useCallback((itemId, itemType) => {
+    removeFromAllLists(itemId, itemType);
+  }, [removeFromAllLists]);
+
+  const moveItem = useCallback((itemId, itemType, listType) => {
+    if (!Object.values(LIST_TYPES).includes(listType)) return;
+    setData((prev) => {
+      let found = null;
+      for (const key of [LIST_TYPES.WATCHLIST, LIST_TYPES.WATCHING, LIST_TYPES.COMPLETED, LIST_TYPES.DROPPED]) {
+        found = found || prev[key].find(
+          (i) => i.id === itemId && (i.type === itemType || i.media_type === itemType),
+        );
+      }
+      if (!found) return prev;
+
+      const next = { ...prev };
+      for (const key of [LIST_TYPES.WATCHLIST, LIST_TYPES.WATCHING, LIST_TYPES.COMPLETED, LIST_TYPES.DROPPED]) {
+        next[key] = prev[key].filter(
+          (i) => !(i.id === itemId && (i.type === itemType || i.media_type === itemType)),
+        );
+      }
+      next[listType] = [...next[listType], { ...found, list: listType }];
+      return next;
+    });
+  }, []);
+
+  const updateRating = useCallback((itemId, itemType, rating) => {
+    rateItem(itemId, itemType, rating);
+    setData((prev) => {
+      const next = { ...prev, ratings: { ...prev.ratings, [`${itemType}:${itemId}`]: rating } };
+      for (const key of [LIST_TYPES.WATCHLIST, LIST_TYPES.WATCHING, LIST_TYPES.COMPLETED, LIST_TYPES.DROPPED]) {
+        next[key] = prev[key].map((item) => (
+          item.id === itemId && (item.type === itemType || item.media_type === itemType)
+            ? { ...item, rating, userRating: rating }
+            : item
+        ));
+      }
+      return next;
+    });
+  }, [rateItem]);
+
+  const getItem = useCallback((itemId, itemType) => {
+    for (const key of [LIST_TYPES.WATCHLIST, LIST_TYPES.WATCHING, LIST_TYPES.COMPLETED, LIST_TYPES.DROPPED]) {
+      const item = data[key].find(
+        (i) => i.id === itemId && (i.type === itemType || i.media_type === itemType),
+      );
+      if (item) return { ...item, list: key, rating: data.ratings[`${itemType}:${itemId}`] ?? item.rating };
+    }
+    const rating = data.ratings[`${itemType}:${itemId}`];
+    return rating ? { id: itemId, media_type: itemType, type: itemType, rating } : null;
+  }, [data]);
+
+  const syncToCloud = useCallback(async () => {
+    if (!accessToken) {
+      setLastSyncedAt(new Date().toISOString());
+      return;
+    }
+    setIsSyncing(true);
+    try {
+      googleDriveService.init(accessToken);
+      await googleDriveService.syncAll(data);
+      setLastSyncedAt(new Date().toISOString());
+    } finally {
+      setIsSyncing(false);
+    }
+  }, [accessToken, data]);
+
+  const items = useMemo(() => (
+    [LIST_TYPES.WATCHLIST, LIST_TYPES.WATCHING, LIST_TYPES.COMPLETED, LIST_TYPES.DROPPED]
+      .flatMap((list) => data[list].map((item) => ({
+        ...item,
+        list,
+        type: item.type || item.media_type || 'movie',
+        media_type: item.media_type || item.type || 'movie',
+        rating: data.ratings[`${item.type || item.media_type}:${item.id}`] ?? item.rating ?? item.userRating ?? null,
+      })))
+  ), [data]);
+
   /**
    * Get the list an item currently belongs to, or null.
    * @param {string|number} itemId
@@ -355,9 +488,20 @@ export function UserDataProvider({ children }) {
       ratings: data.ratings,
       preferences: data.preferences,
       isSyncing,
+      isLoading: false,
       lastSyncedAt,
+      lastSyncTime: lastSyncedAt,
+      syncStatus: isSyncing ? 'syncing' : lastSyncedAt ? 'synced' : 'local',
+      items,
 
       // Actions
+      addToList,
+      removeFromList,
+      removeItem,
+      moveItem,
+      updateRating,
+      getItem,
+      syncToCloud,
       addToWatchlist,
       removeFromWatchlist,
       moveToWatching,
@@ -378,6 +522,14 @@ export function UserDataProvider({ children }) {
       data,
       isSyncing,
       lastSyncedAt,
+      items,
+      addToList,
+      removeFromList,
+      removeItem,
+      moveItem,
+      updateRating,
+      getItem,
+      syncToCloud,
       addToWatchlist,
       removeFromWatchlist,
       moveToWatching,

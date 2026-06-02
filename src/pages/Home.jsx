@@ -1,14 +1,12 @@
-import { useState, useEffect, useCallback } from 'react';
+import { useState } from 'react';
 import { Link } from 'react-router-dom';
-import { ChevronRight, TrendingUp, Film, Tv, Sparkles, Users, Clock, Flame } from 'lucide-react';
+import { ChevronRight, TrendingUp, Film, Tv, Sparkles, Users, Flame } from 'lucide-react';
 import { useApi } from '../hooks/useApi';
 import * as tmdb from '../services/tmdb';
 import * as jikan from '../services/jikan';
 import * as trakt from '../services/trakt';
-import { MEDIA_TYPES, TIME_WINDOWS } from '../utils/constants';
 import HeroCarousel from '../components/common/HeroCarousel';
 import ContentRow from '../components/common/ContentRow';
-import MediaCard from '../components/common/MediaCard';
 import LoadingSkeleton from '../components/common/LoadingSkeleton';
 
 function Home() {
@@ -62,14 +60,50 @@ function Home() {
     error: communityError,
   } = useApi(() => trakt.getTrending('movies'), []);
 
-  const heroItems = heroMovies?.results?.slice(0, 8) || [];
   const trendingItems = trendingAll?.results || [];
+  const heroItems = (heroMovies?.results?.length
+    ? heroMovies.results
+    : trendingItems.filter((item) => (item.media_type || 'movie') === 'movie')
+  ).slice(0, 8);
   const trendingWeekItems = trendingWeek?.results || [];
   const nowPlayingItems = nowPlaying?.results || [];
   const floppingItems = flopping?.results || [];
   const streamingItems = streaming?.results || [];
   const animeItems = seasonAnime?.data || [];
-  const communityItems = communityTrending || [];
+  const communityItems = communityTrending?.length
+    ? communityTrending.map((item) => ({
+      id: item.movie?.ids?.tmdb,
+      title: item.movie?.title,
+      poster_path: null,
+      vote_average: item.movie?.rating ? item.movie.rating * 10 : null,
+      media_type: 'movie',
+      release_date: item.movie?.year?.toString(),
+      watchers: item.watchers,
+    })).filter((item) => item.id)
+    : trendingWeekItems.slice(0, 20);
+  const topToday = trendingItems[0];
+  const pulseCards = [
+    {
+      label: 'Hot today',
+      value: topToday?.title || topToday?.name || 'Loading trends',
+      meta: topToday?.vote_average ? `${topToday.vote_average.toFixed(1)} TMDB` : 'Live internet pulse',
+    },
+    {
+      label: 'In theaters',
+      value: `${nowPlayingItems.length || 0} picks`,
+      meta: 'Fresh cinema releases',
+    },
+    {
+      label: 'Streaming radar',
+      value: `${streamingItems.length || 0} drops`,
+      meta: 'New flatrate titles',
+    },
+    {
+      label: 'Anime season',
+      value: `${animeItems.length || 0} shows`,
+      meta: 'Current MAL season',
+    },
+  ];
 
   const renderSectionHeader = (icon, title, linkTo, linkText = 'See All') => (
     <div className="section-header">
@@ -112,16 +146,26 @@ function Home() {
     <div className="page home-page">
       {/* Hero Carousel */}
       <section className="hero-section">
-        {heroLoading ? (
+        {heroLoading && heroItems.length === 0 ? (
           <LoadingSkeleton type="hero" />
-        ) : heroError ? (
-          renderError('hero content')
         ) : heroItems.length > 0 ? (
           <HeroCarousel items={heroItems} />
+        ) : heroError ? (
+          renderError('hero content')
         ) : null}
       </section>
 
       <div className="page-content">
+        <section className="pulse-panel" aria-label="Entertainment pulse">
+          {pulseCards.map((card) => (
+            <div className="pulse-card" key={card.label}>
+              <span className="pulse-label">{card.label}</span>
+              <strong>{card.value}</strong>
+              <span>{card.meta}</span>
+            </div>
+          ))}
+        </section>
+
         {/* Trending Section with Toggle */}
         <section className="section">
           <div className="section-header-row">
@@ -254,17 +298,7 @@ function Home() {
           ) : communityError ? (
             renderError('community content')
           ) : communityItems.length > 0 ? (
-            <ContentRow
-              items={communityItems.map((item) => ({
-                id: item.movie?.ids?.tmdb,
-                title: item.movie?.title,
-                poster_path: null,
-                vote_average: item.movie?.rating,
-                media_type: 'movie',
-                release_date: item.movie?.year?.toString(),
-                watchers: item.watchers,
-              }))}
-            />
+            <ContentRow items={communityItems} />
           ) : (
             <p className="empty-message">No community trends available.</p>
           )}

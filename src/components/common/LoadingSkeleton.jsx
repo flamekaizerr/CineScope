@@ -72,7 +72,7 @@ function LoadingSkeleton({ type = 'text', count = 1 }) {
               key={i}
               className="skeleton-shimmer skeleton-text"
               /* Vary widths for a realistic look */
-              style={{ width: `${70 + Math.random() * 30}%` }}
+              style={{ width: `${[86, 74, 92, 68, 80][i % 5]}%` }}
             />
           ))}
         </div>

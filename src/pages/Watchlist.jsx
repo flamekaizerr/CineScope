@@ -1,16 +1,13 @@
-import { useState, useEffect, useCallback, useMemo } from 'react';
+import { useState, useCallback, useMemo } from 'react';
 import { Link } from 'react-router-dom';
 import {
   Bookmark, Eye, CheckCircle, XCircle, List,
   SlidersHorizontal, Film, Tv, Sparkles, Star,
   ChevronDown, Trash2, ArrowUpDown
 } from 'lucide-react';
-import { useAuth } from '../context/AuthContext';
 import { useUserData } from '../context/UserDataContext';
-import { MEDIA_TYPES, LIST_TYPES } from '../utils/constants';
 import MediaCard from '../components/common/MediaCard';
 import LoadingSkeleton from '../components/common/LoadingSkeleton';
-import GuestPrompt from '../components/common/GuestPrompt';
 
 const LIST_TABS = [
   { key: 'watchlist', label: 'Watchlist', icon: Bookmark },
@@ -35,7 +32,6 @@ const MEDIA_FILTERS = [
 ];
 
 function Watchlist() {
-  const { user, isLoading: authLoading } = useAuth();
   const { items, removeItem, moveItem, isLoading: dataLoading } = useUserData();
 
   const [activeTab, setActiveTab] = useState('watchlist');
@@ -72,7 +68,7 @@ function Watchlist() {
 
     // Sort
     const sorted = [...filtered].sort((a, b) => {
-      let comparison = 0;
+      let comparison;
       switch (sortBy) {
         case 'title':
           comparison = (a.title || '').localeCompare(b.title || '');
@@ -112,20 +108,7 @@ function Watchlist() {
     return { totalItems, avgRating, watchlistCount, completedCount, watchingCount };
   }, [items]);
 
-  // Not logged in — show beautiful guest prompt
-  if (!authLoading && !user) {
-    return (
-      <div className="page watchlist-page">
-        <GuestPrompt
-          title="Track Your Entertainment"
-          description="Sign in to build your watchlist, track what you're watching, and rate your favorites."
-          feature="watchlist"
-        />
-      </div>
-    );
-  }
-
-  if (authLoading || dataLoading) {
+  if (dataLoading) {
     return (
       <div className="page watchlist-page">
         <LoadingSkeleton type="page" />

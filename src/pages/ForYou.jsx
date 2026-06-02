@@ -1,7 +1,6 @@
 import { useState, useEffect, useCallback } from 'react';
 import { Link } from 'react-router-dom';
 import { Sparkles, RefreshCw, Lightbulb, Film, Tv, Zap, Loader } from 'lucide-react';
-import { useAuth } from '../context/AuthContext';
 import { useUserData } from '../context/UserDataContext';
 import { useApi } from '../hooks/useApi';
 import * as gemini from '../services/gemini';
@@ -10,10 +9,8 @@ import MediaCard from '../components/common/MediaCard';
 import ContentRow from '../components/common/ContentRow';
 import LoadingSkeleton from '../components/common/LoadingSkeleton';
 import AiRecommendations from '../components/features/AiRecommendations';
-import GuestPrompt from '../components/common/GuestPrompt';
 
 function ForYou() {
-  const { user, isLoading: authLoading } = useAuth();
   const { items, isLoading: dataLoading } = useUserData();
   const [recommendations, setRecommendations] = useState(null);
   const [aiLoading, setAiLoading] = useState(false);
@@ -28,7 +25,7 @@ function ForYou() {
 
   // Fetch AI recommendations
   const fetchRecommendations = useCallback(async () => {
-    if (!user || !items || items.length === 0) return;
+    if (!items || items.length < 3) return;
 
     setAiLoading(true);
     setAiError(null);
@@ -37,11 +34,14 @@ function ForYou() {
       const completedItems = items.filter((i) => i.list === 'completed' || i.rating > 0);
       const watchlistItems = items.filter((i) => i.list === 'watchlist');
       const userProfile = {
-        completed: completedItems.map((i) => ({
+        watchHistory: completedItems.map((i) => ({
           title: i.title,
           rating: i.rating,
-          media_type: i.media_type,
+          type: i.media_type,
         })),
+        favoriteGenres: [
+          ...new Set(items.flatMap((i) => (i.genres || []).map((g) => g.name || g)).filter(Boolean)),
+        ].slice(0, 8),
         watchlist: watchlistItems.map((i) => ({
           title: i.title,
           media_type: i.media_type,
@@ -49,39 +49,38 @@ function ForYou() {
       };
 
       const result = await gemini.getRecommendations(userProfile);
-      setRecommendations(result);
+      const hydrated = await Promise.all(result.slice(0, 10).map(async (pick) => {
+        if (pick.type === 'anime') return { ...pick, media_type: 'anime' };
+        const search = await tmdb.search(pick.title);
+        const match = search.results?.find((item) => item.media_type === pick.type) || search.results?.[0];
+        return {
+          ...pick,
+          ...match,
+          title: match?.title || match?.name || pick.title,
+          media_type: match?.media_type || pick.type,
+          reason: pick.reason,
+        };
+      }));
+      setRecommendations({ personalizedPicks: hydrated.filter((item) => item.id) });
     } catch (err) {
       console.error('Failed to get AI recommendations:', err);
       setAiError('Unable to generate recommendations right now. Showing trending content instead.');
     } finally {
       setAiLoading(false);
     }
-  }, [user, items]);
+  }, [items]);
 
   useEffect(() => {
-    if (user && items && items.length > 0) {
+    if (items && items.length >= 3) {
       fetchRecommendations();
     }
-  }, [user, items?.length, refreshKey, fetchRecommendations]);
+  }, [items, items?.length, refreshKey, fetchRecommendations]);
 
   const handleRefresh = useCallback(() => {
     setRefreshKey((prev) => prev + 1);
   }, []);
 
-  // Not logged in — show guest prompt
-  if (!authLoading && !user) {
-    return (
-      <div className="page foryou-page">
-        <GuestPrompt
-          title="Your AI-Powered Recommendations"
-          description="Sign in and rate some titles to get personalized picks powered by Google Gemini."
-          feature="recommendations"
-        />
-      </div>
-    );
-  }
-
-  if (authLoading || dataLoading) {
+  if (dataLoading) {
     return (
       <div className="page foryou-page">
         <LoadingSkeleton type="page" />

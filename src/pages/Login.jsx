@@ -1,7 +1,7 @@
 import { useCallback, useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import {
-  Film, Tv, Sparkles, Cloud, Shield, BarChart3,
+  Film, Sparkles, Cloud, Shield, BarChart3,
   Bookmark, Zap, ArrowLeft
 } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';

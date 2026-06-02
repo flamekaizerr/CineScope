@@ -51,8 +51,8 @@ function CastList({ cast }) {
       </div>
 
       <div className="cast-list-scroll" ref={scrollRef}>
-        {validCast.map((member) => {
-          const key = member.cast_id ?? member.credit_id ?? member.id ?? Math.random();
+        {validCast.map((member, index) => {
+          const key = member.cast_id ?? member.credit_id ?? member.id ?? `cast-${index}`;
           const hasError = imgErrors[key];
           const hasPhoto = member.profile_path && !hasError;
 

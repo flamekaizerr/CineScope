@@ -17,7 +17,7 @@ import {
  * Desktop: logo + search bar + notifications + user avatar/dropdown.
  * Mobile: hamburger + logo + search icon.
  */
-function Navbar({ onToggleSidebar, onToggleMobileMenu }) {
+function Navbar({ onToggleMobileMenu }) {
   const { user, isAuthenticated, logout } = useAuth();
   const navigate = useNavigate();
   const [dropdownOpen, setDropdownOpen] = useState(false);

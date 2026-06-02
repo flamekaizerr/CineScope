@@ -1,5 +1,4 @@
 import { useState, useCallback, useRef, useEffect, memo } from 'react';
-import { useAuth } from '../../context/AuthContext';
 import { useUserData } from '../../context/UserDataContext';
 import { LIST_TYPES } from '../../utils/constants';
 import {
@@ -8,7 +7,6 @@ import {
   CheckCircle,
   XCircle,
   ChevronDown,
-  LogIn,
 } from 'lucide-react';
 
 const LIST_OPTIONS = [
@@ -24,48 +22,42 @@ const LIST_OPTIONS = [
  * Requires login — shows a login prompt if not authenticated.
  */
 function WatchlistButton({ item, mediaType }) {
-  const { isAuthenticated } = useAuth();
   const { addToList, removeFromList, getItemStatus } = useUserData();
   const [dropdownOpen, setDropdownOpen] = useState(false);
-  const [showLoginPrompt, setShowLoginPrompt] = useState(false);
   const wrapperRef = useRef(null);
 
-  const currentStatus = item ? getItemStatus(item.id, mediaType) : null;
+  const itemType = mediaType || item?.media_type || item?.type || 'movie';
+  const currentStatus = item ? getItemStatus(item.id, itemType) : null;
 
   // Close dropdown on outside click
   useEffect(() => {
     function handleClickOutside(e) {
       if (wrapperRef.current && !wrapperRef.current.contains(e.target)) {
         setDropdownOpen(false);
-        setShowLoginPrompt(false);
       }
     }
-    if (dropdownOpen || showLoginPrompt) {
+    if (dropdownOpen) {
       document.addEventListener('mousedown', handleClickOutside);
     }
     return () => document.removeEventListener('mousedown', handleClickOutside);
-  }, [dropdownOpen, showLoginPrompt]);
+  }, [dropdownOpen]);
 
   const handleToggle = useCallback(() => {
-    if (!isAuthenticated) {
-      setShowLoginPrompt(true);
-      return;
-    }
     setDropdownOpen((prev) => !prev);
-  }, [isAuthenticated]);
+  }, []);
 
   const handleSelect = useCallback(
     (listType) => {
       if (!item) return;
       if (currentStatus === listType) {
         // Remove if clicking the same status
-        removeFromList(listType, item.id, mediaType);
+        removeFromList(listType, item.id, itemType);
       } else {
-        addToList(listType, { ...item, mediaType });
+        addToList(listType, { ...item, mediaType: itemType, media_type: itemType });
       }
       setDropdownOpen(false);
     },
-    [item, mediaType, currentStatus, addToList, removeFromList]
+    [item, itemType, currentStatus, addToList, removeFromList]
   );
 
   if (!item) return null;
@@ -111,16 +103,6 @@ function WatchlistButton({ item, mediaType }) {
         </div>
       )}
 
-      {/* Login prompt */}
-      {showLoginPrompt && (
-        <div className="watchlist-dropdown watchlist-login-prompt" role="alert">
-          <LogIn size={20} aria-hidden="true" />
-          <p>Please log in to add items to your list.</p>
-          <a href="/login" className="watchlist-login-link">
-            Log in
-          </a>
-        </div>
-      )}
     </div>
   );
 }

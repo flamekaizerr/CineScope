@@ -1,7 +1,7 @@
 import { useState, useEffect, useCallback, useRef, memo } from 'react';
 import { Link } from 'react-router-dom';
 import { ChevronLeft, ChevronRight, Info } from 'lucide-react';
-import { truncateText, getYearFromDate, formatRating } from '../../utils/helpers';
+import { truncateText, getYearFromDate } from '../../utils/helpers';
 import { TMDB_IMAGE_BASE, BACKDROP_SIZES } from '../../utils/constants';
 import RatingBadge from './RatingBadge';
 import GenrePill from './GenrePill';
@@ -119,6 +119,13 @@ function HeroCarousel({ items }) {
           <div className="hero-actions">
             <Link
               to={`/${mediaType}/${currentItem?.id}`}
+              state={{
+                fallback: {
+                  ...currentItem,
+                  media_type: mediaType,
+                  type: mediaType,
+                },
+              }}
               className="hero-btn hero-btn-primary"
             >
               <Info size={18} aria-hidden="true" />

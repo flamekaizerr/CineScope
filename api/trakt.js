@@ -12,7 +12,7 @@ export default async function handler(req, res) {
   if (req.method === 'OPTIONS') return res.status(200).end();
   if (req.method !== 'GET') return res.status(405).json({ error: 'Method not allowed' });
 
-  const clientId = process.env.TRAKT_CLIENT_ID;
+  const clientId = process.env.TRAKT_CLIENT_ID || process.env.VITE_TRAKT_CLIENT_ID;
   if (!clientId) {
     return res.status(500).json({ error: 'Trakt Client ID not configured on server' });
   }

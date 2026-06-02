@@ -124,7 +124,7 @@ class GoogleAuth {
       return Promise.reject(new Error('GoogleAuth not initialised.'));
     }
     return new Promise((resolve, reject) => {
-      this._pendingResolve = (profile) => resolve(this._accessToken);
+      this._pendingResolve = () => resolve(this._accessToken);
       this._pendingReject = reject;
       this._tokenClient.requestAccessToken({ prompt: '' });
     });

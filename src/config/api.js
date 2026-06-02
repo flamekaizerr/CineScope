@@ -13,20 +13,15 @@
  * authorized redirect URIs, not client ID secrecy).
  */
 
-const isDev = import.meta.env.DEV;
-const useDirectApi = import.meta.env.VITE_USE_DIRECT_API === 'true';
-
 const config = {
   /**
-   * When true, services call APIs directly (for local dev without `vercel dev`).
-   * When false, services route through /api/* serverless proxies.
+   * Keep third-party credentials behind /api/* in both production and local dev.
+   * Vite supplies matching local middleware; Vercel supplies serverless functions.
    */
-  useDirectApi: isDev && useDirectApi,
+  useDirectApi: false,
 
   /** TMDB (The Movie Database) */
   tmdb: {
-    // Only needed when useDirectApi is true (local dev shortcut)
-    apiKey: import.meta.env.VITE_TMDB_API_KEY || '',
     proxyPath: '/api/tmdb',
     baseUrl: 'https://api.themoviedb.org/3',
     imageBaseUrl: 'https://image.tmdb.org/t/p/',
@@ -46,7 +41,6 @@ const config = {
 
   /** Trakt */
   trakt: {
-    apiKey: import.meta.env.VITE_TRAKT_CLIENT_ID || '',
     proxyPath: '/api/trakt',
     baseUrl: 'https://api.trakt.tv',
     apiVersion: '2',
@@ -54,7 +48,6 @@ const config = {
 
   /** Google Gemini AI */
   gemini: {
-    apiKey: import.meta.env.VITE_GEMINI_API_KEY || '',
     proxyPath: '/api/gemini',
     baseUrl: 'https://generativelanguage.googleapis.com/v1beta',
     model: 'gemini-2.0-flash',
@@ -81,18 +74,18 @@ const config = {
  * @returns {boolean}
  */
 export function isApiConfigured(service) {
-  // In proxy mode, assume configured (server has the keys)
+  // In proxy mode, assume configured (server/dev middleware has the keys)
   if (!config.useDirectApi && service !== 'google') {
     return true;
   }
 
   switch (service) {
     case 'tmdb':
-      return config.tmdb.apiKey.length > 0;
+      return true;
     case 'trakt':
-      return config.trakt.apiKey.length > 0;
+      return true;
     case 'gemini':
-      return config.gemini.apiKey.length > 0;
+      return true;
     case 'google':
       return config.google.clientId.length > 0;
     case 'jikan':

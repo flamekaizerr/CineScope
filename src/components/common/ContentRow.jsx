@@ -81,9 +81,9 @@ function ContentRow({ title, items, mediaType, seeAllLink, isLoading = false }) 
 
         <div className="content-row-items" ref={scrollRef}>
           {validItems.length > 0 ? (
-            validItems.map((item) => (
+            validItems.map((item, index) => (
               <MediaCard
-                key={item.id || Math.random()}
+                key={`${mediaType || item.media_type || item.type || 'item'}-${item.id || item.title || index}-${index}`}
                 item={item}
                 mediaType={mediaType}
               />

@@ -1,6 +1,6 @@
 import { memo, useCallback, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { formatRating, getYearFromDate } from '../../utils/helpers';
+import { getYearFromDate } from '../../utils/helpers';
 import { MEDIA_TYPES, TMDB_IMAGE_BASE, POSTER_SIZES } from '../../utils/constants';
 import RatingBadge from './RatingBadge';
 
@@ -22,8 +22,16 @@ function MediaCard({ item, mediaType, showRating = true, showYear = true, onClic
       return;
     }
     if (!item?.id) return;
-    const type = mediaType || item.media_type || MEDIA_TYPES.MOVIE;
-    navigate(`/${type}/${item.id}`);
+    const type = mediaType || item.media_type || item.type || MEDIA_TYPES.MOVIE;
+    navigate(`/${type}/${item.id}`, {
+      state: {
+        fallback: {
+          ...item,
+          media_type: type,
+          type,
+        },
+      },
+    });
   }, [item, mediaType, navigate, onClick]);
 
   const handleKeyDown = useCallback(
@@ -41,10 +49,13 @@ function MediaCard({ item, mediaType, showRating = true, showYear = true, onClic
   const title = item.title || item.name || 'Untitled';
   const year = getYearFromDate(item.release_date || item.first_air_date);
   const rating = item.vote_average;
-  const posterPath = item.poster_path
-    ? `${TMDB_IMAGE_BASE}/${POSTER_SIZES.MEDIUM}${item.poster_path}`
+  const rawPoster = item.poster_path || item.poster;
+  const posterPath = rawPoster
+    ? (String(rawPoster).startsWith('http') || String(rawPoster).startsWith('data:')
+      ? rawPoster
+      : `${TMDB_IMAGE_BASE}/${POSTER_SIZES.MEDIUM}${rawPoster}`)
     : null;
-  const displayType = mediaType || item.media_type || '';
+  const displayType = mediaType || item.media_type || item.type || '';
   const typeLabel =
     displayType === MEDIA_TYPES.MOVIE
       ? 'Movie'

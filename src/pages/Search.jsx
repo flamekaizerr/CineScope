@@ -5,7 +5,6 @@ import { useDebouncedSearch } from '../hooks/useDebouncedSearch';
 import { useApi } from '../hooks/useApi';
 import * as tmdb from '../services/tmdb';
 import * as jikan from '../services/jikan';
-import { MEDIA_TYPES } from '../utils/constants';
 import MediaCard from '../components/common/MediaCard';
 import SearchBar from '../components/common/SearchBar';
 import LoadingSkeleton from '../components/common/LoadingSkeleton';
@@ -153,7 +152,7 @@ function Search() {
 
   const isLoading = tmdbLoading || animeLoading;
   const hasError = tmdbError || animeError;
-  const hasQuery = debouncedQuery.length > 0;
+  const hasQuery = (debouncedQuery || '').length > 0;
   const trendingItems = trendingData?.results?.slice(0, 10) || [];
 
   return (

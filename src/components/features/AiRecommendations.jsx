@@ -93,8 +93,8 @@ function AiRecommendations({ recommendations, isLoading = false, onRefresh }) {
       </div>
 
       <div className="ai-recs-grid">
-        {validRecs.map((rec) => {
-          const id = rec.id || rec.title || Math.random();
+        {validRecs.map((rec, index) => {
+          const id = rec.id || rec.title || `rec-${index}`;
           const isExpanded = !!expandedCards[id];
           const posterSrc = rec.poster_path
             ? `${TMDB_IMAGE_BASE}/${POSTER_SIZES.SMALL}${rec.poster_path}`

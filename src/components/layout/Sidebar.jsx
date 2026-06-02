@@ -1,6 +1,5 @@
 import { memo, useCallback, useEffect } from 'react';
 import { Link, useLocation } from 'react-router-dom';
-import { useAuth } from '../../context/AuthContext';
 import { useUserData } from '../../context/UserDataContext';
 import {
   Home,
@@ -24,7 +23,7 @@ const NAV_ITEMS_TOP = [
 ];
 
 const NAV_ITEMS_MIDDLE = [
-  { to: '/for-you', label: 'For You', icon: Wand2, requiresAuth: true },
+  { to: '/for-you', label: 'For You', icon: Wand2 },
   { to: '/watchlist', label: 'Watchlist', icon: Bookmark, showCount: true },
 ];
 
@@ -38,7 +37,6 @@ const NAV_ITEMS_BOTTOM = [
  */
 function Sidebar({ collapsed, mobileOpen, onCloseMobile }) {
   const location = useLocation();
-  const { isAuthenticated } = useAuth();
   const { watchlistCount } = useUserData();
 
   // Close mobile sidebar on route change
@@ -79,11 +77,6 @@ function Sidebar({ collapsed, mobileOpen, onCloseMobile }) {
         >
           <Icon size={20} aria-hidden="true" />
           {!collapsed && <span className="sidebar-link-label">{item.label}</span>}
-          {!collapsed && item.requiresAuth && !isAuthenticated && (
-            <span className="sidebar-badge sidebar-badge-auth" aria-label="Login required">
-              🔒
-            </span>
-          )}
           {!collapsed && item.showCount && watchlistCount > 0 && (
             <span className="sidebar-badge" aria-label={`${watchlistCount} items`}>
               {watchlistCount > 99 ? '99+' : watchlistCount}
@@ -92,7 +85,7 @@ function Sidebar({ collapsed, mobileOpen, onCloseMobile }) {
         </Link>
       );
     },
-    [collapsed, isActive, isAuthenticated, watchlistCount]
+    [collapsed, isActive, watchlistCount]
   );
 
   const sidebarClasses = [

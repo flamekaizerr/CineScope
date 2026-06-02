@@ -3,10 +3,10 @@ import { useSearchParams } from 'react-router-dom';
 import { Sparkles, X } from 'lucide-react';
 import { useApi } from '../hooks/useApi';
 import * as jikan from '../services/jikan';
-import { MEDIA_TYPES } from '../utils/constants';
 import MediaCard from '../components/common/MediaCard';
 import GenrePill from '../components/common/GenrePill';
 import LoadingSkeleton from '../components/common/LoadingSkeleton';
+import { FALLBACK_ANIME } from '../utils/fallbackData';
 
 const TABS = [
   { key: 'season', label: 'This Season' },
@@ -32,14 +32,16 @@ const ANIME_GENRES = [
 ];
 
 function fetchAnimeByTab(tab, page, genres) {
-  const params = { page, genres: genres.join(',') };
+  if (genres.length > 0) {
+    return jikan.getAnimeByGenre(genres.join(','), page);
+  }
   switch (tab) {
     case 'season':
       return jikan.getSeasonNow(page);
     case 'airing':
       return jikan.getTopAiring(page);
     case 'popular':
-      return jikan.getTopAnime({ page, filter: 'bypopularity', genres: genres.join(',') });
+      return jikan.getTopAnime('bypopularity', page);
     case 'upcoming':
       return jikan.getUpcomingAnime(page);
     default:
@@ -126,6 +128,7 @@ function Anime() {
   }, [page, activeTab, selectedGenres]);
 
   const hasNextPage = animeData?.pagination?.has_next_page ?? false;
+  const displayAnime = allAnime.length > 0 ? allAnime : FALLBACK_ANIME;
 
   return (
     <div className="page anime-page">
@@ -193,14 +196,14 @@ function Anime() {
               <LoadingSkeleton key={i} type="card" />
             ))}
           </div>
-        ) : animeError ? (
+        ) : animeError && displayAnime.length === 0 ? (
           <div className="error-state">
             <p>Something went wrong loading anime. Please try again.</p>
           </div>
-        ) : allAnime.length > 0 ? (
+        ) : displayAnime.length > 0 ? (
           <>
             <div className="media-grid">
-              {allAnime.map((anime) => (
+              {displayAnime.map((anime) => (
                 <MediaCard
                   key={anime.id}
                   item={anime}

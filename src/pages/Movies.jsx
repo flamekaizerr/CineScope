@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback, useMemo } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import { Film, SlidersHorizontal, X, ChevronDown } from 'lucide-react';
 import { useApi } from '../hooks/useApi';
@@ -7,6 +7,7 @@ import { MEDIA_TYPES } from '../utils/constants';
 import MediaCard from '../components/common/MediaCard';
 import GenrePill from '../components/common/GenrePill';
 import LoadingSkeleton from '../components/common/LoadingSkeleton';
+import { FALLBACK_MOVIES } from '../utils/fallbackData';
 
 const TABS = [
   { key: 'now_playing', label: 'Now Playing' },
@@ -44,7 +45,7 @@ function Movies() {
     loading: moviesLoading,
     error: moviesError,
   } = useApi(
-    () => tmdb.getMovies(activeTab, { page: 1, with_genres: selectedGenres.join(','), sort_by: sortBy }),
+    () => tmdb.getMovies(activeTab, { page: 1, genreId: selectedGenres.join(','), sortBy }),
     [activeTab, selectedGenres, sortBy]
   );
 
@@ -91,8 +92,8 @@ function Movies() {
     try {
       const data = await tmdb.getMovies(activeTab, {
         page: nextPage,
-        with_genres: selectedGenres.join(','),
-        sort_by: sortBy,
+        genreId: selectedGenres.join(','),
+        sortBy,
       });
       if (data?.results) {
         setAllMovies((prev) => [...prev, ...data.results]);
@@ -106,8 +107,9 @@ function Movies() {
   }, [page, activeTab, selectedGenres, sortBy]);
 
   const totalPages = moviesData?.total_pages || 1;
-  const genreList = genres?.genres || [];
+  const genreList = Array.isArray(genres) ? genres : (genres?.genres || []);
   const currentSortLabel = SORT_OPTIONS.find((s) => s.key === sortBy)?.label || 'Sort';
+  const displayMovies = allMovies.length > 0 ? allMovies : FALLBACK_MOVIES;
 
   return (
     <div className="page movies-page">
@@ -208,14 +210,14 @@ function Movies() {
               <LoadingSkeleton key={i} type="card" />
             ))}
           </div>
-        ) : moviesError ? (
+        ) : moviesError && displayMovies.length === 0 ? (
           <div className="error-state">
             <p>Something went wrong loading movies. Please try again.</p>
           </div>
-        ) : allMovies.length > 0 ? (
+        ) : displayMovies.length > 0 ? (
           <>
             <div className="media-grid">
-              {allMovies.map((movie) => (
+              {displayMovies.map((movie) => (
                 <MediaCard
                   key={movie.id}
                   item={movie}

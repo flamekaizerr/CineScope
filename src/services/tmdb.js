@@ -111,7 +111,7 @@ export async function getTrending(mediaType = 'all', timeWindow = 'day') {
   try {
     return await tmdbFetch(`/trending/${mediaType}/${timeWindow}`);
   } catch (error) {
-    console.error('[TMDB] getTrending failed:', error.message);
+    console.warn('[TMDB] getTrending failed:', error.message);
     return { page: 1, results: [], total_pages: 0, total_results: 0 };
   }
 }
@@ -130,7 +130,7 @@ export async function getPopular(mediaType = 'movie', page = 1) {
   try {
     return await tmdbFetch(`/${mediaType}/popular`, { page });
   } catch (error) {
-    console.error('[TMDB] getPopular failed:', error.message);
+    console.warn('[TMDB] getPopular failed:', error.message);
     return { page, results: [], total_pages: 0, total_results: 0 };
   }
 }
@@ -145,7 +145,7 @@ export async function getTopRated(mediaType = 'movie', page = 1) {
   try {
     return await tmdbFetch(`/${mediaType}/top_rated`, { page });
   } catch (error) {
-    console.error('[TMDB] getTopRated failed:', error.message);
+    console.warn('[TMDB] getTopRated failed:', error.message);
     return { page, results: [], total_pages: 0, total_results: 0 };
   }
 }
@@ -166,7 +166,7 @@ export async function getNowPlaying(page = 1) {
       region: config.tmdb.defaultRegion,
     });
   } catch (error) {
-    console.error('[TMDB] getNowPlaying failed:', error.message);
+    console.warn('[TMDB] getNowPlaying failed:', error.message);
     return { page, results: [], total_pages: 0, total_results: 0 };
   }
 }
@@ -183,7 +183,7 @@ export async function getUpcoming(page = 1) {
       region: config.tmdb.defaultRegion,
     });
   } catch (error) {
-    console.error('[TMDB] getUpcoming failed:', error.message);
+    console.warn('[TMDB] getUpcoming failed:', error.message);
     return { page, results: [], total_pages: 0, total_results: 0 };
   }
 }
@@ -201,7 +201,7 @@ export async function getAiringToday(page = 1) {
   try {
     return await tmdbFetch('/tv/airing_today', { page });
   } catch (error) {
-    console.error('[TMDB] getAiringToday failed:', error.message);
+    console.warn('[TMDB] getAiringToday failed:', error.message);
     return { page, results: [], total_pages: 0, total_results: 0 };
   }
 }
@@ -215,7 +215,7 @@ export async function getOnTheAir(page = 1) {
   try {
     return await tmdbFetch('/tv/on_the_air', { page });
   } catch (error) {
-    console.error('[TMDB] getOnTheAir failed:', error.message);
+    console.warn('[TMDB] getOnTheAir failed:', error.message);
     return { page, results: [], total_pages: 0, total_results: 0 };
   }
 }
@@ -238,7 +238,7 @@ export async function getDetails(mediaType, id) {
         'videos,credits,recommendations,watch/providers,reviews,similar',
     });
   } catch (error) {
-    console.error('[TMDB] getDetails failed:', error.message);
+    console.warn('[TMDB] getDetails failed:', error.message);
     return null;
   }
 }
@@ -254,7 +254,7 @@ export async function getWatchProviders(mediaType, id) {
     const data = await tmdbFetch(`/${mediaType}/${id}/watch/providers`);
     return data?.results?.[config.tmdb.defaultRegion] ?? null;
   } catch (error) {
-    console.error('[TMDB] getWatchProviders failed:', error.message);
+    console.warn('[TMDB] getWatchProviders failed:', error.message);
     return null;
   }
 }
@@ -276,7 +276,7 @@ export async function search(query, page = 1) {
   try {
     return await tmdbFetch('/search/multi', { query: query.trim(), page });
   } catch (error) {
-    console.error('[TMDB] search failed:', error.message);
+    console.warn('[TMDB] search failed:', error.message);
     return { page, results: [], total_pages: 0, total_results: 0 };
   }
 }
@@ -300,7 +300,7 @@ export async function getByGenre(mediaType, genreId, page = 1) {
       page,
     });
   } catch (error) {
-    console.error('[TMDB] getByGenre failed:', error.message);
+    console.warn('[TMDB] getByGenre failed:', error.message);
     return { page, results: [], total_pages: 0, total_results: 0 };
   }
 }
@@ -315,7 +315,7 @@ export async function getGenres(mediaType = 'movie') {
     const data = await tmdbFetch(`/genre/${mediaType}/list`);
     return data?.genres ?? [];
   } catch (error) {
-    console.error('[TMDB] getGenres failed:', error.message);
+    console.warn('[TMDB] getGenres failed:', error.message);
     return [];
   }
 }
@@ -345,7 +345,7 @@ export async function getFlopping(page = 1) {
       page,
     });
   } catch (error) {
-    console.error('[TMDB] getFlopping failed:', error.message);
+    console.warn('[TMDB] getFlopping failed:', error.message);
     return { page, results: [], total_pages: 0, total_results: 0 };
   }
 }
@@ -364,7 +364,7 @@ export async function getNewOnStreaming(page = 1) {
       page,
     });
   } catch (error) {
-    console.error('[TMDB] getNewOnStreaming failed:', error.message);
+    console.warn('[TMDB] getNewOnStreaming failed:', error.message);
     return { page, results: [], total_pages: 0, total_results: 0 };
   }
 }
@@ -393,7 +393,7 @@ export async function getMovies(category = 'popular', { page = 1, genreId, sortB
     const path = endpoints[category] || '/movie/popular';
     return await tmdbFetch(path, { page });
   } catch (error) {
-    console.error('[TMDB] getMovies failed:', error.message);
+    console.warn('[TMDB] getMovies failed:', error.message);
     return { page, results: [], total_pages: 0, total_results: 0 };
   }
 }
@@ -418,7 +418,7 @@ export async function getTvShows(category = 'popular', { page = 1, genreId, sort
     const path = endpoints[category] || '/tv/popular';
     return await tmdbFetch(path, { page });
   } catch (error) {
-    console.error('[TMDB] getTvShows failed:', error.message);
+    console.warn('[TMDB] getTvShows failed:', error.message);
     return { page, results: [], total_pages: 0, total_results: 0 };
   }
 }
@@ -436,7 +436,7 @@ export async function getCredits(mediaType, id) {
   try {
     return await tmdbFetch(`/${mediaType}/${id}/credits`);
   } catch (error) {
-    console.error('[TMDB] getCredits failed:', error.message);
+    console.warn('[TMDB] getCredits failed:', error.message);
     return { cast: [], crew: [] };
   }
 }
@@ -451,7 +451,7 @@ export async function getVideos(mediaType, id) {
   try {
     return await tmdbFetch(`/${mediaType}/${id}/videos`);
   } catch (error) {
-    console.error('[TMDB] getVideos failed:', error.message);
+    console.warn('[TMDB] getVideos failed:', error.message);
     return { results: [] };
   }
 }
@@ -466,7 +466,7 @@ export async function getReviews(mediaType, id) {
   try {
     return await tmdbFetch(`/${mediaType}/${id}/reviews`);
   } catch (error) {
-    console.error('[TMDB] getReviews failed:', error.message);
+    console.warn('[TMDB] getReviews failed:', error.message);
     return { results: [] };
   }
 }
@@ -481,7 +481,7 @@ export async function getRecommendations(mediaType, id) {
   try {
     return await tmdbFetch(`/${mediaType}/${id}/recommendations`);
   } catch (error) {
-    console.error('[TMDB] getRecommendations failed:', error.message);
+    console.warn('[TMDB] getRecommendations failed:', error.message);
     return { results: [] };
   }
 }
@@ -496,7 +496,7 @@ export async function getSimilar(mediaType, id) {
   try {
     return await tmdbFetch(`/${mediaType}/${id}/similar`);
   } catch (error) {
-    console.error('[TMDB] getSimilar failed:', error.message);
+    console.warn('[TMDB] getSimilar failed:', error.message);
     return { results: [] };
   }
 }
@@ -511,7 +511,7 @@ export async function getSeasonDetails(tvId, seasonNumber) {
   try {
     return await tmdbFetch(`/tv/${tvId}/season/${seasonNumber}`);
   } catch (error) {
-    console.error('[TMDB] getSeasonDetails failed:', error.message);
+    console.warn('[TMDB] getSeasonDetails failed:', error.message);
     return null;
   }
 }

@@ -40,7 +40,8 @@ export function useApi(asyncFn, deps = [], options = {}) {
   /** Generation counter to guard against stale setState calls. */
   const generationRef = useRef(0);
 
-  const key = cacheKey ?? JSON.stringify(deps);
+  const effectKey = JSON.stringify(deps);
+  const key = cacheKey || null;
 
   const fetchData = useCallback(
     async (skipCache = false) => {
@@ -56,7 +57,7 @@ export function useApi(asyncFn, deps = [], options = {}) {
 
       // Check cache first
       if (!skipCache) {
-        const cached = cache.get(key);
+        const cached = key ? cache.get(key) : null;
         if (cached && Date.now() - cached.timestamp < ttl) {
           setData(cached.data);
           setLoading(false);
@@ -74,7 +75,9 @@ export function useApi(asyncFn, deps = [], options = {}) {
         // Only update state if this is still the latest request
         if (gen !== generationRef.current) return;
 
-        cache.set(key, { data: result, timestamp: Date.now() });
+        if (key) {
+          cache.set(key, { data: result, timestamp: Date.now() });
+        }
         setData(result);
       } catch (err) {
         if (err.name === 'AbortError') return; // request was intentionally cancelled
@@ -86,7 +89,6 @@ export function useApi(asyncFn, deps = [], options = {}) {
         }
       }
     },
-    // eslint-disable-next-line react-hooks/exhaustive-deps
     [key, ttl, asyncFn],
   );
 
@@ -105,7 +107,7 @@ export function useApi(asyncFn, deps = [], options = {}) {
       }
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [key, enabled]);
+  }, [effectKey, enabled]);
 
   /** Force a fresh fetch, bypassing the cache. */
   const refetch = useCallback(() => fetchData(true), [fetchData]);

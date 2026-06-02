@@ -1,0 +1,130 @@
+export const FALLBACK_MOVIES = [
+  {
+    id: 550,
+    title: 'Fight Club',
+    media_type: 'movie',
+    release_date: '1999-10-15',
+    vote_average: 8.4,
+    overview: 'A restless office worker and a soap maker build an underground movement that spirals into something much larger.',
+  },
+  {
+    id: 603,
+    title: 'The Matrix',
+    media_type: 'movie',
+    release_date: '1999-03-31',
+    vote_average: 8.2,
+    overview: 'A hacker discovers reality is a simulation and joins a rebellion against the machines controlling it.',
+  },
+  {
+    id: 27205,
+    title: 'Inception',
+    media_type: 'movie',
+    release_date: '2010-07-16',
+    vote_average: 8.4,
+    overview: 'A thief who steals secrets through dream-sharing gets a chance at redemption with one impossible job.',
+  },
+  {
+    id: 157336,
+    title: 'Interstellar',
+    media_type: 'movie',
+    release_date: '2014-11-07',
+    vote_average: 8.5,
+    overview: 'Explorers travel through a wormhole to find humanity a new home as Earth runs out of time.',
+  },
+  {
+    id: 155,
+    title: 'The Dark Knight',
+    media_type: 'movie',
+    release_date: '2008-07-18',
+    vote_average: 8.5,
+    overview: 'Batman faces a criminal mastermind whose chaos pushes Gotham and its heroes to the edge.',
+  },
+  {
+    id: 496243,
+    title: 'Parasite',
+    media_type: 'movie',
+    release_date: '2019-05-30',
+    vote_average: 8.5,
+    overview: 'A struggling family infiltrates a wealthy household in a darkly funny thriller about class and survival.',
+  },
+];
+
+export const FALLBACK_TV = [
+  {
+    id: 1396,
+    name: 'Breaking Bad',
+    media_type: 'tv',
+    first_air_date: '2008-01-20',
+    vote_average: 8.9,
+    overview: 'A chemistry teacher turns to the drug trade, transforming himself and everyone around him.',
+  },
+  {
+    id: 66732,
+    name: 'Stranger Things',
+    media_type: 'tv',
+    first_air_date: '2016-07-15',
+    vote_average: 8.6,
+    overview: 'A small town faces secret experiments, supernatural threats, and a group of kids at the center of it all.',
+  },
+  {
+    id: 94605,
+    name: 'Arcane',
+    media_type: 'tv',
+    first_air_date: '2021-11-06',
+    vote_average: 8.7,
+    overview: 'Two sisters are caught on opposite sides of a conflict between rival cities and unstable magic.',
+  },
+  {
+    id: 1399,
+    name: 'Game of Thrones',
+    media_type: 'tv',
+    first_air_date: '2011-04-17',
+    vote_average: 8.4,
+    overview: 'Noble families fight for power while an ancient threat gathers beyond the Wall.',
+  },
+  {
+    id: 60574,
+    name: 'Peaky Blinders',
+    media_type: 'tv',
+    first_air_date: '2013-09-12',
+    vote_average: 8.5,
+    overview: 'A Birmingham crime family expands its power in the aftermath of World War I.',
+  },
+];
+
+export const FALLBACK_ANIME = [
+  {
+    id: 5114,
+    title: 'Fullmetal Alchemist: Brotherhood',
+    media_type: 'anime',
+    release_date: '2009-04-05',
+    vote_average: 9.1,
+    overview: 'Two brothers search for the Philosopher Stone after a forbidden ritual changes their lives.',
+  },
+  {
+    id: 16498,
+    title: 'Attack on Titan',
+    media_type: 'anime',
+    release_date: '2013-04-07',
+    vote_average: 8.6,
+    overview: 'Humanity fights for survival behind walls as the truth about the Titans begins to unravel.',
+  },
+  {
+    id: 21,
+    title: 'One Piece',
+    media_type: 'anime',
+    release_date: '1999-10-20',
+    vote_average: 8.7,
+    overview: 'A pirate crew searches for the world greatest treasure across a massive, dangerous sea.',
+  },
+  {
+    id: 38000,
+    title: 'Demon Slayer: Kimetsu no Yaiba',
+    media_type: 'anime',
+    release_date: '2019-04-06',
+    vote_average: 8.5,
+    overview: 'A young swordsman joins the Demon Slayer Corps after his family is attacked.',
+  },
+];
+
+export const FALLBACK_TRENDING = [...FALLBACK_MOVIES, ...FALLBACK_TV, ...FALLBACK_ANIME];

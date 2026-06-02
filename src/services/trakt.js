@@ -71,8 +71,8 @@ async function traktFetch(path, params = {}) {
 export async function getTrending(type = 'movies', page = 1, limit = 20) {
   try {
     return await traktFetch(`/${type}/trending`, { page, limit, extended: 'full' });
-  } catch (error) {
-    console.error('[Trakt] getTrending failed:', error.message);
+  } catch {
+    console.warn('[Trakt] trending unavailable, using fallback data.');
     return [];
   }
 }
@@ -96,8 +96,8 @@ export async function getMostWatched(type = 'movies', period = 'weekly', page = 
       limit,
       extended: 'full',
     });
-  } catch (error) {
-    console.error('[Trakt] getMostWatched failed:', error.message);
+  } catch {
+    console.warn('[Trakt] most watched unavailable, using fallback data.');
     return [];
   }
 }
@@ -121,8 +121,8 @@ export async function getMostPlayed(type = 'movies', period = 'weekly', page = 1
       limit,
       extended: 'full',
     });
-  } catch (error) {
-    console.error('[Trakt] getMostPlayed failed:', error.message);
+  } catch {
+    console.warn('[Trakt] most played unavailable, using fallback data.');
     return [];
   }
 }
@@ -141,8 +141,8 @@ export async function getMostPlayed(type = 'movies', period = 'weekly', page = 1
 export async function getPopular(type = 'movies', page = 1, limit = 20) {
   try {
     return await traktFetch(`/${type}/popular`, { page, limit, extended: 'full' });
-  } catch (error) {
-    console.error('[Trakt] getPopular failed:', error.message);
+  } catch {
+    console.warn('[Trakt] popular unavailable, using fallback data.');
     return [];
   }
 }
@@ -165,8 +165,8 @@ export async function getAnticipated(type = 'movies', page = 1, limit = 20) {
       limit,
       extended: 'full',
     });
-  } catch (error) {
-    console.error('[Trakt] getAnticipated failed:', error.message);
+  } catch {
+    console.warn('[Trakt] anticipated unavailable, using fallback data.');
     return [];
   }
 }
@@ -182,8 +182,8 @@ export async function getAnticipated(type = 'movies', page = 1, limit = 20) {
 export async function getBoxOffice() {
   try {
     return await traktFetch('/movies/boxoffice', { extended: 'full' });
-  } catch (error) {
-    console.error('[Trakt] getBoxOffice failed:', error.message);
+  } catch {
+    console.warn('[Trakt] box office unavailable, using fallback data.');
     return [];
   }
 }

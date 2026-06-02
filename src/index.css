@@ -1805,10 +1805,11 @@ ul, ol {
 
 .detail-info {
   position: relative;
-  padding: 0 var(--space-2xl);
-  margin-top: -180px;
+  padding: var(--space-xl) var(--space-2xl) 0;
+  margin-top: 0;
   display: flex;
-  gap: var(--space-2xl);
+  flex-direction: column;
+  gap: var(--space-lg);
   max-width: var(--content-max-width);
   margin-left: auto;
   margin-right: auto;
@@ -2304,6 +2305,40 @@ ul, ol {
 
 
 /* ---------- Buzz Page ---------- */
+.buzz-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+  gap: var(--space-lg);
+}
+
+.buzz-card {
+  position: relative;
+}
+
+.buzz-rank {
+  position: absolute;
+  top: -10px;
+  left: -10px;
+  background: var(--accent-primary);
+  color: white;
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: bold;
+  z-index: 5;
+}
+
+.buzz-watchers {
+  display: block;
+  margin-top: 8px;
+  font-size: var(--text-xs);
+  color: var(--text-secondary);
+  text-align: center;
+}
+
 .buzz-page .box-office-list {
   display: flex;
   flex-direction: column;

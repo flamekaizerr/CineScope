@@ -87,9 +87,6 @@ function MediaCard({ item, mediaType, showRating = true, showYear = true, onClic
             <RatingBadge rating={rating} size="sm" />
           </div>
         )}
-        {typeLabel && (
-          <span className={`media-card-type-badge ${displayType}`}>{typeLabel}</span>
-        )}
         <div className="media-card-overlay" aria-hidden="true" />
       </div>
       <div className="media-card-info">

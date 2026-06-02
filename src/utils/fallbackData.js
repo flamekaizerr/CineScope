@@ -68,6 +68,8 @@ export const FALLBACK_TV = [
     media_type: 'tv',
     first_air_date: '2008-01-20',
     vote_average: 8.9,
+    poster_path: '/ztkUQFLlC19CCMYHW9o1zWhJRNq.jpg',
+    backdrop_path: '/tsRy63Mu5cu8etL1X7ZLyf7UP1M.jpg',
     overview: 'A chemistry teacher turns to the drug trade, transforming himself and everyone around him.',
   },
   {
@@ -76,6 +78,8 @@ export const FALLBACK_TV = [
     media_type: 'tv',
     first_air_date: '2016-07-15',
     vote_average: 8.6,
+    poster_path: '/uOOtwVbSr4QDjAGIifLDwpb2Pdl.jpg',
+    backdrop_path: '/56v2KjBlU4XaOv9rVYEQypROD7P.jpg',
     overview: 'A small town faces secret experiments, supernatural threats, and a group of kids at the center of it all.',
   },
   {
@@ -84,6 +88,8 @@ export const FALLBACK_TV = [
     media_type: 'tv',
     first_air_date: '2021-11-06',
     vote_average: 8.7,
+    poster_path: '/fqldf2t8ztc9aiwn3k6mlX3tvRT.jpg',
+    backdrop_path: '/rkB4LyZHo1NHXFEDHl9vSD9r1lI.jpg',
     overview: 'Two sisters are caught on opposite sides of a conflict between rival cities and unstable magic.',
   },
   {
@@ -92,6 +98,8 @@ export const FALLBACK_TV = [
     media_type: 'tv',
     first_air_date: '2011-04-17',
     vote_average: 8.4,
+    poster_path: '/1XS1oqL89opfnbLl8WnZY1O1uJx.jpg',
+    backdrop_path: '/2OMB0ynKlyIenMJWI2Dy9IWT4c.jpg',
     overview: 'Noble families fight for power while an ancient threat gathers beyond the Wall.',
   },
   {
@@ -100,6 +108,8 @@ export const FALLBACK_TV = [
     media_type: 'tv',
     first_air_date: '2013-09-12',
     vote_average: 8.5,
+    poster_path: '/vUUqzWa2LnHIVqkaKVlVGkVcZIW.jpg',
+    backdrop_path: '/bGksau9GGu0uJ8DJQ8DYc9JW5LM.jpg',
     overview: 'A Birmingham crime family expands its power in the aftermath of World War I.',
   },
 ];

@@ -44,9 +44,24 @@ function createInitialState() {
     const saved = localStorage.getItem(STORAGE_KEY);
     if (!saved) return initial;
     const parsed = JSON.parse(saved);
+    
+    // Fix corrupted types (e.g. TMDB returning 'Scripted' or 'Miniseries' for TV shows)
+    const validTypes = ['movie', 'tv', 'anime'];
+    const cleanList = (list) => (list || []).map(item => {
+      let t = item.media_type || item.mediaType || item.type;
+      if (!validTypes.includes(t)) t = 'movie';
+      // If it has 'first_air_date' or 'name' instead of 'title', it's likely a TV show
+      if (t === 'movie' && (item.first_air_date || (item.name && !item.title))) t = 'tv';
+      return { ...item, type: t, media_type: t };
+    });
+
     return {
       ...initial,
       ...parsed,
+      watchlist: cleanList(parsed.watchlist),
+      watching: cleanList(parsed.watching),
+      completed: cleanList(parsed.completed),
+      dropped: cleanList(parsed.dropped),
       preferences: { ...initial.preferences, ...(parsed.preferences || {}) },
     };
   } catch {
@@ -156,8 +171,8 @@ export function UserDataProvider({ children }) {
    */
   const normaliseItem = useCallback((rawItem) => ({
     id: rawItem.id,
-    type: rawItem.type || rawItem.mediaType || rawItem.media_type || 'movie',
-    media_type: rawItem.media_type || rawItem.mediaType || rawItem.type || 'movie',
+    type: rawItem.media_type || rawItem.mediaType || (rawItem.type && ['movie', 'tv', 'anime'].includes(rawItem.type) ? rawItem.type : null) || 'movie',
+    media_type: rawItem.media_type || rawItem.mediaType || (rawItem.type && ['movie', 'tv', 'anime'].includes(rawItem.type) ? rawItem.type : null) || 'movie',
     title: rawItem.title || rawItem.name || 'Untitled',
     poster: rawItem.poster || rawItem.poster_path || null,
     poster_path: rawItem.poster_path || rawItem.poster || null,
@@ -180,7 +195,7 @@ export function UserDataProvider({ children }) {
       const next = { ...prev };
       for (const key of [LIST_TYPES.WATCHLIST, LIST_TYPES.WATCHING, LIST_TYPES.COMPLETED, LIST_TYPES.DROPPED]) {
         next[key] = prev[key].filter(
-          (i) => !(i.id === itemId && i.type === itemType),
+          (i) => !(String(i.id) === String(itemId) && i.type === itemType),
         );
       }
       return next;
@@ -199,11 +214,11 @@ export function UserDataProvider({ children }) {
         const cleaned = { ...prev };
         for (const key of [LIST_TYPES.WATCHING, LIST_TYPES.COMPLETED, LIST_TYPES.DROPPED]) {
           cleaned[key] = prev[key].filter(
-            (i) => !(i.id === normalised.id && i.type === normalised.type),
+            (i) => !(String(i.id) === String(normalised.id) && i.type === normalised.type),
           );
         }
         // Avoid duplicates in watchlist
-        if (prev.watchlist.some((i) => i.id === normalised.id && i.type === normalised.type)) {
+        if (prev.watchlist.some((i) => String(i.id) === String(normalised.id) && i.type === normalised.type)) {
           return cleaned;
         }
         cleaned.watchlist = [...prev.watchlist, normalised];
@@ -222,7 +237,7 @@ export function UserDataProvider({ children }) {
     setData((prev) => ({
       ...prev,
       watchlist: prev.watchlist.filter(
-        (i) => !(i.id === itemId && i.type === itemType),
+        (i) => !(String(i.id) === String(itemId) && i.type === itemType),
       ),
     }));
   }, []);
@@ -247,13 +262,13 @@ export function UserDataProvider({ children }) {
         const cleaned = { ...prev };
         for (const key of [LIST_TYPES.WATCHLIST, LIST_TYPES.COMPLETED, LIST_TYPES.DROPPED]) {
           cleaned[key] = prev[key].filter(
-            (i) => !(i.id === normalised.id && i.type === normalised.type),
+            (i) => !(String(i.id) === String(normalised.id) && i.type === normalised.type),
           );
         }
         // Replace or add in watching
         cleaned.watching = [
           ...prev.watching.filter(
-            (i) => !(i.id === normalised.id && i.type === normalised.type),
+            (i) => !(String(i.id) === String(normalised.id) && i.type === normalised.type),
           ),
           normalised,
         ];
@@ -279,12 +294,12 @@ export function UserDataProvider({ children }) {
         const cleaned = { ...prev };
         for (const key of [LIST_TYPES.WATCHLIST, LIST_TYPES.WATCHING, LIST_TYPES.DROPPED]) {
           cleaned[key] = prev[key].filter(
-            (i) => !(i.id === normalised.id && i.type === normalised.type),
+            (i) => !(String(i.id) === String(normalised.id) && i.type === normalised.type),
           );
         }
         cleaned.completed = [
           ...prev.completed.filter(
-            (i) => !(i.id === normalised.id && i.type === normalised.type),
+            (i) => !(String(i.id) === String(normalised.id) && i.type === normalised.type),
           ),
           normalised,
         ];
@@ -313,12 +328,12 @@ export function UserDataProvider({ children }) {
         const cleaned = { ...prev };
         for (const key of [LIST_TYPES.WATCHLIST, LIST_TYPES.WATCHING, LIST_TYPES.COMPLETED]) {
           cleaned[key] = prev[key].filter(
-            (i) => !(i.id === normalised.id && i.type === normalised.type),
+            (i) => !(String(i.id) === String(normalised.id) && i.type === normalised.type),
           );
         }
         cleaned.dropped = [
           ...prev.dropped.filter(
-            (i) => !(i.id === normalised.id && i.type === normalised.type),
+            (i) => !(String(i.id) === String(normalised.id) && i.type === normalised.type),
           ),
           normalised,
         ];
@@ -361,7 +376,7 @@ export function UserDataProvider({ children }) {
       const next = { ...prev };
       for (const key of [LIST_TYPES.WATCHLIST, LIST_TYPES.WATCHING, LIST_TYPES.COMPLETED, LIST_TYPES.DROPPED]) {
         next[key] = prev[key].filter(
-          (i) => !(i.id === normalised.id && i.type === normalised.type),
+          (i) => !(String(i.id) === String(normalised.id) && i.type === normalised.type),
         );
       }
       next[listType] = [...next[listType], normalised];
@@ -374,7 +389,7 @@ export function UserDataProvider({ children }) {
     setData((prev) => ({
       ...prev,
       [listType]: prev[listType].filter(
-        (i) => !(i.id === itemId && (i.type === itemType || i.media_type === itemType)),
+        (i) => !(String(i.id) === String(itemId) && (i.type === itemType || i.media_type === itemType)),
       ),
     }));
   }, []);
@@ -389,7 +404,7 @@ export function UserDataProvider({ children }) {
       let found = null;
       for (const key of [LIST_TYPES.WATCHLIST, LIST_TYPES.WATCHING, LIST_TYPES.COMPLETED, LIST_TYPES.DROPPED]) {
         found = found || prev[key].find(
-          (i) => i.id === itemId && (i.type === itemType || i.media_type === itemType),
+          (i) => String(i.id) === String(itemId) && (i.type === itemType || i.media_type === itemType),
         );
       }
       if (!found) return prev;
@@ -397,7 +412,7 @@ export function UserDataProvider({ children }) {
       const next = { ...prev };
       for (const key of [LIST_TYPES.WATCHLIST, LIST_TYPES.WATCHING, LIST_TYPES.COMPLETED, LIST_TYPES.DROPPED]) {
         next[key] = prev[key].filter(
-          (i) => !(i.id === itemId && (i.type === itemType || i.media_type === itemType)),
+          (i) => !(String(i.id) === String(itemId) && (i.type === itemType || i.media_type === itemType)),
         );
       }
       next[listType] = [...next[listType], { ...found, list: listType }];
@@ -411,7 +426,7 @@ export function UserDataProvider({ children }) {
       const next = { ...prev, ratings: { ...prev.ratings, [`${itemType}:${itemId}`]: rating } };
       for (const key of [LIST_TYPES.WATCHLIST, LIST_TYPES.WATCHING, LIST_TYPES.COMPLETED, LIST_TYPES.DROPPED]) {
         next[key] = prev[key].map((item) => (
-          item.id === itemId && (item.type === itemType || item.media_type === itemType)
+          String(item.id) === String(itemId) && (item.type === itemType || item.media_type === itemType)
             ? { ...item, rating, userRating: rating }
             : item
         ));
@@ -423,7 +438,7 @@ export function UserDataProvider({ children }) {
   const getItem = useCallback((itemId, itemType) => {
     for (const key of [LIST_TYPES.WATCHLIST, LIST_TYPES.WATCHING, LIST_TYPES.COMPLETED, LIST_TYPES.DROPPED]) {
       const item = data[key].find(
-        (i) => i.id === itemId && (i.type === itemType || i.media_type === itemType),
+        (i) => String(i.id) === String(itemId) && (i.type === itemType || i.media_type === itemType),
       );
       if (item) return { ...item, list: key, rating: data.ratings[`${itemType}:${itemId}`] ?? item.rating };
     }
@@ -466,7 +481,7 @@ export function UserDataProvider({ children }) {
   const getItemStatus = useCallback(
     (itemId, itemType) => {
       for (const key of [LIST_TYPES.WATCHLIST, LIST_TYPES.WATCHING, LIST_TYPES.COMPLETED, LIST_TYPES.DROPPED]) {
-        if (data[key].some((i) => i.id === itemId && i.type === itemType)) {
+        if (data[key].some((i) => String(i.id) === String(itemId) && i.type === itemType)) {
           return key;
         }
       }

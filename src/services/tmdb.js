@@ -525,10 +525,18 @@ export async function getFlopping(page = 1) {
  */
 export async function getNewOnStreaming(page = 1) {
   try {
+    const today = new Date();
+    const threeMonthsAgo = new Date();
+    threeMonthsAgo.setMonth(today.getMonth() - 3);
+    
+    const formatDate = (d) => d.toISOString().split('T')[0];
+
     return await tmdbFetch('/discover/movie', {
-      sort_by: 'primary_release_date.desc',
+      sort_by: 'popularity.desc',
       with_watch_monetization_types: 'flatrate',
       watch_region: config.tmdb.defaultRegion,
+      'primary_release_date.gte': formatDate(threeMonthsAgo),
+      'primary_release_date.lte': formatDate(today),
       page,
     });
   } catch (error) {

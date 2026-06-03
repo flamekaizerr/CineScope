@@ -261,7 +261,7 @@ function Home() {
 
       <div className="page-content stream-content">
         <section className="section">
-          {renderSectionHeader(<Flame size={20} aria-hidden="true" />, 'Trending Today', '/movies')}
+          {renderSectionHeader(<Flame size={20} aria-hidden="true" />, 'Trending Today', '/trending')}
           <ContentRow items={trendingItems} />
         </section>
 

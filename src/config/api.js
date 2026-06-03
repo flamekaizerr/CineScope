@@ -51,6 +51,7 @@ const config = {
     proxyPath: '/api/gemini',
     baseUrl: 'https://generativelanguage.googleapis.com/v1beta',
     model: 'gemini-2.0-flash',
+    apiKey: import.meta.env.VITE_GEMINI_API_KEY || '',
   },
 
   /** Google OAuth / Identity Services — Client ID is PUBLIC by design */

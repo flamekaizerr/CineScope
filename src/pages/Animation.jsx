@@ -88,14 +88,6 @@ function Animation() {
 
       <section className="browse-control-panel browse-control-panel-compact" aria-label="Animation filters">
         <div className="browse-inline-toolbar">
-          <label className="browse-inline-select">
-            Region
-            <select value={watchRegion} onChange={(event) => { setWatchRegion(event.target.value); setAllTitles([]); setPage(1); }}>
-              {WATCH_REGIONS.map((region) => (
-                <option key={region.key} value={region.key}>{region.label}</option>
-              ))}
-            </select>
-          </label>
           <div className="browse-chip-row browse-chip-row-tight" aria-label="Animation window">
             {TIME_FILTERS.filter((item) => item.key !== 'all').map((item) => (
               <button
@@ -115,7 +107,6 @@ function Animation() {
         <span className="active-filters-label">Showing:</span>
         <span className="active-filter-tag">{activeStudio.label}</span>
         <span className="active-filter-tag">{TIME_FILTERS.find((item) => item.key === timeWindow)?.label}</span>
-        <span className="active-filter-tag">{WATCH_REGIONS.find((item) => item.key === watchRegion)?.label}</span>
       </div>
 
       {loading ? (
@@ -136,7 +127,6 @@ function Animation() {
                 key={title.id}
                 item={title}
                 mediaType={MEDIA_TYPES.MOVIE}
-                platformLabel={activeStudio.shortLabel || activeStudio.label}
               />
             ))}
           </div>

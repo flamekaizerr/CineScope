@@ -172,14 +172,7 @@ function TvShows() {
               ))}
             </div>
 
-            <label className="browse-inline-select">
-              Region
-              <select value={watchRegion} onChange={(event) => { setWatchRegion(event.target.value); setAllShows([]); setPage(1); }}>
-                {WATCH_REGIONS.map((region) => (
-                  <option key={region.key} value={region.key}>{region.label}</option>
-                ))}
-              </select>
-            </label>
+
           </div>
 
           <div className="browse-chip-row" aria-label="TV collections">
@@ -229,7 +222,7 @@ function TvShows() {
             <span className="active-filter-tag">{currentProviderLabel}</span>
             <span className="active-filter-tag">{TV_COLLECTIONS.find((item) => item.key === collection)?.label}</span>
             <span className="active-filter-tag">{currentTimeLabel}</span>
-            <span className="active-filter-tag">{currentRegionLabel}</span>
+
             {selectedGenres.map((genreId) => {
               const genre = genreList.find((g) => g.id === genreId);
               return genre ? (

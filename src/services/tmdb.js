@@ -69,9 +69,9 @@ function getWindowRange(windowKey) {
   const now = new Date();
   const from = new Date(now);
   if (windowKey === 'week') {
-    from.setDate(now.getDate() - 7);
+    from.setDate(now.getDate() - 30);
   } else if (windowKey === 'month') {
-    from.setMonth(now.getMonth() - 1);
+    from.setDate(now.getDate() - 90);
   }
   return {
     from: formatDate(from),
@@ -550,7 +550,7 @@ export async function getMovies(category = 'popular', {
         with_watch_monetization_types: providerId && providerId !== 'all' ? 'flatrate' : undefined,
         with_origin_country: collectionParams.with_origin_country,
         with_original_language: collectionParams.with_original_language,
-        'vote_count.gte': category === 'top_rated' ? 100 : (collection === 'documentary' ? 5 : 10),
+        'vote_count.gte': (timeWindow && timeWindow !== 'all' && timeWindow !== 'today') ? 2 : (category === 'top_rated' ? 100 : (collection === 'documentary' ? 5 : 10)),
         'primary_release_date.gte': windowRange.from,
         'primary_release_date.lte': windowRange.to,
       };
@@ -604,7 +604,7 @@ export async function getTvShows(category = 'popular', {
         with_watch_monetization_types: providerId && providerId !== 'all' ? 'flatrate' : undefined,
         with_origin_country: collectionParams.with_origin_country,
         with_original_language: collectionParams.with_original_language,
-        'vote_count.gte': category === 'top_rated' ? 50 : 5,
+        'vote_count.gte': (timeWindow && timeWindow !== 'all' && timeWindow !== 'today') ? 2 : (category === 'top_rated' ? 50 : 5),
         'first_air_date.gte': windowRange.from,
         'first_air_date.lte': windowRange.to,
       };
@@ -638,7 +638,7 @@ export async function getAnimationMovies({
       with_genres: '16',
       with_companies: getAnimationStudioCompany(studio),
       watch_region: region,
-      'vote_count.gte': 5,
+      'vote_count.gte': (timeWindow && timeWindow !== 'all' && timeWindow !== 'today') ? 2 : 5,
       'primary_release_date.gte': windowRange.from,
       'primary_release_date.lte': windowRange.to,
     });

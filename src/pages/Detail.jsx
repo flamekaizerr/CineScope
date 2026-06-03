@@ -302,7 +302,7 @@ function Detail() {
               {/* Director */}
               {director && (
                 <div className="detail-director">
-                  <span className="detail-director-label">Directed by</span>
+                  <span className="detail-director-label">Directed by </span>
                   <span className="detail-director-name">{director.name}</span>
                 </div>
               )}
@@ -337,7 +337,7 @@ function Detail() {
             )}
             {director && (
               <div className="detail-director detail-director-inline">
-                <span className="detail-director-label">Directed by</span>
+                <span className="detail-director-label">Directed by </span>
                 <span className="detail-director-name">{director.name}</span>
               </div>
             )}

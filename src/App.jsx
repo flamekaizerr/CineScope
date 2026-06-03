@@ -4,6 +4,7 @@ import { ThemeProvider } from './context/ThemeContext';
 import { UserDataProvider } from './context/UserDataContext';
 import Layout from './components/layout/Layout';
 import Home from './pages/Home';
+import TrendingToday from './pages/TrendingToday';
 import Movies from './pages/Movies';
 import TvShows from './pages/TvShows';
 import Anime from './pages/Anime';
@@ -33,6 +34,7 @@ function App() {
                   <Layout>
                     <Routes>
                       <Route path="/" element={<Home />} />
+                      <Route path="/trending" element={<TrendingToday />} />
                       <Route path="/movies" element={<Movies />} />
                       <Route path="/tv" element={<TvShows />} />
                       <Route path="/anime" element={<Anime />} />

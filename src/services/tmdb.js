@@ -304,10 +304,25 @@ export async function getTopRated(mediaType = 'movie', page = 1) {
  */
 export async function getNowPlaying(page = 1) {
   try {
-    return await tmdbFetch('/movie/now_playing', {
+    const data = await tmdbFetch('/movie/now_playing', {
       page,
       region: config.tmdb.defaultRegion,
     });
+    
+    // TMDB often returns old re-releases in the now_playing endpoint.
+    // We filter out anything older than 6 months.
+    if (data && data.results) {
+      const sixMonthsAgo = new Date();
+      sixMonthsAgo.setMonth(sixMonthsAgo.getMonth() - 6);
+      
+      data.results = data.results.filter((movie) => {
+        if (!movie.release_date) return true;
+        const releaseDate = new Date(movie.release_date);
+        return releaseDate >= sixMonthsAgo;
+      });
+    }
+    
+    return data;
   } catch (error) {
     console.warn('[TMDB] getNowPlaying failed:', error.message);
     return { page, results: [], total_pages: 0, total_results: 0 };

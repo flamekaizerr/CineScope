@@ -121,6 +121,7 @@ function Search() {
     // Add TMDB results
     if (tmdbResults?.results) {
       tmdbResults.results.forEach((item) => {
+        if (item.media_type === 'person') return;
         if (activeFilter === 'all' || activeFilter === item.media_type) {
           combined.push(item);
         }

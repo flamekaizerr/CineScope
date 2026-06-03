@@ -1,6 +1,7 @@
 import { useState, useEffect, useCallback } from 'react';
 import { Film, Sparkles } from 'lucide-react';
 import { useApi } from '../hooks/useApi';
+import { useSessionStorage } from '../hooks/useSessionStorage';
 import * as tmdb from '../services/tmdb';
 import MediaCard from '../components/common/MediaCard';
 import LoadingSkeleton from '../components/common/LoadingSkeleton';
@@ -9,11 +10,11 @@ import { MEDIA_TYPES } from '../utils/constants';
 
 
 function Animation() {
-  const [studio, setStudio] = useState('all');
-  const [timeWindow, setTimeWindow] = useState('today');
-  const [watchRegion, setWatchRegion] = useState('US');
-  const [page, setPage] = useState(1);
-  const [allTitles, setAllTitles] = useState([]);
+  const [studio, setStudio] = useSessionStorage('animation_studio', 'all');
+  const [timeWindow, setTimeWindow] = useSessionStorage('animation_time', 'today');
+  const [watchRegion, setWatchRegion] = useSessionStorage('animation_region', 'US');
+  const [page, setPage] = useSessionStorage('animation_page', 1);
+  const [allTitles, setAllTitles] = useSessionStorage('animation_list', []);
   const [loadingMore, setLoadingMore] = useState(false);
 
   const {

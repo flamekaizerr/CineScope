@@ -1,6 +1,7 @@
 import { useState, useEffect, useCallback } from 'react';
 import { CalendarDays, Clapperboard, Sparkles, X } from 'lucide-react';
 import { useApi } from '../hooks/useApi';
+import { useSessionStorage } from '../hooks/useSessionStorage';
 import * as jikan from '../services/jikan';
 import MediaCard from '../components/common/MediaCard';
 import GenrePill from '../components/common/GenrePill';
@@ -39,11 +40,11 @@ function normalizeAnime(anime) {
 }
 
 function Anime() {
-  const [selectedGenres, setSelectedGenres] = useState([]);
-  const [format, setFormat] = useState('all');
-  const [timeWindow, setTimeWindow] = useState('today');
-  const [page, setPage] = useState(1);
-  const [allAnime, setAllAnime] = useState([]);
+  const [selectedGenres, setSelectedGenres] = useSessionStorage('anime_genres', []);
+  const [format, setFormat] = useSessionStorage('anime_format', 'all');
+  const [timeWindow, setTimeWindow] = useSessionStorage('anime_time', 'today');
+  const [page, setPage] = useSessionStorage('anime_page', 1);
+  const [allAnime, setAllAnime] = useSessionStorage('anime_list', []);
   const [loadingMore, setLoadingMore] = useState(false);
 
   const {

@@ -329,6 +329,24 @@ function AnimeDetail() {
             )}
           </section>
           )}
+
+          {recommendationList.length > 0 && (
+          <section className="section detail-nested-section">
+            <h2 className="section-title">Recommendations</h2>
+            {recommendationsLoading ? (
+              <LoadingSkeleton type="row" count={6} />
+            ) : (
+              <ContentRow
+                items={recommendationList.map((rec) => ({
+                  id: rec.entry?.mal_id,
+                  title: rec.entry?.title,
+                  poster_path: rec.entry?.images?.jpg?.large_image_url,
+                  media_type: 'anime',
+                }))}
+              />
+            )}
+          </section>
+          )}
         </section>
         )}
 
@@ -427,7 +445,7 @@ function AnimeDetail() {
         {/* Recommendations */}
         {activePanel === 'buzz' && (
           <section className="section detail-panel">
-            <h2 className="section-title">Buzz & Recommendations</h2>
+            <h2 className="section-title">Buzz</h2>
             <div className="stat-cards-row">
               {members && (
                 <div className="stat-card">
@@ -444,23 +462,6 @@ function AnimeDetail() {
                 </div>
               )}
             </div>
-          {recommendationList.length > 0 && (
-          <section className="section detail-nested-section">
-            <h2 className="section-title">Recommendations</h2>
-            {recommendationsLoading ? (
-              <LoadingSkeleton type="row" count={6} />
-            ) : (
-              <ContentRow
-                items={recommendationList.map((rec) => ({
-                  id: rec.entry?.mal_id,
-                  title: rec.entry?.title,
-                  poster_path: rec.entry?.images?.jpg?.large_image_url,
-                  media_type: 'anime',
-                }))}
-              />
-            )}
-          </section>
-          )}
           </section>
         )}
       </div>

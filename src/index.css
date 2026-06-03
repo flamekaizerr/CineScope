@@ -114,7 +114,7 @@
   /* Layout */
   --sidebar-width: 240px;
   --sidebar-collapsed: 72px;
-  --navbar-height: 64px;
+  --navbar-height: 118px;
   --bottom-nav-height: 64px;
   --content-max-width: 1440px;
 }
@@ -1956,8 +1956,8 @@ ul, ol {
 
   .detail-info {
     flex-direction: column;
-    align-items: center;
-    text-align: center;
+    align-items: flex-start;
+    text-align: left;
     padding: var(--space-md) var(--space-lg);
     margin-top: 0;
   }
@@ -1971,7 +1971,7 @@ ul, ol {
   }
 
   .detail-meta, .detail-genres, .detail-actions {
-    justify-content: center;
+    justify-content: flex-start;
   }
 
   .detail-overview {
@@ -4459,9 +4459,7 @@ body {
 }
 
 @media (max-width: 760px) {
-  :root {
-    --navbar-height: 62px;
-  }
+
 
   .layout {
     padding-top: var(--navbar-height);
@@ -4473,10 +4471,21 @@ body {
     gap: 10px;
   }
 
-  .navbar-search,
-  .navbar-icon-btn,
-  .navbar-login-btn {
+  .navbar-search {
     display: none;
+  }
+
+  .navbar-icon-btn,
+  .navbar-avatar,
+  .navbar-mobile-toggle {
+    width: 36px;
+    height: 36px;
+  }
+
+  .navbar-login-btn {
+    height: 36px;
+    padding: 0 10px;
+    font-size: 0.82rem;
   }
 
   .navbar-logo-text {
@@ -5100,9 +5109,10 @@ body {
 
 .entertainment-switcher {
   width: min(100%, var(--content-max-width));
-  height: 48px;
+  height: auto;
+  min-height: 48px;
   margin: 0 auto;
-  padding: 0 clamp(14px, 3vw, 36px) 10px;
+  padding: 6px clamp(14px, 3vw, 36px) 10px;
   display: flex;
   align-items: center;
   gap: 8px;
@@ -5129,6 +5139,7 @@ body {
   font-size: 0.9rem;
   font-weight: 800;
   white-space: nowrap;
+  flex-shrink: 0;
 }
 
 .entertainment-switcher-link:hover,
@@ -5581,7 +5592,7 @@ body {
 @media (max-width: 1024px) {
   .bottom-nav {
     display: grid;
-    grid-template-columns: repeat(6, minmax(0, 1fr));
+    grid-template-columns: repeat(5, minmax(0, 1fr));
     align-items: stretch;
   }
 
@@ -5603,8 +5614,9 @@ body {
   }
 
   .entertainment-switcher {
-    height: 46px;
-    padding-bottom: 8px;
+    height: auto;
+    min-height: 46px;
+    padding: 6px clamp(14px, 3vw, 36px) 8px;
   }
 
   .entertainment-switcher-link {
@@ -5658,10 +5670,14 @@ body {
 
   .detail-header-content,
   .anime-detail-header-content {
-    padding: 46px 14px 22px;
-    grid-template-columns: 104px minmax(0, 1fr);
+    padding: 24px 14px 18px;
+    grid-template-columns: 120px minmax(0, 1fr);
     gap: 13px;
     align-items: end;
+  }
+
+  .detail-info {
+    text-align: left;
   }
 
   .detail-title {
@@ -5672,6 +5688,7 @@ body {
   .detail-genres,
   .detail-actions {
     justify-content: flex-start;
+    flex-wrap: wrap;
     gap: 7px;
   }
 
@@ -5714,4 +5731,61 @@ body {
     width: 19px;
     height: 19px;
   }
+
+  /* Tabs: wrap instead of clip on mobile */
+  .tabs {
+    flex-wrap: wrap;
+    overflow-x: visible;
+  }
+
+  .tab {
+    padding: 6px 12px;
+    font-size: 0.82rem;
+  }
+}
+
+/* ---------- MediaCard Bookmark Button ---------- */
+.media-card-bookmark {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  z-index: 3;
+  width: 32px;
+  height: 32px;
+  display: grid;
+  place-items: center;
+  border: none;
+  border-radius: 50%;
+  background: rgba(0, 0, 0, 0.6);
+  color: #fff;
+  backdrop-filter: blur(8px);
+  cursor: pointer;
+  opacity: 0;
+  transition: opacity 0.2s, background 0.2s, transform 0.2s;
+}
+
+.media-card:hover .media-card-bookmark,
+.media-card-bookmark:focus-visible {
+  opacity: 1;
+}
+
+@media (hover: none) {
+  .media-card-bookmark {
+    opacity: 1;
+  }
+}
+
+.media-card-bookmark.bookmarked {
+  color: var(--accent-secondary);
+  background: rgba(0, 0, 0, 0.75);
+}
+
+.media-card-bookmark:active {
+  transform: scale(0.9);
+}
+
+/* Move platform badge to bottom-right to avoid bookmark overlap */
+.media-card-platform-badge {
+  top: auto;
+  bottom: 36px;
 }

@@ -341,12 +341,34 @@ function Detail() {
                 <span className="detail-director-name">{director.name}</span>
               </div>
             )}
+
+            {recommendationList.length > 0 && (
+            <section className="section detail-nested-section">
+              <h2 className="section-title">Recommendations</h2>
+              {recommendationsLoading ? (
+                <LoadingSkeleton type="row" count={6} />
+              ) : (
+                <ContentRow items={recommendationList} />
+              )}
+            </section>
+            )}
+
+            {similarList.length > 0 && (
+            <section className="section detail-nested-section">
+              <h2 className="section-title">Similar Titles</h2>
+              {similarLoading ? (
+                <LoadingSkeleton type="row" count={6} />
+              ) : (
+                <ContentRow items={similarList} />
+              )}
+            </section>
+            )}
           </section>
         )}
 
         {activePanel === 'watch' && (
         <section className="section detail-panel">
-          <h2 className="section-title">Where to Watch</h2>
+
           <div className="detail-panel-actions">
             {trailer && (
               <button className="btn btn-trailer" onClick={() => setShowTrailer(true)}>
@@ -506,28 +528,6 @@ function Detail() {
             </div>
           ) : (
             <p className="empty-message">No reviews yet. Be the first to review!</p>
-          )}
-
-          {recommendationList.length > 0 && (
-          <section className="section detail-nested-section">
-            <h2 className="section-title">Recommendations</h2>
-            {recommendationsLoading ? (
-              <LoadingSkeleton type="row" count={6} />
-            ) : (
-              <ContentRow items={recommendationList} />
-            )}
-          </section>
-          )}
-
-          {similarList.length > 0 && (
-          <section className="section detail-nested-section">
-            <h2 className="section-title">Similar Titles</h2>
-            {similarLoading ? (
-              <LoadingSkeleton type="row" count={6} />
-            ) : (
-              <ContentRow items={similarList} />
-            )}
-          </section>
           )}
         </section>
         )}

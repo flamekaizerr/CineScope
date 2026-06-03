@@ -65,7 +65,7 @@ function formatDate(date) {
 }
 
 function getWindowRange(windowKey) {
-  if (!windowKey || windowKey === 'all') return {};
+  if (!windowKey || windowKey === 'all' || windowKey === 'today') return {};
   const now = new Date();
   const from = new Date(now);
   if (windowKey === 'week') {
@@ -74,7 +74,7 @@ function getWindowRange(windowKey) {
     from.setMonth(now.getMonth() - 1);
   }
   return {
-    from: formatDate(windowKey === 'today' ? now : from),
+    from: formatDate(from),
     to: formatDate(now),
   };
 }
@@ -116,6 +116,8 @@ function getTvCollectionParams(collection) {
       return { with_genres: '10762' };
     case 'reality':
       return { with_genres: '10764' };
+    case 'documentary':
+      return { with_genres: '99' };
     default:
       return {};
   }
@@ -126,9 +128,9 @@ function shouldUseDiscover(options = {}) {
     options.genreId ||
     options.providerId && options.providerId !== 'all' ||
     options.collection && options.collection !== 'all' ||
-    options.timeWindow && options.timeWindow !== 'all' ||
+    (options.timeWindow && options.timeWindow !== 'all' && options.timeWindow !== 'today') ||
     options.region && options.region !== config.tmdb.defaultRegion ||
-    options.sortBy
+    (options.sortBy && options.sortBy !== 'popularity.desc')
   );
 }
 
@@ -545,10 +547,10 @@ export async function getMovies(category = 'popular', {
         with_genres: mergeGenre(genreId, collectionParams.with_genres),
         with_watch_providers: providerId && providerId !== 'all' ? providerId : undefined,
         watch_region: region,
-        with_watch_monetization_types: 'flatrate',
+        with_watch_monetization_types: providerId && providerId !== 'all' ? 'flatrate' : undefined,
         with_origin_country: collectionParams.with_origin_country,
         with_original_language: collectionParams.with_original_language,
-        'vote_count.gte': category === 'top_rated' ? 100 : 10,
+        'vote_count.gte': category === 'top_rated' ? 100 : (collection === 'documentary' ? 5 : 10),
         'primary_release_date.gte': windowRange.from,
         'primary_release_date.lte': windowRange.to,
       };
@@ -599,7 +601,7 @@ export async function getTvShows(category = 'popular', {
         with_genres: mergeGenre(genreId, collectionParams.with_genres),
         with_watch_providers: providerId && providerId !== 'all' ? providerId : undefined,
         watch_region: region,
-        with_watch_monetization_types: 'flatrate',
+        with_watch_monetization_types: providerId && providerId !== 'all' ? 'flatrate' : undefined,
         with_origin_country: collectionParams.with_origin_country,
         with_original_language: collectionParams.with_original_language,
         'vote_count.gte': category === 'top_rated' ? 50 : 5,
@@ -636,8 +638,7 @@ export async function getAnimationMovies({
       with_genres: '16',
       with_companies: getAnimationStudioCompany(studio),
       watch_region: region,
-      with_watch_monetization_types: 'flatrate',
-      'vote_count.gte': 10,
+      'vote_count.gte': 5,
       'primary_release_date.gte': windowRange.from,
       'primary_release_date.lte': windowRange.to,
     });

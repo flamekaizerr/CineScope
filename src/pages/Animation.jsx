@@ -75,7 +75,7 @@ function Animation() {
             type="button"
             key={item.key}
             className={`studio-chip ${studio === item.key ? 'studio-chip-active' : ''}`}
-            onClick={() => { setStudio(item.key); setAllTitles([]); setPage(1); }}
+            onClick={() => { setStudio(studio === item.key ? 'all' : item.key); setAllTitles([]); setPage(1); }}
           >
             <span className="studio-chip-mark">{item.logo}</span>
             <span>
@@ -102,7 +102,7 @@ function Animation() {
                 type="button"
                 key={item.key}
                 className={`browse-chip window-chip ${timeWindow === item.key ? 'browse-chip-active' : ''}`}
-                onClick={() => { setTimeWindow(item.key); setAllTitles([]); setPage(1); }}
+                onClick={() => { setTimeWindow(timeWindow === item.key ? 'today' : item.key); setAllTitles([]); setPage(1); }}
               >
                 {item.label}
               </button>

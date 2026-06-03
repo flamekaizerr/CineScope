@@ -165,7 +165,7 @@ function Movies() {
                 <button
                   key={item.key}
                   className={`browse-chip window-chip ${timeWindow === item.key ? 'browse-chip-active' : ''}`}
-                  onClick={() => { setTimeWindow(item.key); setAllMovies([]); setPage(1); }}
+                  onClick={() => { setTimeWindow(timeWindow === item.key ? 'today' : item.key); setAllMovies([]); setPage(1); }}
                 >
                   {item.label}
                 </button>
@@ -187,7 +187,7 @@ function Movies() {
               <button
                 key={item.key}
                 className={`browse-chip ${collection === item.key ? 'browse-chip-active' : ''}`}
-                onClick={() => { setCollection(item.key); setAllMovies([]); setPage(1); }}
+                onClick={() => { setCollection(collection === item.key ? 'all' : item.key); setAllMovies([]); setPage(1); }}
               >
                 {item.label}
               </button>

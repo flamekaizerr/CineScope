@@ -5,7 +5,6 @@ import {
   Film,
   Tv,
   Sparkles,
-  Clapperboard,
   MoreHorizontal,
   TrendingUp,
   Wand2,
@@ -19,7 +18,7 @@ const PRIMARY_ITEMS = [
   { to: '/movies', label: 'Movies', icon: Film },
   { to: '/tv', label: 'TV', icon: Tv },
   { to: '/anime', label: 'Anime', icon: Sparkles },
-  { to: '/animation', label: 'Anim', icon: Clapperboard },
+
 ];
 
 const MORE_ITEMS = [

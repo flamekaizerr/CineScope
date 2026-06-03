@@ -31,8 +31,8 @@ export const MOVIE_COLLECTIONS = [
   { key: 'all', label: 'All Movies' },
   { key: 'animation', label: 'Animation' },
   { key: 'korean', label: 'Korean Cinema' },
-  { key: 'thai', label: 'Thai Movies' },
-  { key: 'indian', label: 'Indian Movies' },
+  { key: 'thai', label: 'Thai' },
+  { key: 'indian', label: 'Indian' },
   { key: 'family', label: 'Family Night' },
   { key: 'documentary', label: 'Documentaries' },
 ];
@@ -41,8 +41,9 @@ export const TV_COLLECTIONS = [
   { key: 'all', label: 'All TV' },
   { key: 'animation', label: 'Animation' },
   { key: 'kdrama', label: 'K-Drama' },
-  { key: 'thai', label: 'Thai Shows' },
-  { key: 'indian', label: 'Indian Shows' },
+  { key: 'thai', label: 'Thai' },
+  { key: 'indian', label: 'Indian' },
+  { key: 'documentary', label: 'Documentaries' },
   { key: 'kids', label: 'Kids' },
   { key: 'reality', label: 'Reality' },
 ];

@@ -165,7 +165,7 @@ function TvShows() {
                 <button
                   key={item.key}
                   className={`browse-chip window-chip ${timeWindow === item.key ? 'browse-chip-active' : ''}`}
-                  onClick={() => { setTimeWindow(item.key); setAllShows([]); setPage(1); }}
+                  onClick={() => { setTimeWindow(timeWindow === item.key ? 'today' : item.key); setAllShows([]); setPage(1); }}
                 >
                   {item.label}
                 </button>
@@ -187,7 +187,7 @@ function TvShows() {
               <button
                 key={item.key}
                 className={`browse-chip ${collection === item.key ? 'browse-chip-active' : ''}`}
-                onClick={() => { setCollection(item.key); setAllShows([]); setPage(1); }}
+                onClick={() => { setCollection(collection === item.key ? 'all' : item.key); setAllShows([]); setPage(1); }}
               >
                 {item.label}
               </button>

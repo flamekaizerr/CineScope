@@ -1462,7 +1462,7 @@ ul, ol {
   border: 1px solid var(--border-default);
   border-radius: var(--radius-lg);
   box-shadow: var(--shadow-xl);
-  z-index: var(--z-dropdown);
+  z-index: calc(var(--z-sticky) + 10);
   min-width: 200px;
   padding: var(--space-sm);
   animation: slideUp 0.2s ease-out;
@@ -1873,8 +1873,6 @@ ul, ol {
   gap: var(--space-md);
   margin-bottom: var(--space-xl);
   flex-wrap: wrap;
-  position: relative;
-  z-index: var(--z-dropdown);
 }
 
 .detail-overview {

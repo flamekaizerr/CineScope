@@ -129,8 +129,8 @@ function Watchlist() {
         {/* Stats Summary */}
         <div className="stat-cards-row">
           <div className="stat-card">
-            <div className="stat-value">{stats.totalItems}</div>
-            <div className="stat-label">Total Items</div>
+            <div className="stat-value">{filteredItems.length}</div>
+            <div className="stat-label">Current View</div>
           </div>
           <div className="stat-card">
             <div className="stat-value">{stats.watchlistCount}</div>

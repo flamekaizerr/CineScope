@@ -26,11 +26,15 @@ function Animation() {
   );
 
   useEffect(() => {
-    if (data?.results) {
-      setAllTitles(data.results);
-      setPage(1);
+    if (data?.results && !loading) {
+      setAllTitles((prev) => {
+        if (prev.length === 0 || page === 1) {
+          return data.results;
+        }
+        return prev;
+      });
     }
-  }, [data]);
+  }, [data, loading, page, setAllTitles]);
 
   const handleLoadMore = useCallback(async () => {
     const nextPage = page + 1;

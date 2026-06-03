@@ -56,11 +56,15 @@ function Anime() {
   );
 
   useEffect(() => {
-    if (animeData?.data) {
-      setAllAnime(animeData.data.map(normalizeAnime));
-      setPage(1);
+    if (animeData?.data && !animeLoading) {
+      setAllAnime((prev) => {
+        if (prev.length === 0 || page === 1) {
+          return animeData.data.map(normalizeAnime);
+        }
+        return prev;
+      });
     }
-  }, [animeData]);
+  }, [animeData, animeLoading, page, setAllAnime]);
 
   const handleGenreToggle = useCallback((genreId) => {
     setSelectedGenres((prev) =>

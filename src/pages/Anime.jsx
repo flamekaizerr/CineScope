@@ -5,7 +5,7 @@ import * as jikan from '../services/jikan';
 import MediaCard from '../components/common/MediaCard';
 import GenrePill from '../components/common/GenrePill';
 import LoadingSkeleton from '../components/common/LoadingSkeleton';
-import { FALLBACK_ANIME } from '../utils/fallbackData';
+
 import { ANIME_FORMATS, TIME_FILTERS } from '../utils/discoveryOptions';
 
 const ANIME_GENRES = [
@@ -95,7 +95,7 @@ function Anime() {
   }, [page, selectedGenres, format, timeWindow]);
 
   const hasNextPage = animeData?.pagination?.has_next_page ?? false;
-  const displayAnime = allAnime.length > 0 ? allAnime : FALLBACK_ANIME;
+  const displayAnime = allAnime;
 
   return (
     <div className="page anime-page">

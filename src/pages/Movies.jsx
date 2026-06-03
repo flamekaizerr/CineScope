@@ -6,7 +6,7 @@ import { MEDIA_TYPES } from '../utils/constants';
 import MediaCard from '../components/common/MediaCard';
 import GenrePill from '../components/common/GenrePill';
 import LoadingSkeleton from '../components/common/LoadingSkeleton';
-import { FALLBACK_MOVIES } from '../utils/fallbackData';
+
 import { MOVIE_COLLECTIONS, STREAMING_PLATFORMS, TIME_FILTERS, WATCH_REGIONS } from '../utils/discoveryOptions';
 
 const SORT_OPTIONS = [
@@ -112,7 +112,7 @@ function Movies() {
   const currentProviderLabel = currentProvider.label;
   const currentTimeLabel = TIME_FILTERS.find((t) => t.key === timeWindow)?.label || 'Any Time';
   const currentRegionLabel = WATCH_REGIONS.find((r) => r.key === watchRegion)?.label || watchRegion;
-  const displayMovies = allMovies.length > 0 ? allMovies : FALLBACK_MOVIES;
+  const displayMovies = allMovies;
 
   return (
     <div className="page movies-page">

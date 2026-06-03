@@ -6,8 +6,7 @@ import * as tmdb from '../services/tmdb';
 import * as jikan from '../services/jikan';
 import * as trakt from '../services/trakt';
 import ContentRow from '../components/common/ContentRow';
-import { BACKDROP_SIZES, MEDIA_TYPES, POSTER_SIZES, TMDB_IMAGE_BASE } from '../utils/constants';
-import { FALLBACK_ANIMATION, FALLBACK_ANIME, FALLBACK_MOVIES, FALLBACK_TRENDING, FALLBACK_TV } from '../utils/fallbackData';
+import { MEDIA_TYPES, BACKDROP_SIZES, POSTER_SIZES, TMDB_IMAGE_BASE } from '../utils/constants';
 
 const DISCOVERY_LINKS = [
   { label: 'Movies', to: '/movies' },
@@ -65,53 +64,53 @@ function Home() {
   const [trendingWindow, setTrendingWindow] = useState('day');
   const [searchQuery, setSearchQuery] = useState('');
 
-  const { data: trendingAll } = useApi(
+  const { data: trendingAll, loading: trendingAllLoading } = useApi(
     () => tmdb.getTrending('all', trendingWindow),
     [trendingWindow]
   );
 
-  const { data: trendingWeek } = useApi(
+  const { data: trendingWeek, loading: trendingWeekLoading } = useApi(
     () => tmdb.getTrending('all', 'week'),
     []
   );
 
-  const { data: nowPlaying } = useApi(
+  const { data: nowPlaying, loading: nowPlayingLoading } = useApi(
     () => tmdb.getNowPlaying(),
     []
   );
 
-  const { data: streaming } = useApi(
+  const { data: streaming, loading: streamingLoading } = useApi(
     () => tmdb.getNewOnStreaming(),
     []
   );
 
-  const { data: animation } = useApi(
+  const { data: animation, loading: animationLoading } = useApi(
     () => tmdb.getAnimationMovies({ timeWindow: 'week' }),
     []
   );
 
-  const { data: upcoming } = useApi(
+  const { data: upcoming, loading: upcomingLoading } = useApi(
     () => tmdb.getUpcoming(),
     []
   );
 
-  const { data: seasonAnime } = useApi(
+  const { data: seasonAnime, loading: seasonAnimeLoading } = useApi(
     () => jikan.getSeasonNow(),
     []
   );
 
-  const { data: communityTrending } = useApi(
+  const { data: communityTrending, loading: communityLoading } = useApi(
     () => trakt.getTrending('movies'),
     []
   );
 
-  const trendingItems = trendingAll?.results?.length ? trendingAll.results : FALLBACK_TRENDING;
-  const weekItems = trendingWeek?.results?.length ? trendingWeek.results : FALLBACK_TRENDING;
-  const movieItems = nowPlaying?.results?.length ? nowPlaying.results : FALLBACK_MOVIES;
-  const streamingItems = streaming?.results?.length ? streaming.results : FALLBACK_MOVIES;
-  const animationItems = animation?.results?.length ? animation.results : FALLBACK_ANIMATION;
-  const upcomingItems = upcoming?.results?.length ? upcoming.results : FALLBACK_MOVIES;
-  const animeItems = seasonAnime?.data?.length ? seasonAnime.data.map(normalizeAnime) : FALLBACK_ANIME;
+  const trendingItems = trendingAll?.results || [];
+  const weekItems = trendingWeek?.results || [];
+  const movieItems = nowPlaying?.results || [];
+  const streamingItems = streaming?.results || [];
+  const animationItems = animation?.results || [];
+  const upcomingItems = upcoming?.results || [];
+  const animeItems = seasonAnime?.data?.length ? seasonAnime.data.map(normalizeAnime) : [];
   const communityItems = communityTrending?.length
     ? communityTrending
       .map((item) => ({
@@ -131,14 +130,14 @@ function Home() {
     [trendingItems, animeItems, weekItems]
   );
 
-  const heroItem = hotItems[0] || FALLBACK_TRENDING[0];
+  const heroItem = hotItems[0];
   const heroBackdrop =
     getImageUrl(heroItem?.backdrop_path, BACKDROP_SIZES.LARGE) ||
     getImageUrl(heroItem?.poster_path || heroItem?.poster, POSTER_SIZES.LARGE);
 
   const stats = [
     { label: 'Movies', value: `${movieItems.length}+` },
-    { label: 'TV Picks', value: `${FALLBACK_TV.length + weekItems.filter((item) => getMediaType(item) === MEDIA_TYPES.TV).length}+` },
+    { label: 'TV Picks', value: `${weekItems.filter((item) => getMediaType(item) === MEDIA_TYPES.TV).length}+` },
     { label: 'Anime', value: `${animeItems.length}+` },
     { label: 'Animation', value: `${animationItems.length}+` },
   ];
@@ -262,37 +261,37 @@ function Home() {
       <div className="page-content stream-content">
         <section className="section">
           {renderSectionHeader(<Flame size={20} aria-hidden="true" />, 'Trending Today', '/trending')}
-          <ContentRow items={trendingItems} />
+          <ContentRow items={trendingItems} isLoading={trendingAllLoading} />
         </section>
 
         <section className="section">
           {renderSectionHeader(<Users size={20} aria-hidden="true" />, 'Internet Buzz This Week', '/buzz')}
-          <ContentRow items={communityItems} />
+          <ContentRow items={communityItems} isLoading={communityLoading} />
         </section>
 
         <section className="section">
           {renderSectionHeader(<Clapperboard size={20} aria-hidden="true" />, 'Animation Studio Picks', '/animation')}
-          <ContentRow items={animationItems} mediaType={MEDIA_TYPES.MOVIE} />
+          <ContentRow items={animationItems} mediaType={MEDIA_TYPES.MOVIE} isLoading={animationLoading} />
         </section>
 
         <section className="section">
           {renderSectionHeader(<Clapperboard size={20} aria-hidden="true" />, 'Now in Cinemas', '/movies')}
-          <ContentRow items={movieItems} mediaType={MEDIA_TYPES.MOVIE} />
+          <ContentRow items={movieItems} mediaType={MEDIA_TYPES.MOVIE} isLoading={nowPlayingLoading} />
         </section>
 
         <section className="section">
           {renderSectionHeader(<Tv size={20} aria-hidden="true" />, 'Fresh on Streaming', '/movies')}
-          <ContentRow items={streamingItems} mediaType={MEDIA_TYPES.MOVIE} />
+          <ContentRow items={streamingItems} mediaType={MEDIA_TYPES.MOVIE} isLoading={streamingLoading} />
         </section>
 
         <section className="section">
           {renderSectionHeader(<Sparkles size={20} aria-hidden="true" />, 'Anime Heat', '/anime')}
-          <ContentRow items={animeItems} mediaType={MEDIA_TYPES.ANIME} />
+          <ContentRow items={animeItems} mediaType={MEDIA_TYPES.ANIME} isLoading={seasonAnimeLoading} />
         </section>
 
         <section className="section">
           {renderSectionHeader(<CalendarDays size={20} aria-hidden="true" />, 'Coming Soon', '/movies')}
-          <ContentRow items={upcomingItems} mediaType={MEDIA_TYPES.MOVIE} />
+          <ContentRow items={upcomingItems} mediaType={MEDIA_TYPES.MOVIE} isLoading={upcomingLoading} />
         </section>
       </div>
     </div>

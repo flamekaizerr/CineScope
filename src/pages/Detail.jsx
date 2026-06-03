@@ -15,7 +15,7 @@ import WatchlistButton from '../components/features/WatchlistButton';
 import WhereToWatch from '../components/features/WhereToWatch';
 import CastList from '../components/features/CastList';
 import TrailerModal from '../components/features/TrailerModal';
-import { FALLBACK_MOVIES, FALLBACK_TV } from '../utils/fallbackData';
+
 
 function Detail() {
   const { mediaType, id } = useParams();
@@ -79,19 +79,6 @@ function Detail() {
         genres: fallback.genres || [],
       };
     }
-    const fallbackList = type === 'movie' ? FALLBACK_MOVIES : FALLBACK_TV;
-    const fallbackItem = fallbackList.find((item) => String(item.id) === String(id));
-    if (fallbackItem) {
-      return {
-        ...fallbackItem,
-        title: fallbackItem.title || fallbackItem.name,
-        name: fallbackItem.name || fallbackItem.title,
-        release_date: fallbackItem.release_date || fallbackItem.first_air_date,
-        first_air_date: fallbackItem.first_air_date || fallbackItem.release_date,
-        genres: fallbackItem.genres || [],
-      };
-    }
-
     try {
       const raw = sessionStorage.getItem(`cinescope_media_${type}_${id}`);
       if (!raw) return null;

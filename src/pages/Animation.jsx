@@ -6,7 +6,7 @@ import MediaCard from '../components/common/MediaCard';
 import LoadingSkeleton from '../components/common/LoadingSkeleton';
 import { ANIMATION_STUDIOS, TIME_FILTERS, WATCH_REGIONS } from '../utils/discoveryOptions';
 import { MEDIA_TYPES } from '../utils/constants';
-import { FALLBACK_ANIMATION } from '../utils/fallbackData';
+
 
 function Animation() {
   const [studio, setStudio] = useState('all');
@@ -55,7 +55,7 @@ function Animation() {
 
   const totalPages = data?.total_pages || 1;
   const activeStudio = ANIMATION_STUDIOS.find((item) => item.key === studio) || ANIMATION_STUDIOS[0];
-  const titles = allTitles.length > 0 ? allTitles : FALLBACK_ANIMATION;
+  const titles = allTitles;
 
   return (
     <div className="page animation-page">

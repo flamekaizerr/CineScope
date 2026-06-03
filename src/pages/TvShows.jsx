@@ -6,7 +6,7 @@ import { MEDIA_TYPES } from '../utils/constants';
 import MediaCard from '../components/common/MediaCard';
 import GenrePill from '../components/common/GenrePill';
 import LoadingSkeleton from '../components/common/LoadingSkeleton';
-import { FALLBACK_TV } from '../utils/fallbackData';
+
 import { STREAMING_PLATFORMS, TIME_FILTERS, TV_COLLECTIONS, WATCH_REGIONS } from '../utils/discoveryOptions';
 
 const SORT_OPTIONS = [
@@ -112,7 +112,7 @@ function TvShows() {
   const currentProviderLabel = currentProvider.label;
   const currentTimeLabel = TIME_FILTERS.find((t) => t.key === timeWindow)?.label || 'Any Time';
   const currentRegionLabel = WATCH_REGIONS.find((r) => r.key === watchRegion)?.label || watchRegion;
-  const displayShows = allShows.length > 0 ? allShows : FALLBACK_TV;
+  const displayShows = allShows;
 
   return (
     <div className="page tv-page">

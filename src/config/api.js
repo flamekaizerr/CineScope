@@ -18,7 +18,7 @@ const config = {
    * Keep third-party credentials behind /api/* in both production and local dev.
    * Vite supplies matching local middleware; Vercel supplies serverless functions.
    */
-  useDirectApi: false,
+  useDirectApi: import.meta.env.VITE_USE_DIRECT_API === 'true',
 
   /** TMDB (The Movie Database) */
   tmdb: {
@@ -50,7 +50,7 @@ const config = {
   gemini: {
     proxyPath: '/api/gemini',
     baseUrl: 'https://generativelanguage.googleapis.com/v1beta',
-    model: 'gemini-2.0-flash',
+    model: 'gemini-3.5-flash',
     apiKey: import.meta.env.VITE_GEMINI_API_KEY || '',
   },
 

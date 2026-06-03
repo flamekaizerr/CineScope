@@ -102,6 +102,7 @@ export async function getRecommendations(userProfile = {}) {
       favoriteGenres = [],
       dislikedGenres = [],
       preferredThemes = [],
+      watchlist = [],
     } = userProfile;
 
     // Build a richly detailed prompt
@@ -115,6 +116,13 @@ export async function getRecommendations(userProfile = {}) {
           .join('\n')
       : 'No watch history available yet.';
 
+    const watchlistBlock = watchlist.length
+      ? watchlist
+          .slice(0, 40)
+          .map((item) => `- "${item.title}" (${item.media_type || item.type})`)
+          .join('\n')
+      : 'No watchlist available yet.';
+
     const prompt = `You are a highly knowledgeable entertainment recommendation engine.
 A user wants personalised movie, TV show, and anime recommendations.
 
@@ -126,9 +134,12 @@ Preferred themes/moods: ${preferredThemes.length ? preferredThemes.join(', ') : 
 Watch history (with optional user ratings):
 ${historyBlock}
 
+Watchlist (items they plan to watch):
+${watchlistBlock}
+
 === INSTRUCTIONS ===
 Based on the profile above, suggest 10 titles the user would love. Include a mix of movies, TV shows, and anime.
-Do NOT recommend anything already in their watch history.
+Do NOT recommend anything already in their watch history or watchlist.
 For each recommendation provide:
 - title (string)
 - type ("movie", "tv", or "anime")

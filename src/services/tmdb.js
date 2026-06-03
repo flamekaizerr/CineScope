@@ -336,9 +336,19 @@ export async function getNowPlaying(page = 1) {
  */
 export async function getUpcoming(page = 1) {
   try {
-    return await tmdbFetch('/movie/upcoming', {
+    const today = new Date();
+    const future = new Date();
+    future.setMonth(future.getMonth() + 3);
+    
+    const formatDate = (d) => d.toISOString().split('T')[0];
+
+    return await tmdbFetch('/discover/movie', {
       page,
       region: config.tmdb.defaultRegion,
+      'primary_release_date.gte': formatDate(today),
+      'primary_release_date.lte': formatDate(future),
+      with_release_type: '2|3', // Theatrical limited/wide
+      sort_by: 'popularity.desc',
     });
   } catch (error) {
     console.warn('[TMDB] getUpcoming failed:', error.message);

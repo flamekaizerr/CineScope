@@ -45,9 +45,9 @@
     "semantic_hash": "5e608d25b50104cae0af274603593038"
   },
   "C:\\my_projects\\CineScope\\src\\App.jsx": {
-    "mtime": 1780510442.850937,
-    "ast_hash": "41da2d0917b162ed1f09ad0d88050f55",
-    "semantic_hash": "41da2d0917b162ed1f09ad0d88050f55"
+    "mtime": 1780516688.6390665,
+    "ast_hash": "3a2c1b8d96fd1151dba6cac3b0e4c5fe",
+    "semantic_hash": "3a2c1b8d96fd1151dba6cac3b0e4c5fe"
   },
   "C:\\my_projects\\CineScope\\src\\main.jsx": {
     "mtime": 1780504206.7955484,
@@ -145,9 +145,9 @@
     "semantic_hash": "8152b96c699c74c6810f57990256e284"
   },
   "C:\\my_projects\\CineScope\\src\\config\\api.js": {
-    "mtime": 1780420817.3037763,
-    "ast_hash": "87c56852a829ff375d948194c1e24c0d",
-    "semantic_hash": "87c56852a829ff375d948194c1e24c0d"
+    "mtime": 1780520004.0528638,
+    "ast_hash": "81b13d37dbc54f0d58dcd1c83c1d4252",
+    "semantic_hash": "81b13d37dbc54f0d58dcd1c83c1d4252"
   },
   "C:\\my_projects\\CineScope\\src\\context\\AuthContext.jsx": {
     "mtime": 1780411079.0518396,
@@ -155,9 +155,9 @@
     "semantic_hash": "c937fcab09317cda97804e82bb057582"
   },
   "C:\\my_projects\\CineScope\\src\\context\\UserDataContext.jsx": {
-    "mtime": 1780420817.3077645,
-    "ast_hash": "fd42a95a445eb3e4a7967865edfcb753",
-    "semantic_hash": "fd42a95a445eb3e4a7967865edfcb753"
+    "mtime": 1780519264.1401224,
+    "ast_hash": "05ddb91e24c7509585f691285005cebc",
+    "semantic_hash": "05ddb91e24c7509585f691285005cebc"
   },
   "C:\\my_projects\\CineScope\\src\\hooks\\useApi.js": {
     "mtime": 1780420817.3087623,
@@ -170,14 +170,14 @@
     "semantic_hash": "dc2c9995189c62c15220402039dc2b51"
   },
   "C:\\my_projects\\CineScope\\src\\pages\\Anime.jsx": {
-    "mtime": 1780510773.145924,
-    "ast_hash": "c075112add52075827a09cb21bd800ed",
-    "semantic_hash": "c075112add52075827a09cb21bd800ed"
+    "mtime": 1780522179.3443184,
+    "ast_hash": "dcbf2a8946fd1be1efe838ad9b30362a",
+    "semantic_hash": "dcbf2a8946fd1be1efe838ad9b30362a"
   },
   "C:\\my_projects\\CineScope\\src\\pages\\AnimeDetail.jsx": {
-    "mtime": 1780514865.4888756,
-    "ast_hash": "cdee6b72a5a6085fbd777b12eb37c857",
-    "semantic_hash": "cdee6b72a5a6085fbd777b12eb37c857"
+    "mtime": 1780517621.9082706,
+    "ast_hash": "bdc8608c8a4317818ae9436c5d96065e",
+    "semantic_hash": "bdc8608c8a4317818ae9436c5d96065e"
   },
   "C:\\my_projects\\CineScope\\src\\pages\\Buzz.jsx": {
     "mtime": 1780420817.3203013,
@@ -185,9 +185,9 @@
     "semantic_hash": "1e6b31ebaab31528a9602b080a544517"
   },
   "C:\\my_projects\\CineScope\\src\\pages\\Detail.jsx": {
-    "mtime": 1780514828.028999,
-    "ast_hash": "c2dae46095370917ec2381003ea64f81",
-    "semantic_hash": "c2dae46095370917ec2381003ea64f81"
+    "mtime": 1780522210.4297576,
+    "ast_hash": "681da4fcff21fd517e970f1d08c544f2",
+    "semantic_hash": "681da4fcff21fd517e970f1d08c544f2"
   },
   "C:\\my_projects\\CineScope\\src\\pages\\ForYou.jsx": {
     "mtime": 1780420817.3332675,
@@ -195,9 +195,9 @@
     "semantic_hash": "44e1c474ed355a1d94dab514b1e5ac80"
   },
   "C:\\my_projects\\CineScope\\src\\pages\\Home.jsx": {
-    "mtime": 1780511440.4206786,
-    "ast_hash": "6b7e933eaa67428e997d08f746cff6a7",
-    "semantic_hash": "6b7e933eaa67428e997d08f746cff6a7"
+    "mtime": 1780522241.7998059,
+    "ast_hash": "4dd912e5ceee3f0c21bac99c988e3d54",
+    "semantic_hash": "4dd912e5ceee3f0c21bac99c988e3d54"
   },
   "C:\\my_projects\\CineScope\\src\\pages\\Login.jsx": {
     "mtime": 1780420817.3552108,
@@ -205,9 +205,9 @@
     "semantic_hash": "fcef35621c7fb7bd73a592c9d4da4eca"
   },
   "C:\\my_projects\\CineScope\\src\\pages\\Movies.jsx": {
-    "mtime": 1780514767.0285833,
-    "ast_hash": "b37f6dd38b829866aeb28889e58d9e84",
-    "semantic_hash": "b37f6dd38b829866aeb28889e58d9e84"
+    "mtime": 1780522156.3228989,
+    "ast_hash": "fd5c06a1959be78371adc98fecd030e1",
+    "semantic_hash": "fd5c06a1959be78371adc98fecd030e1"
   },
   "C:\\my_projects\\CineScope\\src\\pages\\Profile.jsx": {
     "mtime": 1780504239.847048,
@@ -220,19 +220,19 @@
     "semantic_hash": "6a5d73b2fc0dda8ad6873b202f4ddfc0"
   },
   "C:\\my_projects\\CineScope\\src\\pages\\TvShows.jsx": {
-    "mtime": 1780514775.9370818,
-    "ast_hash": "9760e29ba91250a49c3e9cadb9c620a4",
-    "semantic_hash": "9760e29ba91250a49c3e9cadb9c620a4"
+    "mtime": 1780522167.7229578,
+    "ast_hash": "1f7ca2641ca1024f64d72e21ac57a387",
+    "semantic_hash": "1f7ca2641ca1024f64d72e21ac57a387"
   },
   "C:\\my_projects\\CineScope\\src\\pages\\Watchlist.jsx": {
-    "mtime": 1780420817.367197,
-    "ast_hash": "7d6a61218e1f1cb3ed18116223b5415b",
-    "semantic_hash": "7d6a61218e1f1cb3ed18116223b5415b"
+    "mtime": 1780518510.0109665,
+    "ast_hash": "14509d3407eba6c4f31bbd159278cb2c",
+    "semantic_hash": "14509d3407eba6c4f31bbd159278cb2c"
   },
   "C:\\my_projects\\CineScope\\src\\services\\gemini.js": {
-    "mtime": 1780412912.0413969,
-    "ast_hash": "515f4831d70567af577cb67bf4cc65e6",
-    "semantic_hash": "515f4831d70567af577cb67bf4cc65e6"
+    "mtime": 1780520048.067225,
+    "ast_hash": "42344d7f285990b300fe9460f5f1637c",
+    "semantic_hash": "42344d7f285990b300fe9460f5f1637c"
   },
   "C:\\my_projects\\CineScope\\src\\services\\google-auth.js": {
     "mtime": 1780420817.382854,
@@ -250,9 +250,9 @@
     "semantic_hash": "07b163e9afe1aea0dac84cf7b3283d90"
   },
   "C:\\my_projects\\CineScope\\src\\services\\tmdb.js": {
-    "mtime": 1780514742.6240268,
-    "ast_hash": "98589a62bb0445c32b36f8f3d3b57dd7",
-    "semantic_hash": "98589a62bb0445c32b36f8f3d3b57dd7"
+    "mtime": 1780521652.435918,
+    "ast_hash": "22c5b8bfdbd7b20b753488fc7d6b9ff2",
+    "semantic_hash": "22c5b8bfdbd7b20b753488fc7d6b9ff2"
   },
   "C:\\my_projects\\CineScope\\src\\services\\trakt.js": {
     "mtime": 1780420817.3855016,
@@ -290,8 +290,13 @@
     "semantic_hash": "bc62b0571cbca0135a51f8104e621b92"
   },
   "C:\\my_projects\\CineScope\\src\\pages\\Animation.jsx": {
-    "mtime": 1780514776.6463878,
-    "ast_hash": "f3c46ecc848700157618049f2cacb9c0",
-    "semantic_hash": "f3c46ecc848700157618049f2cacb9c0"
+    "mtime": 1780522190.7542853,
+    "ast_hash": "4c6c1220409e978b36ca371557240e28",
+    "semantic_hash": "4c6c1220409e978b36ca371557240e28"
+  },
+  "C:\\my_projects\\CineScope\\src\\pages\\TrendingToday.jsx": {
+    "mtime": 1780516678.3529363,
+    "ast_hash": "14c7949836bcb5b035f61243714313a7",
+    "semantic_hash": "14c7949836bcb5b035f61243714313a7"
   }
 }

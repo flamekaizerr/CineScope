@@ -85,7 +85,7 @@ function Home() {
   );
 
   const { data: animation, loading: animationLoading } = useApi(
-    () => tmdb.getAnimationMovies({ timeWindow: 'week' }),
+    () => tmdb.getAnimationMovies(),
     []
   );
 

@@ -3,31 +3,29 @@
     "0": [
       "common_contentrow_contentrow",
       "common_guestprompt_guestprompt",
-      "common_herocarousel_herocarousel",
       "common_loadingskeleton_loadingskeleton",
-      "common_mediacard_mediacard",
-      "common_ratingbadge_ratingbadge",
       "common_scrolltotop_scrolltotop",
       "context_authcontext_authcontext",
       "context_authcontext_authprovider",
       "context_authcontext_useauth",
+      "context_themecontext_getstoredtheme",
+      "context_themecontext_themeprovider",
+      "context_themecontext_usetheme",
       "context_userdatacontext_createinitialstate",
       "context_userdatacontext_userdatacontext",
       "context_userdatacontext_userdataprovider",
       "context_userdatacontext_useuserdata",
-      "features_castlist_castlist",
-      "features_watchlistbutton_list_options",
-      "features_watchlistbutton_watchlistbutton",
-      "features_wheretowatch_section_labels",
-      "features_wheretowatch_wheretowatch",
+      "layout_bottomnav_bottomnav",
+      "layout_bottomnav_more_items",
+      "layout_bottomnav_primary_items",
+      "layout_layout_layout",
+      "layout_navbar_entertainment_items",
+      "layout_navbar_nav_items",
+      "layout_navbar_navbar",
       "layout_sidebar_nav_items_bottom",
       "layout_sidebar_nav_items_middle",
       "layout_sidebar_nav_items_top",
       "layout_sidebar_sidebar",
-      "pages_animedetail_animedetail",
-      "pages_buzz_buzz",
-      "pages_buzz_content_types",
-      "pages_detail_detail",
       "pages_foryou_foryou",
       "pages_login_features",
       "pages_login_login",
@@ -38,32 +36,19 @@
       "src_app_app",
       "src_app_jsx",
       "src_components_common_contentrow_jsx",
+      "src_components_layout_layout_jsx",
+      "src_components_layout_navbar_jsx",
       "src_components_layout_sidebar_jsx",
       "src_context_authcontext_jsx",
+      "src_context_themecontext_jsx",
       "src_context_userdatacontext_jsx",
-      "src_pages_animedetail_jsx",
-      "src_pages_buzz_jsx",
-      "src_pages_detail_jsx",
       "src_pages_foryou_jsx",
       "src_pages_login_jsx",
       "src_pages_profile_jsx",
-      "src_pages_watchlist_jsx",
-      "src_utils_helpers_js",
-      "utils_constants_backdrop_sizes",
-      "utils_constants_list_types",
-      "utils_helpers_debounce",
-      "utils_helpers_formatdate",
-      "utils_helpers_formatnumber",
-      "utils_helpers_formatrating",
-      "utils_helpers_formatruntime",
-      "utils_helpers_generateid",
-      "utils_helpers_getmediatype",
-      "utils_helpers_getyearfromdate",
-      "utils_helpers_sleep",
-      "utils_helpers_truncatetext"
+      "src_pages_trendingtoday_jsx",
+      "src_pages_watchlist_jsx"
     ],
     "1": [
-      "common_genrepill_genrepill",
       "hooks_useapi_cache",
       "hooks_useapi_useapi",
       "pages_animation_animation",
@@ -72,6 +57,8 @@
       "pages_anime_fetchanimebytab",
       "pages_anime_normalizeanime",
       "pages_anime_tabs",
+      "pages_buzz_buzz",
+      "pages_buzz_content_types",
       "pages_home_discovery_links",
       "pages_home_getimageurl",
       "pages_home_getmedialabel",
@@ -86,10 +73,10 @@
       "pages_tvshows_sort_options",
       "pages_tvshows_tabs",
       "pages_tvshows_tvshows",
-      "src_components_common_mediacard_jsx",
       "src_hooks_useapi_js",
       "src_pages_animation_jsx",
       "src_pages_anime_jsx",
+      "src_pages_buzz_jsx",
       "src_pages_home_jsx",
       "src_pages_movies_jsx",
       "src_pages_tvshows_jsx",
@@ -151,6 +138,38 @@
       "src_services_tmdb_js"
     ],
     "3": [
+      "common_genrepill_genrepill",
+      "common_herocarousel_herocarousel",
+      "common_mediacard_mediacard",
+      "common_modal_modal",
+      "common_ratingbadge_ratingbadge",
+      "features_castlist_castlist",
+      "features_trailermodal_trailermodal",
+      "features_watchlistbutton_list_options",
+      "features_watchlistbutton_watchlistbutton",
+      "features_wheretowatch_section_labels",
+      "features_wheretowatch_wheretowatch",
+      "pages_animedetail_animedetail",
+      "pages_detail_detail",
+      "src_components_common_mediacard_jsx",
+      "src_components_common_modal_jsx",
+      "src_pages_animedetail_jsx",
+      "src_pages_detail_jsx",
+      "src_utils_helpers_js",
+      "utils_constants_backdrop_sizes",
+      "utils_constants_list_types",
+      "utils_helpers_debounce",
+      "utils_helpers_formatdate",
+      "utils_helpers_formatnumber",
+      "utils_helpers_formatrating",
+      "utils_helpers_formatruntime",
+      "utils_helpers_generateid",
+      "utils_helpers_getmediatype",
+      "utils_helpers_getyearfromdate",
+      "utils_helpers_sleep",
+      "utils_helpers_truncatetext"
+    ],
+    "4": [
       "cinescope_package_dependencies",
       "cinescope_package_dependencies_lucide_react",
       "cinescope_package_dependencies_react",
@@ -176,7 +195,32 @@
       "cinescope_package_version",
       "package_json"
     ],
-    "4": [
+    "5": [
+      "config_api_areallapisconfigured",
+      "config_api_config",
+      "config_api_isapiconfigured",
+      "services_gemini_geminigenerate",
+      "services_gemini_geminiservice",
+      "services_gemini_getcontentinsight",
+      "services_gemini_getrecommendations",
+      "services_gemini_parsejsonfromresponse",
+      "services_google_auth_googleauth_constructor",
+      "services_google_auth_googleauth_getaccesstoken",
+      "services_google_auth_googleauth_getuserprofile",
+      "services_google_auth_googleauth_handletokenerror",
+      "services_google_auth_googleauth_handletokenresponse",
+      "services_google_auth_googleauth_initgoogleauth",
+      "services_google_auth_googleauth_issignedin",
+      "services_google_auth_googleauth_loadgsiscript",
+      "services_google_auth_googleauth_notifyauthchange",
+      "services_google_auth_googleauth_refreshtoken",
+      "services_google_auth_googleauth_signin",
+      "services_google_auth_googleauth_signout",
+      "src_config_api_js",
+      "src_services_gemini_js",
+      "src_services_google_auth_js"
+    ],
+    "6": [
       "common_searchbar_searchbar",
       "features_airecommendations_airecommendations",
       "pages_search_clearrecentsearches",
@@ -198,28 +242,7 @@
       "utils_constants_time_windows",
       "utils_constants_tv_genres"
     ],
-    "5": [
-      "config_api_areallapisconfigured",
-      "config_api_config",
-      "config_api_isapiconfigured",
-      "services_gemini_geminigenerate",
-      "services_gemini_geminiservice",
-      "services_gemini_getcontentinsight",
-      "services_gemini_getrecommendations",
-      "services_gemini_parsejsonfromresponse",
-      "services_trakt_getanticipated",
-      "services_trakt_getboxoffice",
-      "services_trakt_getmostplayed",
-      "services_trakt_getmostwatched",
-      "services_trakt_getpopular",
-      "services_trakt_gettrending",
-      "services_trakt_traktfetch",
-      "services_trakt_traktservice",
-      "src_config_api_js",
-      "src_services_gemini_js",
-      "src_services_trakt_js"
-    ],
-    "6": [
+    "7": [
       "services_jikan_browseanime",
       "services_jikan_buildurl",
       "services_jikan_enforceratelimit",
@@ -239,7 +262,7 @@
       "services_jikan_searchanime",
       "src_services_jikan_js"
     ],
-    "7": [
+    "8": [
       "public_manifest_background_color",
       "public_manifest_categories",
       "public_manifest_description",
@@ -256,7 +279,7 @@
       "public_manifest_start_url",
       "public_manifest_theme_color"
     ],
-    "8": [
+    "9": [
       "services_google_drive_authheaders",
       "services_google_drive_createfile",
       "services_google_drive_deletefile",
@@ -272,37 +295,7 @@
       "services_google_drive_updatefile",
       "src_services_google_drive_js"
     ],
-    "9": [
-      "context_themecontext_getstoredtheme",
-      "context_themecontext_themeprovider",
-      "context_themecontext_usetheme",
-      "layout_bottomnav_bottomnav",
-      "layout_bottomnav_more_items",
-      "layout_bottomnav_primary_items",
-      "layout_layout_layout",
-      "layout_navbar_entertainment_items",
-      "layout_navbar_nav_items",
-      "layout_navbar_navbar",
-      "src_components_layout_layout_jsx",
-      "src_components_layout_navbar_jsx",
-      "src_context_themecontext_jsx"
-    ],
     "10": [
-      "services_google_auth_googleauth_constructor",
-      "services_google_auth_googleauth_getaccesstoken",
-      "services_google_auth_googleauth_getuserprofile",
-      "services_google_auth_googleauth_handletokenerror",
-      "services_google_auth_googleauth_handletokenresponse",
-      "services_google_auth_googleauth_initgoogleauth",
-      "services_google_auth_googleauth_issignedin",
-      "services_google_auth_googleauth_loadgsiscript",
-      "services_google_auth_googleauth_notifyauthchange",
-      "services_google_auth_googleauth_refreshtoken",
-      "services_google_auth_googleauth_signin",
-      "services_google_auth_googleauth_signout",
-      "src_services_google_auth_js"
-    ],
-    "11": [
       "favicon_svg",
       "google_api",
       "google_gsi",
@@ -315,6 +308,17 @@
       "main_jsx",
       "manifest_json",
       "src_main_storedtheme"
+    ],
+    "11": [
+      "services_trakt_getanticipated",
+      "services_trakt_getboxoffice",
+      "services_trakt_getmostplayed",
+      "services_trakt_getmostwatched",
+      "services_trakt_getpopular",
+      "services_trakt_gettrending",
+      "services_trakt_traktfetch",
+      "services_trakt_traktservice",
+      "src_services_trakt_js"
     ],
     "12": [
       "cinescope_home_qa_ui",
@@ -340,68 +344,63 @@
       "public_sw_url"
     ],
     "15": [
-      "common_modal_modal",
-      "features_trailermodal_trailermodal",
-      "src_components_common_modal_jsx"
-    ],
-    "16": [
       "api_gemini_handler",
       "api_gemini_js"
     ],
-    "17": [
+    "16": [
       "api_tmdb_handler",
       "api_tmdb_js"
     ],
-    "18": [
+    "17": [
       "api_trakt_handler",
       "api_trakt_js"
     ],
-    "19": [
+    "18": [
       "cinescope_vercel_rewrites",
       "vercel_json"
     ],
-    "20": [
+    "19": [
       "eslint_config_js"
     ],
-    "21": [
+    "20": [
       "services_jikan_getanimebyid"
     ],
-    "22": [
+    "21": [
       "services_tmdb_searchmulti"
     ],
-    "23": [
+    "22": [
       "readme_md"
     ],
-    "24": [
+    "23": [
       "icons_svg"
     ],
-    "25": [
+    "24": [
       "icon_384x384_png"
     ],
-    "26": [
+    "25": [
       "icon_72x72_png"
     ],
-    "27": [
+    "26": [
       "icon_96x96_png"
     ]
   },
   "cohesion": {
-    "0": 0.08418079096045197,
-    "1": 0.09494949494949495,
-    "2": 0.1106612685560054,
-    "3": 0.08333333333333333,
-    "4": 0.12105263157894737,
-    "5": 0.16374269005847952,
-    "6": 0.21568627450980393,
-    "7": 0.13333333333333333,
-    "8": 0.23076923076923078,
-    "9": 0.1794871794871795,
-    "10": 0.23076923076923078,
-    "11": 0.16666666666666666,
+    "0": 0.08695652173913043,
+    "1": 0.08695652173913043,
+    "2": 0.11336032388663968,
+    "3": 0.13793103448275862,
+    "4": 0.08333333333333333,
+    "5": 0.12648221343873517,
+    "6": 0.12105263157894737,
+    "7": 0.21568627450980393,
+    "8": 0.13333333333333333,
+    "9": 0.23076923076923078,
+    "10": 0.16666666666666666,
+    "11": 0.3888888888888889,
     "12": 0.25,
     "13": 0.4,
     "14": 0.5,
-    "15": 0.6666666666666666,
+    "15": 1.0,
     "16": 1.0,
     "17": 1.0,
     "18": 1.0,
@@ -412,8 +411,7 @@
     "23": 1.0,
     "24": 1.0,
     "25": 1.0,
-    "26": 1.0,
-    "27": 1.0
+    "26": 1.0
   },
   "gods": [
     {
@@ -424,7 +422,7 @@
     {
       "id": "hooks_useapi_useapi",
       "label": "useApi()",
-      "degree": 20
+      "degree": 21
     },
     {
       "id": "context_authcontext_useauth",

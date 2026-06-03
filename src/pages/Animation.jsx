@@ -11,7 +11,7 @@ import { MEDIA_TYPES } from '../utils/constants';
 
 function Animation() {
   const [studio, setStudio] = useSessionStorage('animation_studio', 'all');
-  const [timeWindow, setTimeWindow] = useSessionStorage('animation_time', 'today');
+  const [timeWindow, setTimeWindow] = useSessionStorage('animation_time', 'year');
   const [watchRegion, setWatchRegion] = useSessionStorage('animation_region', 'US');
   const [page, setPage] = useSessionStorage('animation_page', 1);
   const [allTitles, setAllTitles] = useSessionStorage('animation_list', []);

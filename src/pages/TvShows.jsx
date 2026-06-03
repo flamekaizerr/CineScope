@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback, useRef } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { CalendarDays, MonitorPlay, Tv, SlidersHorizontal, X, ChevronDown } from 'lucide-react';
 import { useApi } from '../hooks/useApi';
 import * as tmdb from '../services/tmdb';
@@ -52,20 +52,16 @@ function TvShows() {
     [selectedGenres, sortBy, providerId, watchRegion, collection, timeWindow]
   );
 
-  const filtersRef = useRef({ selectedGenres, sortBy, providerId, watchRegion, collection, timeWindow });
-
   useEffect(() => {
-    const currentFilters = { selectedGenres, sortBy, providerId, watchRegion, collection, timeWindow };
-    const filtersChanged = JSON.stringify(filtersRef.current) !== JSON.stringify(currentFilters);
-    
-    if (showsData?.results) {
-      if (filtersChanged || allShows.length === 0) {
-        setAllShows(showsData.results);
-        setPage(1);
-        filtersRef.current = currentFilters;
-      }
+    if (showsData?.results && !showsLoading) {
+      setAllShows((prev) => {
+        if (prev.length === 0 || page === 1) {
+          return showsData.results;
+        }
+        return prev;
+      });
     }
-  }, [showsData, selectedGenres, sortBy, providerId, watchRegion, collection, timeWindow]);
+  }, [showsData, showsLoading, page, setAllShows]);
 
   const handleGenreToggle = useCallback((genreId) => {
     setSelectedGenres((prev) =>
@@ -264,7 +260,6 @@ function TvShows() {
                   key={show.id}
                   item={show}
                   mediaType={MEDIA_TYPES.TV}
-                  platformLabel={currentProvider.shortLabel || currentProviderLabel}
                 />
               ))}
             </div>

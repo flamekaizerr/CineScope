@@ -193,7 +193,6 @@ function Anime() {
                   key={anime.id}
                   item={anime}
                   mediaType="anime"
-                  platformLabel="MAL"
                 />
               ))}
             </div>

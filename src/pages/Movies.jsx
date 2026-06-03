@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback, useRef } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { CalendarDays, Film, MonitorPlay, SlidersHorizontal, X, ChevronDown } from 'lucide-react';
 import { useApi } from '../hooks/useApi';
 import * as tmdb from '../services/tmdb';
@@ -52,20 +52,16 @@ function Movies() {
     [selectedGenres, sortBy, providerId, watchRegion, collection, timeWindow]
   );
 
-  const filtersRef = useRef({ selectedGenres, sortBy, providerId, watchRegion, collection, timeWindow });
-
   useEffect(() => {
-    const currentFilters = { selectedGenres, sortBy, providerId, watchRegion, collection, timeWindow };
-    const filtersChanged = JSON.stringify(filtersRef.current) !== JSON.stringify(currentFilters);
-    
-    if (moviesData?.results) {
-      if (filtersChanged || allMovies.length === 0) {
-        setAllMovies(moviesData.results);
-        setPage(1);
-        filtersRef.current = currentFilters;
-      }
+    if (moviesData?.results && !moviesLoading) {
+      setAllMovies((prev) => {
+        if (prev.length === 0 || page === 1) {
+          return moviesData.results;
+        }
+        return prev;
+      });
     }
-  }, [moviesData, selectedGenres, sortBy, providerId, watchRegion, collection, timeWindow]);
+  }, [moviesData, moviesLoading, page, setAllMovies]);
 
   const handleGenreToggle = useCallback((genreId) => {
     setSelectedGenres((prev) =>
@@ -265,7 +261,6 @@ function Movies() {
                   key={movie.id}
                   item={movie}
                   mediaType={MEDIA_TYPES.MOVIE}
-                  platformLabel={currentProvider.shortLabel || currentProviderLabel}
                 />
               ))}
             </div>

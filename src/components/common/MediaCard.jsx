@@ -14,7 +14,7 @@ const FALLBACK_POSTER = 'data:image/svg+xml;charset=UTF-8,' + encodeURIComponent
  * MediaCard – Reusable content card for movies, TV shows, and anime.
  * Shows poster, title, year, media type badge, rating, and watchlist bookmark.
  */
-function MediaCard({ item, mediaType, showRating = true, showYear = true, platformLabel, onClick }) {
+function MediaCard({ item, mediaType, showRating = true, showYear = true, onClick }) {
   const navigate = useNavigate();
   const [imgError, setImgError] = useState(false);
   const { addToList, removeFromList, getItemStatus } = useUserData();
@@ -102,9 +102,6 @@ function MediaCard({ item, mediaType, showRating = true, showYear = true, platfo
           <div className="media-card-rating">
             <RatingBadge rating={rating} size="sm" />
           </div>
-        )}
-        {(platformLabel || typeLabel) && (
-          <span className="media-card-platform-badge">{platformLabel || typeLabel}</span>
         )}
         {typeLabel && (
           <span className={`media-card-type-badge ${displayType}`}>{typeLabel}</span>

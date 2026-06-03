@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import {
   Star, Play, Users, Heart, Trophy, TrendingUp, Tv,
-  Calendar, Clock, BookOpen, ChevronDown, ChevronUp
+  Calendar, Clock, BookOpen, ChevronDown, ChevronUp, ExternalLink
 } from 'lucide-react';
 import { useApi } from '../hooks/useApi';
 import { useUserData } from '../context/UserDataContext';
@@ -100,6 +100,7 @@ function AnimeDetail() {
   const popularity = animeData.popularity;
   const members = animeData.members;
   const favorites = animeData.favorites;
+  const trailerSearchUrl = `https://www.youtube.com/results?search_query=${encodeURIComponent(`${title} anime official trailer`)}`;
 
   const displayCharacters = showAllCharacters ? characterList : characterList.slice(0, 12);
 
@@ -216,6 +217,11 @@ function AnimeDetail() {
                 <button className="btn btn-trailer" onClick={() => setShowTrailer(!showTrailer)}>
                   <Play size={16} /> {showTrailer ? 'Hide Trailer' : 'Watch Trailer'}
                 </button>
+              )}
+              {!trailerUrl && (
+                <a className="btn btn-trailer" href={trailerSearchUrl} target="_blank" rel="noreferrer">
+                  <ExternalLink size={16} /> Find Trailer
+                </a>
               )}
             </div>
 

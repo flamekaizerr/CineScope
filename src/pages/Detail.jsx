@@ -1,7 +1,7 @@
 import { useState, useEffect, useCallback, useMemo } from 'react';
 import { useLocation, useParams, Link } from 'react-router-dom';
 import {
-  Star, Clock, Calendar, Play, ChevronDown, ChevronUp,
+  Star, Clock, Calendar, Play, ChevronDown, ChevronUp, ExternalLink,
 } from 'lucide-react';
 import { useApi } from '../hooks/useApi';
 import { useUserData } from '../context/UserDataContext';
@@ -180,6 +180,7 @@ function Detail() {
       ? detailsForPage.poster_path
       : `https://image.tmdb.org/t/p/w500${detailsForPage.poster_path}`)
     : null;
+  const trailerSearchUrl = `https://www.youtube.com/results?search_query=${encodeURIComponent(`${title} ${year || ''} official trailer`)}`;
 
   return (
     <div className="page detail-page">
@@ -270,6 +271,11 @@ function Detail() {
                   <button className="btn btn-trailer" onClick={() => setShowTrailer(true)}>
                     <Play size={16} /> Watch Trailer
                   </button>
+                )}
+                {!trailer && (
+                  <a className="btn btn-trailer" href={trailerSearchUrl} target="_blank" rel="noreferrer">
+                    <ExternalLink size={16} /> Find Trailer
+                  </a>
                 )}
               </div>
 

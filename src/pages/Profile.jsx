@@ -5,20 +5,15 @@ import {
   CheckCircle, Shield, Info
 } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
+import { useTheme } from '../context/ThemeContext';
 import { useUserData } from '../context/UserDataContext';
 import LoadingSkeleton from '../components/common/LoadingSkeleton';
 
 function Profile() {
   const { user, isLoading: authLoading } = useAuth();
   const { items, syncStatus, lastSyncTime, syncToCloud, isLoading: dataLoading } = useUserData();
+  const { theme, toggleTheme } = useTheme();
   const [syncing, setSyncing] = useState(false);
-  const [theme, setTheme] = useState(() => {
-    try {
-      return localStorage.getItem('cinescope_theme') || 'dark';
-    } catch {
-      return 'dark';
-    }
-  });
 
   const handleSync = useCallback(async () => {
     setSyncing(true);
@@ -30,17 +25,6 @@ function Profile() {
       setSyncing(false);
     }
   }, [syncToCloud]);
-
-  const handleThemeToggle = useCallback(() => {
-    const newTheme = theme === 'dark' ? 'light' : 'dark';
-    setTheme(newTheme);
-    try {
-      localStorage.setItem('cinescope_theme', newTheme);
-      document.documentElement.setAttribute('data-theme', newTheme);
-    } catch {
-      // Silently fail
-    }
-  }, [theme]);
 
   // Viewing Statistics
   const stats = useMemo(() => {
@@ -247,7 +231,7 @@ function Profile() {
               {theme === 'dark' ? <Moon size={20} /> : <Sun size={20} />}
               <span>{theme === 'dark' ? 'Dark Mode' : 'Light Mode'}</span>
             </div>
-            <button className="theme-toggle-btn" onClick={handleThemeToggle}>
+            <button className="theme-toggle-btn" onClick={toggleTheme}>
               <div className={`theme-toggle-track ${theme === 'light' ? 'theme-toggle-light' : ''}`}>
                 <div className="theme-toggle-thumb" />
               </div>

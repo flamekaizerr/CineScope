@@ -1,6 +1,6 @@
 import { useState, useEffect, useCallback } from 'react';
 import { useSearchParams } from 'react-router-dom';
-import { Tv, SlidersHorizontal, X, ChevronDown } from 'lucide-react';
+import { CalendarDays, MonitorPlay, Tv, SlidersHorizontal, X, ChevronDown } from 'lucide-react';
 import { useApi } from '../hooks/useApi';
 import * as tmdb from '../services/tmdb';
 import { MEDIA_TYPES } from '../utils/constants';
@@ -8,6 +8,7 @@ import MediaCard from '../components/common/MediaCard';
 import GenrePill from '../components/common/GenrePill';
 import LoadingSkeleton from '../components/common/LoadingSkeleton';
 import { FALLBACK_TV } from '../utils/fallbackData';
+import { STREAMING_PLATFORMS, TIME_FILTERS, TV_COLLECTIONS, WATCH_REGIONS } from '../utils/discoveryOptions';
 
 const TABS = [
   { key: 'airing_today', label: 'Airing Today' },
@@ -30,6 +31,10 @@ function TvShows() {
   const [activeTab, setActiveTab] = useState(initialTab);
   const [selectedGenres, setSelectedGenres] = useState([]);
   const [sortBy, setSortBy] = useState('popularity.desc');
+  const [providerId, setProviderId] = useState('all');
+  const [watchRegion, setWatchRegion] = useState('US');
+  const [collection, setCollection] = useState('all');
+  const [timeWindow, setTimeWindow] = useState('all');
   const [showSortDropdown, setShowSortDropdown] = useState(false);
   const [page, setPage] = useState(1);
   const [allShows, setAllShows] = useState([]);
@@ -45,8 +50,16 @@ function TvShows() {
     loading: showsLoading,
     error: showsError,
   } = useApi(
-    () => tmdb.getTvShows(activeTab, { page: 1, genreId: selectedGenres.join(','), sortBy }),
-    [activeTab, selectedGenres, sortBy]
+    () => tmdb.getTvShows(activeTab, {
+      page: 1,
+      genreId: selectedGenres.join(','),
+      sortBy,
+      providerId,
+      region: watchRegion,
+      collection,
+      timeWindow,
+    }),
+    [activeTab, selectedGenres, sortBy, providerId, watchRegion, collection, timeWindow]
   );
 
   useEffect(() => {
@@ -94,6 +107,10 @@ function TvShows() {
         page: nextPage,
         genreId: selectedGenres.join(','),
         sortBy,
+        providerId,
+        region: watchRegion,
+        collection,
+        timeWindow,
       });
       if (data?.results) {
         setAllShows((prev) => [...prev, ...data.results]);
@@ -104,11 +121,13 @@ function TvShows() {
     } finally {
       setLoadingMore(false);
     }
-  }, [page, activeTab, selectedGenres, sortBy]);
+  }, [page, activeTab, selectedGenres, sortBy, providerId, watchRegion, collection, timeWindow]);
 
   const totalPages = showsData?.total_pages || 1;
   const genreList = Array.isArray(genres) ? genres : (genres?.genres || []);
   const currentSortLabel = SORT_OPTIONS.find((s) => s.key === sortBy)?.label || 'Sort';
+  const currentProviderLabel = STREAMING_PLATFORMS.find((p) => p.key === providerId)?.label || 'All Platforms';
+  const currentTimeLabel = TIME_FILTERS.find((t) => t.key === timeWindow)?.label || 'Any Time';
   const displayShows = allShows.length > 0 ? allShows : FALLBACK_TV;
 
   return (
@@ -133,6 +152,58 @@ function TvShows() {
       </div>
 
       <div className="page-content">
+        <section className="browse-control-panel" aria-label="TV discovery controls">
+          <div className="browse-control-header">
+            <div>
+              <span className="stream-kicker">Browse smarter</span>
+              <h2>Regions, platforms, genres, and airing windows</h2>
+            </div>
+            <div className="browse-select-group">
+              <label>
+                <MonitorPlay size={15} aria-hidden="true" />
+                <select value={providerId} onChange={(event) => { setProviderId(event.target.value); setAllShows([]); setPage(1); }}>
+                  {STREAMING_PLATFORMS.map((platform) => (
+                    <option key={platform.key} value={platform.key}>{platform.label}</option>
+                  ))}
+                </select>
+              </label>
+              <label>
+                Region
+                <select value={watchRegion} onChange={(event) => { setWatchRegion(event.target.value); setAllShows([]); setPage(1); }}>
+                  {WATCH_REGIONS.map((region) => (
+                    <option key={region.key} value={region.key}>{region.label}</option>
+                  ))}
+                </select>
+              </label>
+            </div>
+          </div>
+
+          <div className="browse-chip-row" aria-label="TV collections">
+            {TV_COLLECTIONS.map((item) => (
+              <button
+                key={item.key}
+                className={`browse-chip ${collection === item.key ? 'browse-chip-active' : ''}`}
+                onClick={() => { setCollection(item.key); setAllShows([]); setPage(1); }}
+              >
+                {item.label}
+              </button>
+            ))}
+          </div>
+
+          <div className="browse-chip-row" aria-label="Airing window">
+            <span className="browse-row-label"><CalendarDays size={14} aria-hidden="true" /> Window</span>
+            {TIME_FILTERS.map((item) => (
+              <button
+                key={item.key}
+                className={`browse-chip ${timeWindow === item.key ? 'browse-chip-active' : ''}`}
+                onClick={() => { setTimeWindow(item.key); setAllShows([]); setPage(1); }}
+              >
+                {item.label}
+              </button>
+            ))}
+          </div>
+        </section>
+
         {/* Filters Row */}
         <div className="filters-row">
           <div className="genre-filters">
@@ -144,7 +215,7 @@ function TvShows() {
                   <GenrePill
                     key={genre.id}
                     genre={genre}
-                    active={selectedGenres.includes(genre.id)}
+                    isActive={selectedGenres.includes(genre.id)}
                     onClick={() => handleGenreToggle(genre.id)}
                   />
                 ))}
@@ -183,9 +254,12 @@ function TvShows() {
         </div>
 
         {/* Active Filters */}
-        {selectedGenres.length > 0 && (
+        {(selectedGenres.length > 0 || collection !== 'all' || providerId !== 'all' || timeWindow !== 'all') && (
           <div className="active-filters">
             <span className="active-filters-label">Filtered by:</span>
+            {collection !== 'all' && <span className="active-filter-tag">{TV_COLLECTIONS.find((item) => item.key === collection)?.label}</span>}
+            {providerId !== 'all' && <span className="active-filter-tag">{currentProviderLabel}</span>}
+            {timeWindow !== 'all' && <span className="active-filter-tag">{currentTimeLabel}</span>}
             {selectedGenres.map((genreId) => {
               const genre = genreList.find((g) => g.id === genreId);
               return genre ? (

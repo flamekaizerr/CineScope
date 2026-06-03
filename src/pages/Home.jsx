@@ -206,10 +206,11 @@ function Home() {
               {[
                 { key: 'day', label: 'Today' },
                 { key: 'week', label: 'Week' },
+                { key: 'month', label: 'Month' },
               ].map((tab) => (
                 <button
                   key={tab.key}
-                  className={`tab ${trendingWindow === tab.key ? 'tab-active' : ''}`}
+                  className={`tab hot-tab window-chip ${trendingWindow === tab.key ? 'tab-active' : ''}`}
                   onClick={() => setTrendingWindow(tab.key)}
                 >
                   {tab.label}

@@ -1,7 +1,8 @@
 import { memo, useCallback, useEffect, useRef, useState } from 'react';
 import { Link, NavLink, useNavigate } from 'react-router-dom';
-import { Bookmark, Compass, Film, LogIn, LogOut, Menu, Search, Sparkles, Telescope, Tv, User, Wand2, X } from 'lucide-react';
+import { Bookmark, Compass, Film, LogIn, LogOut, Menu, Moon, Search, Sparkles, Sun, Telescope, Tv, User, Wand2, X } from 'lucide-react';
 import { useAuth } from '../../context/AuthContext';
+import { useTheme } from '../../context/ThemeContext';
 
 const NAV_ITEMS = [
   { to: '/movies', label: 'Movies', icon: Film },
@@ -13,6 +14,7 @@ const NAV_ITEMS = [
 
 function Navbar() {
   const { user, isAuthenticated, logout } = useAuth();
+  const { theme, toggleTheme } = useTheme();
   const navigate = useNavigate();
   const [searchQuery, setSearchQuery] = useState('');
   const [mobileOpen, setMobileOpen] = useState(false);
@@ -91,6 +93,15 @@ function Navbar() {
         </form>
 
         <div className="navbar-actions">
+          <button
+            className="navbar-icon-btn theme-mode-btn"
+            onClick={toggleTheme}
+            aria-label={theme === 'dark' ? 'Switch to light mode' : 'Switch to dark mode'}
+            title={theme === 'dark' ? 'Light mode' : 'Dark mode'}
+          >
+            {theme === 'dark' ? <Sun size={19} aria-hidden="true" /> : <Moon size={19} aria-hidden="true" />}
+          </button>
+
           <Link to="/watchlist" className="navbar-icon-btn" aria-label="Watchlist">
             <Bookmark size={19} aria-hidden="true" />
           </Link>
@@ -159,6 +170,10 @@ function Navbar() {
           </form>
           {renderNavLinks('stream-nav-links-mobile')}
           <div className="navbar-mobile-actions">
+            <button type="button" onClick={toggleTheme}>
+              {theme === 'dark' ? <Sun size={17} aria-hidden="true" /> : <Moon size={17} aria-hidden="true" />}
+              {theme === 'dark' ? 'Light Mode' : 'Dark Mode'}
+            </button>
             <Link to="/watchlist" onClick={() => setMobileOpen(false)}>
               <Bookmark size={17} aria-hidden="true" />
               Watchlist

@@ -233,6 +233,36 @@ export async function getAnimeByGenre(genreId, page = 1) {
   }
 }
 
+export async function browseAnime({
+  tab = 'season',
+  page = 1,
+  genres = [],
+  format = 'all',
+  timeWindow = 'all',
+} = {}) {
+  try {
+    if (tab === 'season' && genres.length === 0 && format === 'all' && timeWindow !== 'month') {
+      return getSeasonNow(page);
+    }
+    if (tab === 'upcoming' && genres.length === 0 && format === 'all') {
+      return getSeasonUpcoming(page);
+    }
+    const params = {
+      page,
+      sfw: true,
+      order_by: tab === 'popular' ? 'popularity' : 'score',
+      sort: 'desc',
+      genres: genres.length ? genres.join(',') : undefined,
+      type: format !== 'all' ? format : undefined,
+      status: tab === 'airing' || timeWindow === 'today' || timeWindow === 'week' ? 'airing' : undefined,
+    };
+    return await jikanFetch('/anime', params);
+  } catch (error) {
+    console.error('[Jikan] browseAnime failed:', error.message);
+    return { data: [], pagination: {} };
+  }
+}
+
 // ---------------------------------------------------------------------------
 // Genres
 // ---------------------------------------------------------------------------
@@ -299,6 +329,7 @@ const jikanService = {
   searchAnime,
   getAnimeByGenre,
   getAnimeGenres,
+  browseAnime,
 };
 
 export default jikanService;

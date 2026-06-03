@@ -60,6 +60,77 @@ async function tmdbFetch(path, params = {}) {
   return response.json();
 }
 
+function formatDate(date) {
+  return date.toISOString().slice(0, 10);
+}
+
+function getWindowRange(windowKey) {
+  if (!windowKey || windowKey === 'all') return {};
+  const now = new Date();
+  const from = new Date(now);
+  if (windowKey === 'week') {
+    from.setDate(now.getDate() - 7);
+  } else if (windowKey === 'month') {
+    from.setMonth(now.getMonth() - 1);
+  }
+  return {
+    from: formatDate(windowKey === 'today' ? now : from),
+    to: formatDate(now),
+  };
+}
+
+function mergeGenre(existing, next) {
+  return [existing, next].filter(Boolean).join(',');
+}
+
+function getMovieCollectionParams(collection) {
+  switch (collection) {
+    case 'animation':
+      return { with_genres: '16' };
+    case 'korean':
+      return { with_origin_country: 'KR', with_original_language: 'ko' };
+    case 'thai':
+      return { with_origin_country: 'TH', with_original_language: 'th' };
+    case 'indian':
+      return { with_origin_country: 'IN' };
+    case 'family':
+      return { with_genres: '10751' };
+    case 'documentary':
+      return { with_genres: '99' };
+    default:
+      return {};
+  }
+}
+
+function getTvCollectionParams(collection) {
+  switch (collection) {
+    case 'animation':
+      return { with_genres: '16' };
+    case 'kdrama':
+      return { with_origin_country: 'KR', with_original_language: 'ko' };
+    case 'thai':
+      return { with_origin_country: 'TH', with_original_language: 'th' };
+    case 'indian':
+      return { with_origin_country: 'IN' };
+    case 'kids':
+      return { with_genres: '10762' };
+    case 'reality':
+      return { with_genres: '10764' };
+    default:
+      return {};
+  }
+}
+
+function shouldUseDiscover(options = {}) {
+  return Boolean(
+    options.genreId ||
+    options.providerId ||
+    options.collection && options.collection !== 'all' ||
+    options.timeWindow && options.timeWindow !== 'all' ||
+    options.sortBy
+  );
+}
+
 // ---------------------------------------------------------------------------
 // Image URL helpers
 // ---------------------------------------------------------------------------
@@ -108,10 +179,52 @@ export function getProfileUrl(path, size = 'w185') {
  * @returns {Promise<{page: number, results: any[], total_pages: number, total_results: number}>}
  */
 export async function getTrending(mediaType = 'all', timeWindow = 'day') {
+  if (timeWindow === 'month') {
+    return getMonthlyTrending(mediaType);
+  }
   try {
     return await tmdbFetch(`/trending/${mediaType}/${timeWindow}`);
   } catch (error) {
     console.warn('[TMDB] getTrending failed:', error.message);
+    return { page: 1, results: [], total_pages: 0, total_results: 0 };
+  }
+}
+
+export async function getMonthlyTrending(mediaType = 'all') {
+  const windowRange = getWindowRange('month');
+  const movieParams = {
+    page: 1,
+    sort_by: 'popularity.desc',
+    'primary_release_date.gte': windowRange.from,
+    'primary_release_date.lte': windowRange.to,
+    'vote_count.gte': 20,
+  };
+  const tvParams = {
+    page: 1,
+    sort_by: 'popularity.desc',
+    'first_air_date.gte': windowRange.from,
+    'first_air_date.lte': windowRange.to,
+    'vote_count.gte': 10,
+  };
+
+  try {
+    if (mediaType === 'movie') {
+      return await tmdbFetch('/discover/movie', movieParams);
+    }
+    if (mediaType === 'tv') {
+      return await tmdbFetch('/discover/tv', tvParams);
+    }
+    const [movies, tv] = await Promise.all([
+      tmdbFetch('/discover/movie', movieParams),
+      tmdbFetch('/discover/tv', tvParams),
+    ]);
+    const results = [
+      ...(movies?.results || []).map((item) => ({ ...item, media_type: 'movie' })),
+      ...(tv?.results || []).map((item) => ({ ...item, media_type: 'tv' })),
+    ].sort((a, b) => (b.popularity || 0) - (a.popularity || 0));
+    return { page: 1, results, total_pages: 1, total_results: results.length };
+  } catch (error) {
+    console.warn('[TMDB] getMonthlyTrending failed:', error.message);
     return { page: 1, results: [], total_pages: 0, total_results: 0 };
   }
 }
@@ -379,10 +492,32 @@ export async function getNewOnStreaming(page = 1) {
  * @param {object} [options={}]
  * @returns {Promise<{page: number, results: any[], total_pages: number, total_results: number}>}
  */
-export async function getMovies(category = 'popular', { page = 1, genreId, sortBy } = {}) {
+export async function getMovies(category = 'popular', {
+  page = 1,
+  genreId,
+  sortBy,
+  providerId,
+  region = config.tmdb.defaultRegion,
+  collection = 'all',
+  timeWindow = 'all',
+} = {}) {
   try {
-    if (genreId) {
-      return await tmdbFetch('/discover/movie', { page, with_genres: genreId, sort_by: sortBy || 'popularity.desc' });
+    if (shouldUseDiscover({ genreId, providerId, collection, timeWindow, sortBy })) {
+      const windowRange = getWindowRange(timeWindow);
+      const collectionParams = getMovieCollectionParams(collection);
+      const params = {
+        page,
+        sort_by: sortBy || (category === 'top_rated' ? 'vote_average.desc' : 'popularity.desc'),
+        with_genres: mergeGenre(genreId, collectionParams.with_genres),
+        with_watch_providers: providerId && providerId !== 'all' ? providerId : undefined,
+        watch_region: providerId && providerId !== 'all' ? region : undefined,
+        with_origin_country: collectionParams.with_origin_country,
+        with_original_language: collectionParams.with_original_language,
+        'vote_count.gte': category === 'top_rated' ? 100 : 10,
+        'primary_release_date.gte': windowRange.from,
+        'primary_release_date.lte': windowRange.to,
+      };
+      return await tmdbFetch('/discover/movie', params);
     }
     const endpoints = {
       now_playing: '/movie/now_playing',
@@ -391,7 +526,7 @@ export async function getMovies(category = 'popular', { page = 1, genreId, sortB
       upcoming: '/movie/upcoming',
     };
     const path = endpoints[category] || '/movie/popular';
-    return await tmdbFetch(path, { page });
+    return await tmdbFetch(path, { page, region });
   } catch (error) {
     console.warn('[TMDB] getMovies failed:', error.message);
     return { page, results: [], total_pages: 0, total_results: 0 };
@@ -404,10 +539,32 @@ export async function getMovies(category = 'popular', { page = 1, genreId, sortB
  * @param {object} [options={}]
  * @returns {Promise<{page: number, results: any[], total_pages: number, total_results: number}>}
  */
-export async function getTvShows(category = 'popular', { page = 1, genreId, sortBy } = {}) {
+export async function getTvShows(category = 'popular', {
+  page = 1,
+  genreId,
+  sortBy,
+  providerId,
+  region = config.tmdb.defaultRegion,
+  collection = 'all',
+  timeWindow = 'all',
+} = {}) {
   try {
-    if (genreId) {
-      return await tmdbFetch('/discover/tv', { page, with_genres: genreId, sort_by: sortBy || 'popularity.desc' });
+    if (shouldUseDiscover({ genreId, providerId, collection, timeWindow, sortBy })) {
+      const windowRange = getWindowRange(timeWindow);
+      const collectionParams = getTvCollectionParams(collection);
+      const params = {
+        page,
+        sort_by: sortBy || (category === 'top_rated' ? 'vote_average.desc' : 'popularity.desc'),
+        with_genres: mergeGenre(genreId, collectionParams.with_genres),
+        with_watch_providers: providerId && providerId !== 'all' ? providerId : undefined,
+        watch_region: providerId && providerId !== 'all' ? region : undefined,
+        with_origin_country: collectionParams.with_origin_country,
+        with_original_language: collectionParams.with_original_language,
+        'vote_count.gte': category === 'top_rated' ? 50 : 5,
+        'first_air_date.gte': windowRange.from,
+        'first_air_date.lte': windowRange.to,
+      };
+      return await tmdbFetch('/discover/tv', params);
     }
     const endpoints = {
       airing_today: '/tv/airing_today',
@@ -522,6 +679,7 @@ export async function getSeasonDetails(tvId, seasonNumber) {
 
 const tmdbService = {
   getTrending,
+  getMonthlyTrending,
   getPopular,
   getTopRated,
   getNowPlaying,

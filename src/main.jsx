@@ -3,6 +3,16 @@ import { createRoot } from 'react-dom/client'
 import './index.css'
 import App from './App.jsx'
 
+try {
+  const storedTheme = localStorage.getItem('cinescope_theme');
+  const theme = storedTheme === 'dark' ? 'dark' : 'light';
+  document.documentElement.setAttribute('data-theme', theme);
+  document.documentElement.style.colorScheme = theme;
+} catch {
+  document.documentElement.setAttribute('data-theme', 'light');
+  document.documentElement.style.colorScheme = 'light';
+}
+
 // Register service worker for PWA in production only.
 // In dev it can cache a stale shell and make the app look blank while debugging.
 if ('serviceWorker' in navigator && import.meta.env.PROD) {

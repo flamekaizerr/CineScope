@@ -1,9 +1,9 @@
 export const TIME_FILTERS = [
-  { key: 'all', label: 'Any Time' },
   { key: 'today', label: 'Today' },
   { key: 'week', label: 'This Week' },
   { key: 'month', label: 'This Month' },
   { key: 'year', label: 'This Year' },
+  { key: 'all', label: 'All Time' },
 ];
 
 export const WATCH_REGIONS = [

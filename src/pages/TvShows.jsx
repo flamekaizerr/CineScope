@@ -115,7 +115,7 @@ function TvShows() {
   const currentSortLabel = SORT_OPTIONS.find((s) => s.key === sortBy)?.label || 'Sort';
   const currentProvider = STREAMING_PLATFORMS.find((p) => p.key === providerId) || STREAMING_PLATFORMS[0];
   const currentProviderLabel = currentProvider.label;
-  const currentTimeLabel = TIME_FILTERS.find((t) => t.key === timeWindow)?.label || 'Any Time';
+  const currentTimeLabel = TIME_FILTERS.find((t) => t.key === timeWindow)?.label || 'All Time';
   const currentRegionLabel = WATCH_REGIONS.find((r) => r.key === watchRegion)?.label || watchRegion;
   const displayShows = allShows;
 

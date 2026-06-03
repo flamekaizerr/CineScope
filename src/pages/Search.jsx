@@ -120,6 +120,7 @@ function Search() {
 
   // Combine and filter results on first load
   useEffect(() => {
+    if (tmdbLoading || animeLoading) return;
     const combined = [];
 
     // Add TMDB results
@@ -149,7 +150,7 @@ function Search() {
 
     setAllResults(combined);
     setPage(1);
-  }, [tmdbResults, animeResults, activeFilter]);
+  }, [tmdbResults, animeResults, activeFilter, tmdbLoading, animeLoading]);
 
   const handleLoadMore = useCallback(async () => {
     if (!debouncedQuery) return;

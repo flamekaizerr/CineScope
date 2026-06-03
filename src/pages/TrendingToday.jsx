@@ -21,13 +21,15 @@ function TrendingToday() {
   );
 
   useEffect(() => {
-    if (data?.results) {
-      // getTrending currently returns a single page from our implementation, 
-      // but in case it supports pagination later, we set it up this way.
-      setAllTrending(data.results);
-      setPage(1);
+    if (data?.results && !loading) {
+      setAllTrending((prev) => {
+        if (prev.length === 0 || page === 1) {
+          return data.results;
+        }
+        return prev;
+      });
     }
-  }, [data]);
+  }, [data, loading, page, setAllTrending]);
 
   const handleLoadMore = useCallback(async () => {
     // Note: getTrending in tmdb.js currently doesn't accept page param, 

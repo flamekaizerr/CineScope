@@ -128,7 +128,7 @@ function Anime() {
           </div>
           <div className="browse-chip-row browse-chip-row-tight" aria-label="Anime window">
             <span className="browse-row-label"><CalendarDays size={14} aria-hidden="true" /> Window</span>
-            {TIME_FILTERS.filter((item) => item.key !== 'all').map((item) => (
+            {TIME_FILTERS.map((item) => (
               <button
                 key={item.key}
                 className={`browse-chip window-chip ${timeWindow === item.key ? 'browse-chip-active' : ''}`}

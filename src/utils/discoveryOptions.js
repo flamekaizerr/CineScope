@@ -3,6 +3,7 @@ export const TIME_FILTERS = [
   { key: 'today', label: 'Today' },
   { key: 'week', label: 'This Week' },
   { key: 'month', label: 'This Month' },
+  { key: 'year', label: 'This Year' },
 ];
 
 export const WATCH_REGIONS = [

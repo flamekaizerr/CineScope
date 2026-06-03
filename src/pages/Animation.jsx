@@ -93,7 +93,7 @@ function Animation() {
       <section className="browse-control-panel browse-control-panel-compact" aria-label="Animation filters">
         <div className="browse-inline-toolbar">
           <div className="browse-chip-row browse-chip-row-tight" aria-label="Animation window">
-            {TIME_FILTERS.filter((item) => item.key !== 'all').map((item) => (
+            {TIME_FILTERS.map((item) => (
               <button
                 type="button"
                 key={item.key}

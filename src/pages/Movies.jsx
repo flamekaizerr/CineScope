@@ -166,7 +166,7 @@ function Movies() {
             </label>
 
             <div className="browse-chip-row browse-chip-row-tight" aria-label="Movie trend window">
-              {TIME_FILTERS.filter((item) => item.key !== 'all').map((item) => (
+              {TIME_FILTERS.map((item) => (
                 <button
                   key={item.key}
                   className={`browse-chip window-chip ${timeWindow === item.key ? 'browse-chip-active' : ''}`}

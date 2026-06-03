@@ -16,6 +16,7 @@ import Search from './pages/Search';
 import Watchlist from './pages/Watchlist';
 import ForYou from './pages/ForYou';
 import Profile from './pages/Profile';
+import NotFound from './pages/NotFound';
 import Login from './pages/Login';
 import ScrollToTop from './components/common/ScrollToTop';
 
@@ -47,7 +48,7 @@ function App() {
                       <Route path="/watchlist" element={<Watchlist />} />
                       <Route path="/for-you" element={<ForYou />} />
                       <Route path="/profile" element={<Profile />} />
-                      <Route path="*" element={<Navigate to="/" replace />} />
+                      <Route path="*" element={<NotFound />} />
                     </Routes>
                   </Layout>
                 }

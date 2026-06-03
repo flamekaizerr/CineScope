@@ -63,6 +63,10 @@ function Search() {
     debouncedQuery,
   } = useDebouncedSearch(initialQuery, 400);
 
+  const [page, setPage] = useState(1);
+  const [allResults, setAllResults] = useState([]);
+  const [loadingMore, setLoadingMore] = useState(false);
+
   // TMDB multi search
   const {
     data: tmdbResults,
@@ -114,8 +118,8 @@ function Search() {
     setQuery(searchTerm);
   }, [setQuery]);
 
-  // Combine and filter results
-  const results = useMemo(() => {
+  // Combine and filter results on first load
+  useEffect(() => {
     const combined = [];
 
     // Add TMDB results
@@ -143,8 +147,33 @@ function Search() {
       });
     }
 
-    return combined;
+    setAllResults(combined);
+    setPage(1);
   }, [tmdbResults, animeResults, activeFilter]);
+
+  const handleLoadMore = useCallback(async () => {
+    if (!debouncedQuery) return;
+    const nextPage = page + 1;
+    setLoadingMore(true);
+    try {
+      const data = await tmdb.searchMulti(debouncedQuery, nextPage);
+      if (data?.results) {
+        const newResults = [];
+        data.results.forEach((item) => {
+          if (item.media_type === 'person') return;
+          if (activeFilter === 'all' || activeFilter === item.media_type) {
+            newResults.push(item);
+          }
+        });
+        setAllResults((prev) => [...prev, ...newResults]);
+        setPage(nextPage);
+      }
+    } catch (err) {
+      console.error(err);
+    } finally {
+      setLoadingMore(false);
+    }
+  }, [debouncedQuery, page, activeFilter]);
 
   const isLoading = tmdbLoading || animeLoading;
   const hasError = tmdbError || animeError;
@@ -206,25 +235,38 @@ function Search() {
         )}
 
         {/* Results */}
-        {hasQuery && !isLoading && !hasError && results.length > 0 && (
+        {hasQuery && !isLoading && !hasError && allResults.length > 0 && (
           <>
             <p className="search-result-count">
-              Found {results.length} result{results.length !== 1 ? 's' : ''} for "{debouncedQuery}"
+              Found {allResults.length} result{allResults.length !== 1 ? 's' : ''} for "{debouncedQuery}"
             </p>
             <div className="media-grid">
-              {results.map((item) => (
+              {allResults.map((item, index) => (
                 <MediaCard
-                  key={`${item.media_type}-${item.id}`}
+                  key={`${item.media_type}-${item.id}-${index}`}
                   item={item}
                   mediaType={item.media_type}
                 />
               ))}
             </div>
+
+            {/* Load More Button */}
+            {tmdbResults && page < tmdbResults.total_pages && activeFilter !== 'anime' && (
+              <div className="load-more-container">
+                <button
+                  className="load-more-btn"
+                  onClick={handleLoadMore}
+                  disabled={loadingMore}
+                >
+                  {loadingMore ? 'Loading...' : 'Load More'}
+                </button>
+              </div>
+            )}
           </>
         )}
 
         {/* No Results */}
-        {hasQuery && !isLoading && !hasError && results.length === 0 && (
+        {hasQuery && !isLoading && !hasError && allResults.length === 0 && (
           <div className="empty-state">
             <SearchIcon size={48} />
             <h3>No results found</h3>

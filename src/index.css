@@ -4175,6 +4175,14 @@ body {
   gap: 8px;
 }
 
+.load-more-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-top: 2rem;
+  margin-bottom: 2rem;
+}
+
 .genre-pill,
 .clear-filters-btn,
 .sort-btn,
@@ -5889,4 +5897,56 @@ body {
   margin-top: 4px;
   text-transform: uppercase;
   letter-spacing: 0.5px;
+}
+
+/* -------------------------------------------------------------------------
+   NotFound Page
+   ------------------------------------------------------------------------- */
+.not-found-page {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 60vh;
+  text-align: center;
+}
+
+.not-found-content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1rem;
+}
+
+.not-found-icon {
+  color: var(--primary);
+  margin-bottom: 1rem;
+}
+
+.not-found-content h1 {
+  font-size: 6rem;
+  line-height: 1;
+  margin: 0;
+  color: var(--primary);
+  text-shadow: 0 4px 20px rgba(var(--primary-rgb), 0.3);
+}
+
+.not-found-content h2 {
+  font-size: 2rem;
+  margin: 0;
+  color: var(--text-primary);
+}
+
+.not-found-content p {
+  color: var(--text-secondary);
+  margin-bottom: 2rem;
+}
+
+.not-found-btn {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.75rem 1.5rem;
+  border-radius: 8px;
+  text-decoration: none;
+  font-weight: 600;
 }

@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback, useRef } from 'react';
 import { CalendarDays, Film, MonitorPlay, SlidersHorizontal, X, ChevronDown } from 'lucide-react';
 import { useApi } from '../hooks/useApi';
 import * as tmdb from '../services/tmdb';
@@ -6,6 +6,7 @@ import { MEDIA_TYPES } from '../utils/constants';
 import MediaCard from '../components/common/MediaCard';
 import GenrePill from '../components/common/GenrePill';
 import LoadingSkeleton from '../components/common/LoadingSkeleton';
+import { useSessionStorage } from '../hooks/useSessionStorage';
 
 import { MOVIE_COLLECTIONS, STREAMING_PLATFORMS, TIME_FILTERS, WATCH_REGIONS } from '../utils/discoveryOptions';
 
@@ -18,15 +19,15 @@ const SORT_OPTIONS = [
 ];
 
 function Movies() {
-  const [selectedGenres, setSelectedGenres] = useState([]);
-  const [sortBy, setSortBy] = useState('popularity.desc');
-  const [providerId, setProviderId] = useState('all');
-  const [watchRegion, setWatchRegion] = useState('US');
-  const [collection, setCollection] = useState('all');
-  const [timeWindow, setTimeWindow] = useState('today');
+  const [selectedGenres, setSelectedGenres] = useSessionStorage('movies_genres', []);
+  const [sortBy, setSortBy] = useSessionStorage('movies_sort', 'popularity.desc');
+  const [providerId, setProviderId] = useSessionStorage('movies_provider', 'all');
+  const [watchRegion, setWatchRegion] = useSessionStorage('movies_region', 'US');
+  const [collection, setCollection] = useSessionStorage('movies_collection', 'all');
+  const [timeWindow, setTimeWindow] = useSessionStorage('movies_time', 'today');
   const [showSortDropdown, setShowSortDropdown] = useState(false);
-  const [page, setPage] = useState(1);
-  const [allMovies, setAllMovies] = useState([]);
+  const [page, setPage] = useSessionStorage('movies_page', 1);
+  const [allMovies, setAllMovies] = useSessionStorage('movies_list', []);
   const [loadingMore, setLoadingMore] = useState(false);
 
   const {
@@ -51,12 +52,20 @@ function Movies() {
     [selectedGenres, sortBy, providerId, watchRegion, collection, timeWindow]
   );
 
+  const filtersRef = useRef({ selectedGenres, sortBy, providerId, watchRegion, collection, timeWindow });
+
   useEffect(() => {
+    const currentFilters = { selectedGenres, sortBy, providerId, watchRegion, collection, timeWindow };
+    const filtersChanged = JSON.stringify(filtersRef.current) !== JSON.stringify(currentFilters);
+    
     if (moviesData?.results) {
-      setAllMovies(moviesData.results);
-      setPage(1);
+      if (filtersChanged || allMovies.length === 0) {
+        setAllMovies(moviesData.results);
+        setPage(1);
+        filtersRef.current = currentFilters;
+      }
     }
-  }, [moviesData]);
+  }, [moviesData, selectedGenres, sortBy, providerId, watchRegion, collection, timeWindow]);
 
   const handleGenreToggle = useCallback((genreId) => {
     setSelectedGenres((prev) =>

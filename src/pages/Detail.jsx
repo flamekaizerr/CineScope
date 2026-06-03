@@ -1,7 +1,7 @@
 import { useState, useEffect, useCallback, useMemo } from 'react';
-import { useLocation, useParams, Link } from 'react-router-dom';
+import { useLocation, useNavigate, useParams, Link } from 'react-router-dom';
 import {
-  Star, Clock, Calendar, Play, ChevronDown, ChevronUp, ExternalLink,
+  Star, Clock, Calendar, Play, ChevronDown, ChevronUp, ExternalLink, X,
 } from 'lucide-react';
 import { useApi } from '../hooks/useApi';
 import { useUserData } from '../context/UserDataContext';
@@ -20,6 +20,7 @@ import { FALLBACK_MOVIES, FALLBACK_TV } from '../utils/fallbackData';
 function Detail() {
   const { mediaType, id } = useParams();
   const location = useLocation();
+  const navigate = useNavigate();
   const { updateRating, getItem } = useUserData();
 
   const [userRating, setUserRating] = useState(0);
@@ -28,6 +29,7 @@ function Detail() {
   const [expandedReview, setExpandedReview] = useState(null);
   const [selectedSeason, setSelectedSeason] = useState(1);
   const [showAllCast, setShowAllCast] = useState(false);
+  const [activePanel, setActivePanel] = useState('overview');
 
   const type = mediaType || (location.pathname.startsWith('/movie/') ? 'movie' : 'tv');
 
@@ -139,6 +141,14 @@ function Detail() {
     updateRating(Number(id), type, rating);
   }, [id, type, updateRating]);
 
+  const handleClose = useCallback(() => {
+    if (location.key && location.key !== 'default') {
+      navigate(-1);
+      return;
+    }
+    navigate(type === 'tv' ? '/tv' : '/movies');
+  }, [location.key, navigate, type]);
+
   const cast = credits?.cast || [];
   const crew = credits?.crew || [];
   const director = crew.find((c) => c.job === 'Director');
@@ -147,6 +157,13 @@ function Detail() {
   const similarList = similar?.results || [];
   const episodes = seasonData?.episodes || [];
   const seasons = detailsForPage?.seasons?.filter((s) => s.season_number > 0) || [];
+  const detailTabs = [
+    { key: 'overview', label: 'Overview' },
+    { key: 'cast', label: 'Cast' },
+    { key: 'watch', label: 'Where to Watch' },
+    ...(type === 'tv' && seasons.length > 0 ? [{ key: 'episodes', label: 'Episodes' }] : []),
+    { key: 'buzz', label: 'Buzz' },
+  ];
 
   if (detailsLoading && !storedDetails) {
     return (
@@ -184,6 +201,9 @@ function Detail() {
 
   return (
     <div className="page detail-page">
+      <button className="detail-close-btn" type="button" onClick={handleClose} aria-label="Close title">
+        <X size={20} aria-hidden="true" />
+      </button>
       {/* Backdrop Header */}
       <div
         className="detail-backdrop"
@@ -292,26 +312,63 @@ function Detail() {
       </div>
 
       <div className="page-content">
-        {/* Overview */}
-        {detailsForPage.overview && (
-          <section className="section">
+        <div className="detail-tabbar" role="tablist" aria-label={`${title} details`}>
+          {detailTabs.map((tab) => (
+            <button
+              key={tab.key}
+              type="button"
+              role="tab"
+              aria-selected={activePanel === tab.key}
+              className={`detail-tab ${activePanel === tab.key ? 'detail-tab-active' : ''}`}
+              onClick={() => setActivePanel(tab.key)}
+            >
+              {tab.label}
+            </button>
+          ))}
+        </div>
+
+        {activePanel === 'overview' && (
+          <section className="section detail-panel">
             <h2 className="section-title">Overview</h2>
-            <p className="detail-overview">{detailsForPage.overview}</p>
+            {detailsForPage.overview ? (
+              <p className="detail-overview">{detailsForPage.overview}</p>
+            ) : (
+              <p className="empty-message">No overview available.</p>
+            )}
+            {director && (
+              <div className="detail-director detail-director-inline">
+                <span className="detail-director-label">Directed by</span>
+                <span className="detail-director-name">{director.name}</span>
+              </div>
+            )}
           </section>
         )}
 
-        {/* Where to Watch */}
-        <section className="section">
+        {activePanel === 'watch' && (
+        <section className="section detail-panel">
           <h2 className="section-title">Where to Watch</h2>
+          <div className="detail-panel-actions">
+            {trailer && (
+              <button className="btn btn-trailer" onClick={() => setShowTrailer(true)}>
+                <Play size={16} /> Watch Trailer
+              </button>
+            )}
+            {!trailer && (
+              <a className="btn btn-trailer" href={trailerSearchUrl} target="_blank" rel="noreferrer">
+                <ExternalLink size={16} /> Find Trailer
+              </a>
+            )}
+          </div>
           {providersLoading ? (
             <LoadingSkeleton type="providers" />
           ) : (
             <WhereToWatch providers={watchProviders} />
           )}
         </section>
+        )}
 
-        {/* Cast */}
-        <section className="section">
+        {activePanel === 'cast' && (
+        <section className="section detail-panel">
           <h2 className="section-title">Cast</h2>
           {creditsLoading ? (
             <LoadingSkeleton type="cast" count={8} />
@@ -333,10 +390,10 @@ function Detail() {
             </button>
           )}
         </section>
+        )}
 
-        {/* TV: Season Selector & Episodes */}
-        {type === 'tv' && seasons.length > 0 && (
-          <section className="section">
+        {activePanel === 'episodes' && type === 'tv' && seasons.length > 0 && (
+          <section className="section detail-panel">
             <div className="section-header">
               <h2 className="section-title">Episodes</h2>
               <div className="season-selector">
@@ -395,9 +452,9 @@ function Detail() {
           </section>
         )}
 
-        {/* Reviews */}
-        <section className="section">
-          <h2 className="section-title">Reviews</h2>
+        {activePanel === 'buzz' && (
+        <section className="section detail-panel">
+          <h2 className="section-title">Internet Buzz & Reviews</h2>
           {reviewsLoading ? (
             <LoadingSkeleton type="reviews" count={3} />
           ) : reviewList.length > 0 ? (
@@ -450,11 +507,9 @@ function Detail() {
           ) : (
             <p className="empty-message">No reviews yet. Be the first to review!</p>
           )}
-        </section>
 
-        {/* Recommendations */}
-        {recommendationList.length > 0 && (
-          <section className="section">
+          {recommendationList.length > 0 && (
+          <section className="section detail-nested-section">
             <h2 className="section-title">Recommendations</h2>
             {recommendationsLoading ? (
               <LoadingSkeleton type="row" count={6} />
@@ -462,11 +517,10 @@ function Detail() {
               <ContentRow items={recommendationList} />
             )}
           </section>
-        )}
+          )}
 
-        {/* Similar */}
-        {similarList.length > 0 && (
-          <section className="section">
+          {similarList.length > 0 && (
+          <section className="section detail-nested-section">
             <h2 className="section-title">Similar Titles</h2>
             {similarLoading ? (
               <LoadingSkeleton type="row" count={6} />
@@ -474,6 +528,8 @@ function Detail() {
               <ContentRow items={similarList} />
             )}
           </section>
+          )}
+        </section>
         )}
       </div>
 
@@ -481,6 +537,7 @@ function Detail() {
       {showTrailer && trailer && (
         <TrailerModal
           videoKey={trailer.key}
+          isOpen={showTrailer}
           title={trailer.name}
           onClose={() => setShowTrailer(false)}
         />

@@ -7,6 +7,7 @@ import Home from './pages/Home';
 import Movies from './pages/Movies';
 import TvShows from './pages/TvShows';
 import Anime from './pages/Anime';
+import Animation from './pages/Animation';
 import Buzz from './pages/Buzz';
 import Detail from './pages/Detail';
 import AnimeDetail from './pages/AnimeDetail';
@@ -15,6 +16,7 @@ import Watchlist from './pages/Watchlist';
 import ForYou from './pages/ForYou';
 import Profile from './pages/Profile';
 import Login from './pages/Login';
+import ScrollToTop from './components/common/ScrollToTop';
 
 function App() {
   return (
@@ -22,6 +24,7 @@ function App() {
       <AuthProvider>
         <UserDataProvider>
           <Router>
+            <ScrollToTop />
             <Routes>
               <Route path="/login" element={<Login />} />
               <Route
@@ -33,6 +36,7 @@ function App() {
                       <Route path="/movies" element={<Movies />} />
                       <Route path="/tv" element={<TvShows />} />
                       <Route path="/anime" element={<Anime />} />
+                      <Route path="/animation" element={<Animation />} />
                       <Route path="/buzz" element={<Buzz />} />
                       <Route path="/movie/:id" element={<Detail />} />
                       <Route path="/tv/:id" element={<Detail />} />

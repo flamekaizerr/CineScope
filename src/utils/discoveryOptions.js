@@ -15,16 +15,16 @@ export const WATCH_REGIONS = [
 ];
 
 export const STREAMING_PLATFORMS = [
-  { key: 'all', label: 'All Platforms' },
-  { key: '8', label: 'Netflix' },
-  { key: '9', label: 'Prime Video' },
-  { key: '337', label: 'Disney+' },
-  { key: '1899', label: 'Max' },
-  { key: '350', label: 'Apple TV+' },
-  { key: '15', label: 'Hulu' },
-  { key: '531', label: 'Paramount+' },
-  { key: '386', label: 'Peacock' },
-  { key: '122', label: 'Hotstar' },
+  { key: 'all', label: 'All Platforms', shortLabel: 'ALL' },
+  { key: '8', label: 'Netflix', shortLabel: 'N' },
+  { key: '9', label: 'Prime Video', shortLabel: 'Prime' },
+  { key: '337', label: 'Disney+', shortLabel: 'D+' },
+  { key: '1899', label: 'Max', shortLabel: 'Max' },
+  { key: '350', label: 'Apple TV+', shortLabel: 'tv+' },
+  { key: '15', label: 'Hulu', shortLabel: 'Hulu' },
+  { key: '531', label: 'Paramount+', shortLabel: 'P+' },
+  { key: '386', label: 'Peacock', shortLabel: 'Pck' },
+  { key: '122', label: 'Hotstar', shortLabel: 'HS' },
 ];
 
 export const MOVIE_COLLECTIONS = [
@@ -54,4 +54,14 @@ export const ANIME_FORMATS = [
   { key: 'ova', label: 'OVA' },
   { key: 'ona', label: 'ONA' },
   { key: 'special', label: 'Specials' },
+];
+
+export const ANIMATION_STUDIOS = [
+  { key: 'all', label: 'All Animation', shortLabel: 'Ani', logo: 'Ani', description: 'Every studio' },
+  { key: 'pixar', label: 'Pixar', shortLabel: 'Pixar', logo: 'PX', description: 'Pixar features' },
+  { key: 'dreamworks', label: 'DreamWorks', shortLabel: 'DW', logo: 'DW', description: 'DreamWorks worlds' },
+  { key: 'disney', label: 'Disney Animation', shortLabel: 'Disney', logo: 'D', description: 'Disney classics' },
+  { key: 'illumination', label: 'Illumination', shortLabel: 'Illum', logo: 'IL', description: 'Family hits' },
+  { key: 'ghibli', label: 'Studio Ghibli', shortLabel: 'Ghibli', logo: 'SG', description: 'Japanese animation' },
+  { key: 'sony', label: 'Sony Animation', shortLabel: 'Sony', logo: 'SA', description: 'Sony animation' },
 ];

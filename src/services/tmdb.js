@@ -124,11 +124,39 @@ function getTvCollectionParams(collection) {
 function shouldUseDiscover(options = {}) {
   return Boolean(
     options.genreId ||
-    options.providerId ||
+    options.providerId && options.providerId !== 'all' ||
     options.collection && options.collection !== 'all' ||
     options.timeWindow && options.timeWindow !== 'all' ||
+    options.region && options.region !== config.tmdb.defaultRegion ||
     options.sortBy
   );
+}
+
+function getAnimationStudioCompany(studio) {
+  switch (studio) {
+    case 'pixar':
+      return '3';
+    case 'dreamworks':
+      return '521';
+    case 'disney':
+      return '6125';
+    case 'illumination':
+      return '6704';
+    case 'ghibli':
+      return '10342';
+    case 'sony':
+      return '2251';
+    default:
+      return undefined;
+  }
+}
+
+function isGeneralTrendingBrowse({ genreId, providerId, collection, sortBy, region }) {
+  return !genreId &&
+    (!providerId || providerId === 'all') &&
+    (!collection || collection === 'all') &&
+    (!sortBy || sortBy === 'popularity.desc') &&
+    (!region || region === config.tmdb.defaultRegion);
 }
 
 // ---------------------------------------------------------------------------
@@ -502,7 +530,13 @@ export async function getMovies(category = 'popular', {
   timeWindow = 'all',
 } = {}) {
   try {
-    if (shouldUseDiscover({ genreId, providerId, collection, timeWindow, sortBy })) {
+    if (isGeneralTrendingBrowse({ genreId, providerId, collection, sortBy, region })) {
+      if (timeWindow === 'today') return await getTrending('movie', 'day');
+      if (timeWindow === 'week') return await getTrending('movie', 'week');
+      if (timeWindow === 'month') return await getMonthlyTrending('movie');
+    }
+
+    if (shouldUseDiscover({ genreId, providerId, collection, timeWindow, sortBy, region })) {
       const windowRange = getWindowRange(timeWindow);
       const collectionParams = getMovieCollectionParams(collection);
       const params = {
@@ -510,7 +544,8 @@ export async function getMovies(category = 'popular', {
         sort_by: sortBy || (category === 'top_rated' ? 'vote_average.desc' : 'popularity.desc'),
         with_genres: mergeGenre(genreId, collectionParams.with_genres),
         with_watch_providers: providerId && providerId !== 'all' ? providerId : undefined,
-        watch_region: providerId && providerId !== 'all' ? region : undefined,
+        watch_region: region,
+        with_watch_monetization_types: 'flatrate',
         with_origin_country: collectionParams.with_origin_country,
         with_original_language: collectionParams.with_original_language,
         'vote_count.gte': category === 'top_rated' ? 100 : 10,
@@ -549,7 +584,13 @@ export async function getTvShows(category = 'popular', {
   timeWindow = 'all',
 } = {}) {
   try {
-    if (shouldUseDiscover({ genreId, providerId, collection, timeWindow, sortBy })) {
+    if (isGeneralTrendingBrowse({ genreId, providerId, collection, sortBy, region })) {
+      if (timeWindow === 'today') return await getTrending('tv', 'day');
+      if (timeWindow === 'week') return await getTrending('tv', 'week');
+      if (timeWindow === 'month') return await getMonthlyTrending('tv');
+    }
+
+    if (shouldUseDiscover({ genreId, providerId, collection, timeWindow, sortBy, region })) {
       const windowRange = getWindowRange(timeWindow);
       const collectionParams = getTvCollectionParams(collection);
       const params = {
@@ -557,7 +598,8 @@ export async function getTvShows(category = 'popular', {
         sort_by: sortBy || (category === 'top_rated' ? 'vote_average.desc' : 'popularity.desc'),
         with_genres: mergeGenre(genreId, collectionParams.with_genres),
         with_watch_providers: providerId && providerId !== 'all' ? providerId : undefined,
-        watch_region: providerId && providerId !== 'all' ? region : undefined,
+        watch_region: region,
+        with_watch_monetization_types: 'flatrate',
         with_origin_country: collectionParams.with_origin_country,
         with_original_language: collectionParams.with_original_language,
         'vote_count.gte': category === 'top_rated' ? 50 : 5,
@@ -576,6 +618,31 @@ export async function getTvShows(category = 'popular', {
     return await tmdbFetch(path, { page });
   } catch (error) {
     console.warn('[TMDB] getTvShows failed:', error.message);
+    return { page, results: [], total_pages: 0, total_results: 0 };
+  }
+}
+
+export async function getAnimationMovies({
+  page = 1,
+  studio = 'all',
+  timeWindow = 'today',
+  region = config.tmdb.defaultRegion,
+} = {}) {
+  try {
+    const windowRange = getWindowRange(timeWindow);
+    return await tmdbFetch('/discover/movie', {
+      page,
+      sort_by: 'popularity.desc',
+      with_genres: '16',
+      with_companies: getAnimationStudioCompany(studio),
+      watch_region: region,
+      with_watch_monetization_types: 'flatrate',
+      'vote_count.gte': 10,
+      'primary_release_date.gte': windowRange.from,
+      'primary_release_date.lte': windowRange.to,
+    });
+  } catch (error) {
+    console.warn('[TMDB] getAnimationMovies failed:', error.message);
     return { page, results: [], total_pages: 0, total_results: 0 };
   }
 }
@@ -696,6 +763,7 @@ const tmdbService = {
   getNewOnStreaming,
   getMovies,
   getTvShows,
+  getAnimationMovies,
   getCredits,
   getVideos,
   getReviews,

@@ -1,5 +1,4 @@
 import { useState, useEffect, useCallback } from 'react';
-import { useSearchParams } from 'react-router-dom';
 import { CalendarDays, Film, MonitorPlay, SlidersHorizontal, X, ChevronDown } from 'lucide-react';
 import { useApi } from '../hooks/useApi';
 import * as tmdb from '../services/tmdb';
@@ -10,13 +9,6 @@ import LoadingSkeleton from '../components/common/LoadingSkeleton';
 import { FALLBACK_MOVIES } from '../utils/fallbackData';
 import { MOVIE_COLLECTIONS, STREAMING_PLATFORMS, TIME_FILTERS, WATCH_REGIONS } from '../utils/discoveryOptions';
 
-const TABS = [
-  { key: 'now_playing', label: 'Now Playing' },
-  { key: 'popular', label: 'Popular' },
-  { key: 'top_rated', label: 'Top Rated' },
-  { key: 'upcoming', label: 'Upcoming' },
-];
-
 const SORT_OPTIONS = [
   { key: 'popularity.desc', label: 'Most Popular' },
   { key: 'vote_average.desc', label: 'Highest Rated' },
@@ -26,15 +18,12 @@ const SORT_OPTIONS = [
 ];
 
 function Movies() {
-  const [searchParams, setSearchParams] = useSearchParams();
-  const initialTab = searchParams.get('tab') || 'now_playing';
-  const [activeTab, setActiveTab] = useState(initialTab);
   const [selectedGenres, setSelectedGenres] = useState([]);
   const [sortBy, setSortBy] = useState('popularity.desc');
   const [providerId, setProviderId] = useState('all');
   const [watchRegion, setWatchRegion] = useState('US');
   const [collection, setCollection] = useState('all');
-  const [timeWindow, setTimeWindow] = useState('all');
+  const [timeWindow, setTimeWindow] = useState('today');
   const [showSortDropdown, setShowSortDropdown] = useState(false);
   const [page, setPage] = useState(1);
   const [allMovies, setAllMovies] = useState([]);
@@ -50,7 +39,7 @@ function Movies() {
     loading: moviesLoading,
     error: moviesError,
   } = useApi(
-    () => tmdb.getMovies(activeTab, {
+    () => tmdb.getMovies('popular', {
       page: 1,
       genreId: selectedGenres.join(','),
       sortBy,
@@ -59,7 +48,7 @@ function Movies() {
       collection,
       timeWindow,
     }),
-    [activeTab, selectedGenres, sortBy, providerId, watchRegion, collection, timeWindow]
+    [selectedGenres, sortBy, providerId, watchRegion, collection, timeWindow]
   );
 
   useEffect(() => {
@@ -68,13 +57,6 @@ function Movies() {
       setPage(1);
     }
   }, [moviesData]);
-
-  const handleTabChange = useCallback((tab) => {
-    setActiveTab(tab);
-    setSearchParams({ tab });
-    setAllMovies([]);
-    setPage(1);
-  }, [setSearchParams]);
 
   const handleGenreToggle = useCallback((genreId) => {
     setSelectedGenres((prev) =>
@@ -103,7 +85,7 @@ function Movies() {
     const nextPage = page + 1;
     setLoadingMore(true);
     try {
-      const data = await tmdb.getMovies(activeTab, {
+      const data = await tmdb.getMovies('popular', {
         page: nextPage,
         genreId: selectedGenres.join(','),
         sortBy,
@@ -121,13 +103,15 @@ function Movies() {
     } finally {
       setLoadingMore(false);
     }
-  }, [page, activeTab, selectedGenres, sortBy, providerId, watchRegion, collection, timeWindow]);
+  }, [page, selectedGenres, sortBy, providerId, watchRegion, collection, timeWindow]);
 
   const totalPages = moviesData?.total_pages || 1;
   const genreList = Array.isArray(genres) ? genres : (genres?.genres || []);
   const currentSortLabel = SORT_OPTIONS.find((s) => s.key === sortBy)?.label || 'Sort';
-  const currentProviderLabel = STREAMING_PLATFORMS.find((p) => p.key === providerId)?.label || 'All Platforms';
+  const currentProvider = STREAMING_PLATFORMS.find((p) => p.key === providerId) || STREAMING_PLATFORMS[0];
+  const currentProviderLabel = currentProvider.label;
   const currentTimeLabel = TIME_FILTERS.find((t) => t.key === timeWindow)?.label || 'Any Time';
+  const currentRegionLabel = WATCH_REGIONS.find((r) => r.key === watchRegion)?.label || watchRegion;
   const displayMovies = allMovies.length > 0 ? allMovies : FALLBACK_MOVIES;
 
   return (
@@ -137,46 +121,65 @@ function Movies() {
           <Film size={28} />
           <h1>Movies</h1>
         </div>
-
-        {/* Tab Navigation */}
-        <div className="tabs">
-          {TABS.map((tab) => (
-            <button
-              key={tab.key}
-              className={`tab ${activeTab === tab.key ? 'tab-active' : ''}`}
-              onClick={() => handleTabChange(tab.key)}
-            >
-              {tab.label}
-            </button>
-          ))}
-        </div>
+        <p className="page-subtitle">Trending movies on streaming today, filtered by platform, region, genre, and collection.</p>
       </div>
 
       <div className="page-content">
-        <section className="browse-control-panel" aria-label="Movie discovery controls">
-          <div className="browse-control-header">
-            <div>
-              <span className="stream-kicker">Browse smarter</span>
-              <h2>Collections, platforms, genres, and dates</h2>
-            </div>
-            <div className="browse-select-group">
-              <label>
-                <MonitorPlay size={15} aria-hidden="true" />
-                <select value={providerId} onChange={(event) => { setProviderId(event.target.value); setAllMovies([]); setPage(1); }}>
-                  {STREAMING_PLATFORMS.map((platform) => (
-                    <option key={platform.key} value={platform.key}>{platform.label}</option>
+        <section className="browse-control-panel browse-control-panel-compact" aria-label="Movie discovery controls">
+          <div className="browse-inline-toolbar">
+            <div className="sort-dropdown-wrapper">
+              <button
+                className="sort-btn"
+                onClick={() => setShowSortDropdown(!showSortDropdown)}
+              >
+                <SlidersHorizontal size={16} />
+                {currentSortLabel}
+                <ChevronDown size={14} />
+              </button>
+              {showSortDropdown && (
+                <div className="sort-dropdown">
+                  {SORT_OPTIONS.map((option) => (
+                    <button
+                      key={option.key}
+                      className={`sort-option ${sortBy === option.key ? 'sort-option-active' : ''}`}
+                      onClick={() => handleSortChange(option.key)}
+                    >
+                      {option.label}
+                    </button>
                   ))}
-                </select>
-              </label>
-              <label>
-                Region
-                <select value={watchRegion} onChange={(event) => { setWatchRegion(event.target.value); setAllMovies([]); setPage(1); }}>
-                  {WATCH_REGIONS.map((region) => (
-                    <option key={region.key} value={region.key}>{region.label}</option>
-                  ))}
-                </select>
-              </label>
+                </div>
+              )}
             </div>
+
+            <label className="browse-inline-select">
+              <MonitorPlay size={15} aria-hidden="true" />
+              <select value={providerId} onChange={(event) => { setProviderId(event.target.value); setAllMovies([]); setPage(1); }}>
+                {STREAMING_PLATFORMS.map((platform) => (
+                  <option key={platform.key} value={platform.key}>{platform.label}</option>
+                ))}
+              </select>
+            </label>
+
+            <div className="browse-chip-row browse-chip-row-tight" aria-label="Movie trend window">
+              {TIME_FILTERS.filter((item) => item.key !== 'all').map((item) => (
+                <button
+                  key={item.key}
+                  className={`browse-chip window-chip ${timeWindow === item.key ? 'browse-chip-active' : ''}`}
+                  onClick={() => { setTimeWindow(item.key); setAllMovies([]); setPage(1); }}
+                >
+                  {item.label}
+                </button>
+              ))}
+            </div>
+
+            <label className="browse-inline-select">
+              Region
+              <select value={watchRegion} onChange={(event) => { setWatchRegion(event.target.value); setAllMovies([]); setPage(1); }}>
+                {WATCH_REGIONS.map((region) => (
+                  <option key={region.key} value={region.key}>{region.label}</option>
+                ))}
+              </select>
+            </label>
           </div>
 
           <div className="browse-chip-row" aria-label="Movie collections">
@@ -191,18 +194,7 @@ function Movies() {
             ))}
           </div>
 
-          <div className="browse-chip-row" aria-label="Release window">
-            <span className="browse-row-label"><CalendarDays size={14} aria-hidden="true" /> Window</span>
-            {TIME_FILTERS.map((item) => (
-              <button
-                key={item.key}
-                className={`browse-chip ${timeWindow === item.key ? 'browse-chip-active' : ''}`}
-                onClick={() => { setTimeWindow(item.key); setAllMovies([]); setPage(1); }}
-              >
-                {item.label}
-              </button>
-            ))}
-          </div>
+          <span className="browse-control-note"><CalendarDays size={14} aria-hidden="true" /> Region controls streaming availability for All Platforms and specific services.</span>
         </section>
 
         {/* Filters Row */}
@@ -230,39 +222,15 @@ function Movies() {
             )}
           </div>
 
-          {/* Sort Dropdown */}
-          <div className="sort-dropdown-wrapper">
-            <button
-              className="sort-btn"
-              onClick={() => setShowSortDropdown(!showSortDropdown)}
-            >
-              <SlidersHorizontal size={16} />
-              {currentSortLabel}
-              <ChevronDown size={14} />
-            </button>
-            {showSortDropdown && (
-              <div className="sort-dropdown">
-                {SORT_OPTIONS.map((option) => (
-                  <button
-                    key={option.key}
-                    className={`sort-option ${sortBy === option.key ? 'sort-option-active' : ''}`}
-                    onClick={() => handleSortChange(option.key)}
-                  >
-                    {option.label}
-                  </button>
-                ))}
-              </div>
-            )}
-          </div>
         </div>
 
         {/* Active Filters Display */}
-        {(selectedGenres.length > 0 || collection !== 'all' || providerId !== 'all' || timeWindow !== 'all') && (
-          <div className="active-filters">
+        <div className="active-filters active-filters-always">
             <span className="active-filters-label">Filtered by:</span>
-            {collection !== 'all' && <span className="active-filter-tag">{MOVIE_COLLECTIONS.find((item) => item.key === collection)?.label}</span>}
-            {providerId !== 'all' && <span className="active-filter-tag">{currentProviderLabel}</span>}
-            {timeWindow !== 'all' && <span className="active-filter-tag">{currentTimeLabel}</span>}
+            <span className="active-filter-tag">{currentProviderLabel}</span>
+            <span className="active-filter-tag">{MOVIE_COLLECTIONS.find((item) => item.key === collection)?.label}</span>
+            <span className="active-filter-tag">{currentTimeLabel}</span>
+            <span className="active-filter-tag">{currentRegionLabel}</span>
             {selectedGenres.map((genreId) => {
               const genre = genreList.find((g) => g.id === genreId);
               return genre ? (
@@ -275,7 +243,6 @@ function Movies() {
               ) : null;
             })}
           </div>
-        )}
 
         {/* Movies Grid */}
         {moviesLoading ? (
@@ -296,6 +263,7 @@ function Movies() {
                   key={movie.id}
                   item={movie}
                   mediaType={MEDIA_TYPES.MOVIE}
+                  platformLabel={currentProvider.shortLabel || currentProviderLabel}
                 />
               ))}
             </div>

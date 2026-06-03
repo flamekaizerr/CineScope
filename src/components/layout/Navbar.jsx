@@ -1,6 +1,6 @@
 import { memo, useCallback, useEffect, useRef, useState } from 'react';
 import { Link, NavLink, useNavigate } from 'react-router-dom';
-import { Bookmark, Compass, Film, LogIn, LogOut, Menu, Moon, Search, Sparkles, Sun, Telescope, Tv, User, Wand2, X } from 'lucide-react';
+import { Bookmark, Clapperboard, Compass, Film, LogIn, LogOut, Menu, Moon, Search, Sparkles, Sun, Telescope, Tv, User, Wand2, X } from 'lucide-react';
 import { useAuth } from '../../context/AuthContext';
 import { useTheme } from '../../context/ThemeContext';
 
@@ -8,9 +8,14 @@ const NAV_ITEMS = [
   { to: '/movies', label: 'Movies', icon: Film },
   { to: '/tv', label: 'TV Shows', icon: Tv },
   { to: '/anime', label: 'Anime', icon: Sparkles },
+  { to: '/animation', label: 'Animation', icon: Clapperboard },
   { to: '/buzz', label: 'Buzz', icon: Compass },
   { to: '/for-you', label: 'For You', icon: Wand2 },
 ];
+
+const ENTERTAINMENT_ITEMS = NAV_ITEMS.filter((item) =>
+  ['/movies', '/tv', '/anime', '/animation', '/buzz'].includes(item.to)
+);
 
 function Navbar() {
   const { user, isAuthenticated, logout } = useAuth();
@@ -155,6 +160,20 @@ function Navbar() {
           </button>
         </div>
       </div>
+
+      <nav className="entertainment-switcher" aria-label="Entertainment sections">
+        {ENTERTAINMENT_ITEMS.map(({ to, label, icon: Icon }) => (
+          <NavLink
+            key={to}
+            to={to}
+            className={({ isActive }) => `entertainment-switcher-link ${isActive ? 'entertainment-switcher-link-active' : ''}`}
+            onClick={() => setMobileOpen(false)}
+          >
+            <Icon size={15} aria-hidden="true" />
+            <span>{label}</span>
+          </NavLink>
+        ))}
+      </nav>
 
       {mobileOpen && (
         <div className="navbar-mobile-panel">

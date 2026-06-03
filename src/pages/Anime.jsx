@@ -1,5 +1,4 @@
 import { useState, useEffect, useCallback } from 'react';
-import { useSearchParams } from 'react-router-dom';
 import { CalendarDays, Clapperboard, Sparkles, X } from 'lucide-react';
 import { useApi } from '../hooks/useApi';
 import * as jikan from '../services/jikan';
@@ -8,13 +7,6 @@ import GenrePill from '../components/common/GenrePill';
 import LoadingSkeleton from '../components/common/LoadingSkeleton';
 import { FALLBACK_ANIME } from '../utils/fallbackData';
 import { ANIME_FORMATS, TIME_FILTERS } from '../utils/discoveryOptions';
-
-const TABS = [
-  { key: 'season', label: 'This Season' },
-  { key: 'airing', label: 'Top Airing' },
-  { key: 'popular', label: 'Most Popular' },
-  { key: 'upcoming', label: 'Upcoming' },
-];
 
 const ANIME_GENRES = [
   { id: 1, name: 'Action' },
@@ -47,12 +39,9 @@ function normalizeAnime(anime) {
 }
 
 function Anime() {
-  const [searchParams, setSearchParams] = useSearchParams();
-  const initialTab = searchParams.get('tab') || 'season';
-  const [activeTab, setActiveTab] = useState(initialTab);
   const [selectedGenres, setSelectedGenres] = useState([]);
   const [format, setFormat] = useState('all');
-  const [timeWindow, setTimeWindow] = useState('all');
+  const [timeWindow, setTimeWindow] = useState('today');
   const [page, setPage] = useState(1);
   const [allAnime, setAllAnime] = useState([]);
   const [loadingMore, setLoadingMore] = useState(false);
@@ -62,8 +51,8 @@ function Anime() {
     loading: animeLoading,
     error: animeError,
   } = useApi(
-    () => jikan.browseAnime({ tab: activeTab, page: 1, genres: selectedGenres, format, timeWindow }),
-    [activeTab, selectedGenres, format, timeWindow]
+    () => jikan.browseAnime({ tab: 'airing', page: 1, genres: selectedGenres, format, timeWindow }),
+    [selectedGenres, format, timeWindow]
   );
 
   useEffect(() => {
@@ -72,13 +61,6 @@ function Anime() {
       setPage(1);
     }
   }, [animeData]);
-
-  const handleTabChange = useCallback((tab) => {
-    setActiveTab(tab);
-    setSearchParams({ tab });
-    setAllAnime([]);
-    setPage(1);
-  }, [setSearchParams]);
 
   const handleGenreToggle = useCallback((genreId) => {
     setSelectedGenres((prev) =>
@@ -100,7 +82,7 @@ function Anime() {
     const nextPage = page + 1;
     setLoadingMore(true);
     try {
-      const data = await jikan.browseAnime({ tab: activeTab, page: nextPage, genres: selectedGenres, format, timeWindow });
+      const data = await jikan.browseAnime({ tab: 'airing', page: nextPage, genres: selectedGenres, format, timeWindow });
       if (data?.data) {
         setAllAnime((prev) => [...prev, ...data.data.map(normalizeAnime)]);
         setPage(nextPage);
@@ -110,7 +92,7 @@ function Anime() {
     } finally {
       setLoadingMore(false);
     }
-  }, [page, activeTab, selectedGenres, format, timeWindow]);
+  }, [page, selectedGenres, format, timeWindow]);
 
   const hasNextPage = animeData?.pagination?.has_next_page ?? false;
   const displayAnime = allAnime.length > 0 ? allAnime : FALLBACK_ANIME;
@@ -122,29 +104,13 @@ function Anime() {
           <Sparkles size={28} />
           <h1>Anime</h1>
         </div>
-
-        <div className="tabs">
-          {TABS.map((tab) => (
-            <button
-              key={tab.key}
-              className={`tab ${activeTab === tab.key ? 'tab-active' : ''}`}
-              onClick={() => handleTabChange(tab.key)}
-            >
-              {tab.label}
-            </button>
-          ))}
-        </div>
+        <p className="page-subtitle">Airing anime discovery with format, window, and genre controls kept close to the cards.</p>
       </div>
 
       <div className="page-content">
-        <section className="browse-control-panel" aria-label="Anime discovery controls">
-          <div className="browse-control-header">
-            <div>
-              <span className="stream-kicker">Anime discovery</span>
-              <h2>Format, airing status, and genre lanes</h2>
-            </div>
-          </div>
-          <div className="browse-chip-row" aria-label="Anime format">
+        <section className="browse-control-panel browse-control-panel-compact" aria-label="Anime discovery controls">
+          <div className="browse-inline-toolbar">
+          <div className="browse-chip-row browse-chip-row-tight" aria-label="Anime format">
             <span className="browse-row-label"><Clapperboard size={14} aria-hidden="true" /> Format</span>
             {ANIME_FORMATS.map((item) => (
               <button
@@ -156,9 +122,9 @@ function Anime() {
               </button>
             ))}
           </div>
-          <div className="browse-chip-row" aria-label="Anime window">
+          <div className="browse-chip-row browse-chip-row-tight" aria-label="Anime window">
             <span className="browse-row-label"><CalendarDays size={14} aria-hidden="true" /> Window</span>
-            {TIME_FILTERS.map((item) => (
+            {TIME_FILTERS.filter((item) => item.key !== 'all').map((item) => (
               <button
                 key={item.key}
                 className={`browse-chip window-chip ${timeWindow === item.key ? 'browse-chip-active' : ''}`}
@@ -167,6 +133,7 @@ function Anime() {
                 {item.label}
               </button>
             ))}
+          </div>
           </div>
         </section>
 
@@ -190,11 +157,10 @@ function Anime() {
         </div>
 
         {/* Active Filters */}
-        {(selectedGenres.length > 0 || format !== 'all' || timeWindow !== 'all') && (
-          <div className="active-filters">
+          <div className="active-filters active-filters-always">
             <span className="active-filters-label">Filtered by:</span>
-            {format !== 'all' && <span className="active-filter-tag">{ANIME_FORMATS.find((item) => item.key === format)?.label}</span>}
-            {timeWindow !== 'all' && <span className="active-filter-tag">{TIME_FILTERS.find((item) => item.key === timeWindow)?.label}</span>}
+            <span className="active-filter-tag">{ANIME_FORMATS.find((item) => item.key === format)?.label}</span>
+            <span className="active-filter-tag">{TIME_FILTERS.find((item) => item.key === timeWindow)?.label}</span>
             {selectedGenres.map((genreId) => {
               const genre = ANIME_GENRES.find((g) => g.id === genreId);
               return genre ? (
@@ -207,7 +173,6 @@ function Anime() {
               ) : null;
             })}
           </div>
-        )}
 
         {/* Anime Grid */}
         {animeLoading ? (
@@ -228,6 +193,7 @@ function Anime() {
                   key={anime.id}
                   item={anime}
                   mediaType="anime"
+                  platformLabel="MAL"
                 />
               ))}
             </div>

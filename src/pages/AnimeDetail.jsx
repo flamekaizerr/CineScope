@@ -1,8 +1,8 @@
 import { useState, useEffect } from 'react';
-import { useParams, Link } from 'react-router-dom';
+import { useLocation, useNavigate, useParams, Link } from 'react-router-dom';
 import {
   Star, Play, Users, Heart, Trophy, TrendingUp, Tv,
-  Calendar, Clock, BookOpen, ChevronDown, ChevronUp, ExternalLink
+  Calendar, Clock, BookOpen, ChevronDown, ChevronUp, ExternalLink, X
 } from 'lucide-react';
 import { useApi } from '../hooks/useApi';
 import { useUserData } from '../context/UserDataContext';
@@ -16,6 +16,8 @@ import WatchlistButton from '../components/features/WatchlistButton';
 
 function AnimeDetail() {
   const { id } = useParams();
+  const location = useLocation();
+  const navigate = useNavigate();
   const { updateRating, getItem } = useUserData();
 
   const [userRating, setUserRating] = useState(0);
@@ -23,6 +25,7 @@ function AnimeDetail() {
   const [showFullSynopsis, setShowFullSynopsis] = useState(false);
   const [showAllCharacters, setShowAllCharacters] = useState(false);
   const [showTrailer, setShowTrailer] = useState(false);
+  const [activePanel, setActivePanel] = useState('overview');
 
   const {
     data: anime,
@@ -103,9 +106,19 @@ function AnimeDetail() {
   const trailerSearchUrl = `https://www.youtube.com/results?search_query=${encodeURIComponent(`${title} anime official trailer`)}`;
 
   const displayCharacters = showAllCharacters ? characterList : characterList.slice(0, 12);
+  const handleClose = () => {
+    if (location.key && location.key !== 'default') {
+      navigate(-1);
+      return;
+    }
+    navigate('/anime');
+  };
 
   return (
     <div className="page detail-page anime-detail-page">
+      <button className="detail-close-btn" type="button" onClick={handleClose} aria-label="Close title">
+        <X size={20} aria-hidden="true" />
+      </button>
       {/* Header */}
       <div className="anime-detail-header">
         <div className="anime-detail-header-content">
@@ -214,8 +227,8 @@ function AnimeDetail() {
                 mediaType="anime"
               />
               {trailerUrl && (
-                <button className="btn btn-trailer" onClick={() => setShowTrailer(!showTrailer)}>
-                  <Play size={16} /> {showTrailer ? 'Hide Trailer' : 'Watch Trailer'}
+                <button className="btn btn-trailer" onClick={() => { setActivePanel('watch'); setShowTrailer(true); }}>
+                  <Play size={16} /> Watch Trailer
                 </button>
               )}
               {!trailerUrl && (
@@ -241,23 +254,29 @@ function AnimeDetail() {
       </div>
 
       <div className="page-content">
-        {/* Trailer Embed */}
-        {showTrailer && trailerUrl && (
-          <section className="section">
-            <div className="trailer-embed">
-              <iframe
-                src={trailerUrl}
-                title={`${title} Trailer`}
-                className="trailer-iframe"
-                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                allowFullScreen
-              />
-            </div>
-          </section>
-        )}
+        <div className="detail-tabbar" role="tablist" aria-label={`${title} details`}>
+          {[
+            { key: 'overview', label: 'Overview' },
+            { key: 'characters', label: 'Characters' },
+            { key: 'watch', label: 'Watch / Trailer' },
+            { key: 'buzz', label: 'Buzz' },
+          ].map((tab) => (
+            <button
+              key={tab.key}
+              type="button"
+              role="tab"
+              aria-selected={activePanel === tab.key}
+              className={`detail-tab ${activePanel === tab.key ? 'detail-tab-active' : ''}`}
+              onClick={() => setActivePanel(tab.key)}
+            >
+              {tab.label}
+            </button>
+          ))}
+        </div>
 
         {/* Statistics */}
-        <section className="section">
+        {activePanel === 'overview' && (
+        <section className="section detail-panel">
           <h2 className="section-title">Statistics</h2>
           <div className="stat-cards-row">
             {rank && (
@@ -289,11 +308,9 @@ function AnimeDetail() {
               </div>
             )}
           </div>
-        </section>
 
-        {/* Synopsis */}
-        {synopsis && (
-          <section className="section">
+          {synopsis && (
+          <section className="section detail-nested-section">
             <h2 className="section-title">Synopsis</h2>
             <p className="detail-overview">
               {showFullSynopsis ? synopsis : truncateText(synopsis, 500)}
@@ -311,10 +328,54 @@ function AnimeDetail() {
               </button>
             )}
           </section>
+          )}
+        </section>
+        )}
+
+        {activePanel === 'watch' && (
+          <section className="section detail-panel">
+            <h2 className="section-title">Watch / Trailer</h2>
+            <div className="detail-panel-actions">
+              {trailerUrl ? (
+                <button className="btn btn-trailer" onClick={() => setShowTrailer((open) => !open)}>
+                  <Play size={16} /> {showTrailer ? 'Hide Trailer' : 'Watch Trailer'}
+                </button>
+              ) : (
+                <a className="btn btn-trailer" href={trailerSearchUrl} target="_blank" rel="noreferrer">
+                  <ExternalLink size={16} /> Find Trailer
+                </a>
+              )}
+              <a className="btn btn-secondary" href={`https://www.google.com/search?q=${encodeURIComponent(`${title} where to watch`)}`} target="_blank" rel="noreferrer">
+                <ExternalLink size={16} /> Find Watch Options
+              </a>
+            </div>
+            {showTrailer && trailerUrl && (
+              <div className="trailer-embed">
+                <iframe
+                  src={trailerUrl}
+                  title={`${title} Trailer`}
+                  className="trailer-iframe"
+                  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                  allowFullScreen
+                />
+              </div>
+            )}
+            {studios.length > 0 && (
+              <div className="anime-studios anime-studios-panel">
+                <span className="anime-studios-label">Studios:</span>
+                {studios.map((studio, i) => (
+                  <span key={studio.mal_id} className="anime-studio-name">
+                    {studio.name}{i < studios.length - 1 ? ', ' : ''}
+                  </span>
+                ))}
+              </div>
+            )}
+          </section>
         )}
 
         {/* Characters */}
-        <section className="section">
+        {activePanel === 'characters' && (
+        <section className="section detail-panel">
           <h2 className="section-title">Characters</h2>
           {charactersLoading ? (
             <LoadingSkeleton type="cast" count={8} />
@@ -361,10 +422,30 @@ function AnimeDetail() {
             <p className="empty-message">No character information available.</p>
           )}
         </section>
+        )}
 
         {/* Recommendations */}
-        {recommendationList.length > 0 && (
-          <section className="section">
+        {activePanel === 'buzz' && (
+          <section className="section detail-panel">
+            <h2 className="section-title">Buzz & Recommendations</h2>
+            <div className="stat-cards-row">
+              {members && (
+                <div className="stat-card">
+                  <Users size={20} />
+                  <div className="stat-value">{formatNumber(members)}</div>
+                  <div className="stat-label">Members</div>
+                </div>
+              )}
+              {favorites && (
+                <div className="stat-card">
+                  <Heart size={20} />
+                  <div className="stat-value">{formatNumber(favorites)}</div>
+                  <div className="stat-label">Favorites</div>
+                </div>
+              )}
+            </div>
+          {recommendationList.length > 0 && (
+          <section className="section detail-nested-section">
             <h2 className="section-title">Recommendations</h2>
             {recommendationsLoading ? (
               <LoadingSkeleton type="row" count={6} />
@@ -378,6 +459,8 @@ function AnimeDetail() {
                 }))}
               />
             )}
+          </section>
+          )}
           </section>
         )}
       </div>

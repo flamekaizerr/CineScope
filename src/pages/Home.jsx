@@ -7,12 +7,13 @@ import * as jikan from '../services/jikan';
 import * as trakt from '../services/trakt';
 import ContentRow from '../components/common/ContentRow';
 import { BACKDROP_SIZES, MEDIA_TYPES, POSTER_SIZES, TMDB_IMAGE_BASE } from '../utils/constants';
-import { FALLBACK_ANIME, FALLBACK_MOVIES, FALLBACK_TRENDING, FALLBACK_TV } from '../utils/fallbackData';
+import { FALLBACK_ANIMATION, FALLBACK_ANIME, FALLBACK_MOVIES, FALLBACK_TRENDING, FALLBACK_TV } from '../utils/fallbackData';
 
 const DISCOVERY_LINKS = [
   { label: 'Movies', to: '/movies' },
   { label: 'TV Shows', to: '/tv' },
   { label: 'Anime', to: '/anime' },
+  { label: 'Animation', to: '/animation' },
   { label: 'Internet Buzz', to: '/buzz' },
 ];
 
@@ -84,6 +85,11 @@ function Home() {
     []
   );
 
+  const { data: animation } = useApi(
+    () => tmdb.getAnimationMovies({ timeWindow: 'week' }),
+    []
+  );
+
   const { data: upcoming } = useApi(
     () => tmdb.getUpcoming(),
     []
@@ -103,6 +109,7 @@ function Home() {
   const weekItems = trendingWeek?.results?.length ? trendingWeek.results : FALLBACK_TRENDING;
   const movieItems = nowPlaying?.results?.length ? nowPlaying.results : FALLBACK_MOVIES;
   const streamingItems = streaming?.results?.length ? streaming.results : FALLBACK_MOVIES;
+  const animationItems = animation?.results?.length ? animation.results : FALLBACK_ANIMATION;
   const upcomingItems = upcoming?.results?.length ? upcoming.results : FALLBACK_MOVIES;
   const animeItems = seasonAnime?.data?.length ? seasonAnime.data.map(normalizeAnime) : FALLBACK_ANIME;
   const communityItems = communityTrending?.length
@@ -133,7 +140,7 @@ function Home() {
     { label: 'Movies', value: `${movieItems.length}+` },
     { label: 'TV Picks', value: `${FALLBACK_TV.length + weekItems.filter((item) => getMediaType(item) === MEDIA_TYPES.TV).length}+` },
     { label: 'Anime', value: `${animeItems.length}+` },
-    { label: 'Daily Pulse', value: `${hotItems.length}` },
+    { label: 'Animation', value: `${animationItems.length}+` },
   ];
 
   const handleSearch = (event) => {
@@ -264,7 +271,12 @@ function Home() {
         </section>
 
         <section className="section">
-          {renderSectionHeader(<Clapperboard size={20} aria-hidden="true" />, 'Now in Cinemas', '/movies?tab=now_playing')}
+          {renderSectionHeader(<Clapperboard size={20} aria-hidden="true" />, 'Animation Studio Picks', '/animation')}
+          <ContentRow items={animationItems} mediaType={MEDIA_TYPES.MOVIE} />
+        </section>
+
+        <section className="section">
+          {renderSectionHeader(<Clapperboard size={20} aria-hidden="true" />, 'Now in Cinemas', '/movies')}
           <ContentRow items={movieItems} mediaType={MEDIA_TYPES.MOVIE} />
         </section>
 
@@ -279,7 +291,7 @@ function Home() {
         </section>
 
         <section className="section">
-          {renderSectionHeader(<CalendarDays size={20} aria-hidden="true" />, 'Coming Soon', '/movies?tab=upcoming')}
+          {renderSectionHeader(<CalendarDays size={20} aria-hidden="true" />, 'Coming Soon', '/movies')}
           <ContentRow items={upcomingItems} mediaType={MEDIA_TYPES.MOVIE} />
         </section>
       </div>

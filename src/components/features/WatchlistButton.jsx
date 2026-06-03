@@ -46,6 +46,16 @@ function WatchlistButton({ item, mediaType }) {
     setDropdownOpen((prev) => !prev);
   }, []);
 
+  const handlePrimaryClick = useCallback(() => {
+    if (!item) return;
+    if (currentStatus === LIST_TYPES.WATCHLIST) {
+      removeFromList(LIST_TYPES.WATCHLIST, item.id, itemType);
+    } else {
+      addToList(LIST_TYPES.WATCHLIST, { ...item, mediaType: itemType, media_type: itemType });
+    }
+    setDropdownOpen(false);
+  }, [item, itemType, currentStatus, addToList, removeFromList]);
+
   const handleSelect = useCallback(
     (listType) => {
       if (!item) return;
@@ -70,13 +80,20 @@ function WatchlistButton({ item, mediaType }) {
     <div className="watchlist-btn-wrapper" ref={wrapperRef}>
       <button
         className={`watchlist-btn ${currentStatus ? 'watchlist-btn-added' : ''}`}
-        onClick={handleToggle}
-        aria-haspopup="listbox"
-        aria-expanded={dropdownOpen}
+        onClick={handlePrimaryClick}
         aria-label={buttonLabel}
       >
         <CurrentIcon size={18} aria-hidden="true" />
         <span className="watchlist-btn-label">{buttonLabel}</span>
+      </button>
+      <button
+        type="button"
+        className={`watchlist-btn watchlist-menu-btn ${currentStatus ? 'watchlist-btn-added' : ''}`}
+        onClick={handleToggle}
+        aria-haspopup="listbox"
+        aria-expanded={dropdownOpen}
+        aria-label="Choose list"
+      >
         <ChevronDown size={14} aria-hidden="true" />
       </button>
 

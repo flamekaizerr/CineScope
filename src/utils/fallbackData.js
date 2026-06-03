@@ -149,4 +149,67 @@ export const FALLBACK_ANIME = [
   },
 ];
 
-export const FALLBACK_TRENDING = [...FALLBACK_MOVIES, ...FALLBACK_TV, ...FALLBACK_ANIME];
+export const FALLBACK_ANIMATION = [
+  {
+    id: 862,
+    title: 'Toy Story',
+    media_type: 'movie',
+    release_date: '1995-11-22',
+    vote_average: 8.0,
+    poster_path: '/uXDfjJbdP4ijW5hWSBrPrlKpxab.jpg',
+    backdrop_path: '/3Rfvhy1Nl6sSGJwyjb0QiZzZYlB.jpg',
+    overview: 'A cowboy doll feels threatened when a flashy space ranger becomes the new favorite toy.',
+  },
+  {
+    id: 808,
+    title: 'Shrek',
+    media_type: 'movie',
+    release_date: '2001-05-18',
+    vote_average: 7.7,
+    poster_path: '/iB64vpL3dIObOtMZgX3RqdVdQDc.jpg',
+    backdrop_path: '/sRvXNDItGlWCqtO3j6wks52FmbD.jpg',
+    overview: 'An ogre, a talkative donkey, and a princess turn a fairy-tale rescue upside down.',
+  },
+  {
+    id: 129,
+    title: 'Spirited Away',
+    media_type: 'movie',
+    release_date: '2001-07-20',
+    vote_average: 8.5,
+    poster_path: '/39wmItIWsg5sZMyRUHLkWBcuVCM.jpg',
+    backdrop_path: '/Ab8mkHmkYADjU7wQiOkia9BzGvS.jpg',
+    overview: 'A young girl enters a spirit world and must find courage to save her parents.',
+  },
+  {
+    id: 324857,
+    title: 'Spider-Man: Into the Spider-Verse',
+    media_type: 'movie',
+    release_date: '2018-12-14',
+    vote_average: 8.4,
+    poster_path: '/iiZZdoQBEYBv6id8su7ImL0oCbD.jpg',
+    backdrop_path: '/uUiId6cG32JSRI6RyBQSvQtLjz2.jpg',
+    overview: 'Miles Morales discovers a multiverse of Spider-heroes and learns what it means to wear the mask.',
+  },
+  {
+    id: 10191,
+    title: 'How to Train Your Dragon',
+    media_type: 'movie',
+    release_date: '2010-03-26',
+    vote_average: 7.8,
+    poster_path: '/ygGmAO60t8GyqUo9xYeYxSZAR3b.jpg',
+    backdrop_path: '/aH9KWmXFMamXkHMgL6Yx2xXe3dP.jpg',
+    overview: 'A young Viking befriends a dragon and changes the future of his village.',
+  },
+  {
+    id: 354912,
+    title: 'Coco',
+    media_type: 'movie',
+    release_date: '2017-11-22',
+    vote_average: 8.2,
+    poster_path: '/gGEsBPAijhVUFoiNpgZXqRVWJt2.jpg',
+    backdrop_path: '/askg3SMvhqEl4OL52YuvdtY40Yb.jpg',
+    overview: 'A music-loving boy journeys through the Land of the Dead to uncover his family story.',
+  },
+];
+
+export const FALLBACK_TRENDING = [...FALLBACK_MOVIES, ...FALLBACK_TV, ...FALLBACK_ANIME, ...FALLBACK_ANIMATION];

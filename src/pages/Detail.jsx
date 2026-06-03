@@ -162,7 +162,7 @@ function Detail() {
     { key: 'cast', label: 'Cast' },
     { key: 'watch', label: 'Where to Watch' },
     ...(type === 'tv' && seasons.length > 0 ? [{ key: 'episodes', label: 'Episodes' }] : []),
-    { key: 'buzz', label: 'Buzz' },
+    { key: 'buzz', label: '🔥 Internet Buzz' },
   ];
 
   if (detailsLoading && !storedDetails) {

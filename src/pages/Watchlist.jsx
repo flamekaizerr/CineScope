@@ -155,9 +155,6 @@ function Watchlist() {
         {/* List Tabs */}
         <div className="tabs">
           {LIST_TABS.map((tab) => {
-            const count = tab.key === 'all'
-              ? (items || []).length
-              : (items || []).filter((i) => i.list === tab.key).length;
             return (
               <button
                 key={tab.key}
@@ -166,7 +163,6 @@ function Watchlist() {
               >
                 <tab.icon size={14} />
                 {tab.label}
-                <span className="tab-count">{count}</span>
               </button>
             );
           })}

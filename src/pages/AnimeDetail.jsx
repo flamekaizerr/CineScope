@@ -259,7 +259,7 @@ function AnimeDetail() {
             { key: 'overview', label: 'Overview' },
             { key: 'characters', label: 'Characters' },
             { key: 'watch', label: 'Watch / Trailer' },
-            { key: 'buzz', label: 'Buzz' },
+            { key: 'buzz', label: '🔥 Internet Buzz' },
           ].map((tab) => (
             <button
               key={tab.key}

@@ -93,6 +93,16 @@ function getMovieCollectionParams(collection) {
       return { with_genres: '16' };
     case 'korean':
       return { with_origin_country: 'KR', with_original_language: 'ko' };
+    case 'chinese':
+      return { with_origin_country: 'CN', with_original_language: 'zh' };
+    case 'japanese':
+      return { with_origin_country: 'JP', with_original_language: 'ja' };
+    case 'british':
+      return { with_origin_country: 'GB', with_original_language: 'en' };
+    case 'spanish':
+      return { with_original_language: 'es' };
+    case 'nordic':
+      return { with_origin_country: 'SE|NO|DK|FI|IS' };
     case 'thai':
       return { with_origin_country: 'TH', with_original_language: 'th' };
     case 'indian':
@@ -112,6 +122,16 @@ function getTvCollectionParams(collection) {
       return { with_genres: '16' };
     case 'kdrama':
       return { with_origin_country: 'KR', with_original_language: 'ko' };
+    case 'cdrama':
+      return { with_origin_country: 'CN', with_original_language: 'zh' };
+    case 'jdrama':
+      return { with_origin_country: 'JP', with_original_language: 'ja' };
+    case 'british':
+      return { with_origin_country: 'GB', with_original_language: 'en' };
+    case 'spanish':
+      return { with_original_language: 'es' };
+    case 'nordic':
+      return { with_origin_country: 'SE|NO|DK|FI|IS' };
     case 'thai':
       return { with_origin_country: 'TH', with_original_language: 'th' };
     case 'indian':

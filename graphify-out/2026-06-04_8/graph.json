@@ -4841,7 +4841,7 @@
       "context": "import",
       "confidence": "EXTRACTED",
       "source_file": "src/components/layout/Navbar.jsx",
-      "source_location": "L5",
+      "source_location": "L4",
       "weight": 1.0,
       "confidence_score": 1.0,
       "source": "src_components_layout_navbar_jsx",
@@ -4851,7 +4851,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "src/components/layout/Navbar.jsx",
-      "source_location": "L19",
+      "source_location": "L18",
       "weight": 1.0,
       "confidence_score": 1.0,
       "source": "src_components_layout_navbar_jsx",
@@ -4861,7 +4861,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "src/components/layout/Navbar.jsx",
-      "source_location": "L8",
+      "source_location": "L7",
       "weight": 1.0,
       "confidence_score": 1.0,
       "source": "src_components_layout_navbar_jsx",
@@ -4883,7 +4883,7 @@
       "context": "import",
       "confidence": "EXTRACTED",
       "source_file": "src/components/layout/Navbar.jsx",
-      "source_location": "L6",
+      "source_location": "L5",
       "weight": 1.0,
       "confidence_score": 1.0,
       "source": "src_components_layout_navbar_jsx",
@@ -10085,5 +10085,5 @@
     }
   ],
   "hyperedges": [],
-  "built_at_commit": "b87e1df011310f4d048e7941257c79de566ad9a7"
+  "built_at_commit": "34df6609b4506833a3d27041e76b46ba2f9be981"
 }

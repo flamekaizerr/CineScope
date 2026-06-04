@@ -69,6 +69,14 @@ function Search() {
   const [lastQuery, setLastQuery] = useSessionStorage('search_last_query', initialQuery);
   const [loadingMore, setLoadingMore] = useState(false);
 
+  // Sync internal query state when the URL query parameter changes (e.g. from Navbar search)
+  useEffect(() => {
+    if (initialQuery !== query) {
+      setQuery(initialQuery);
+    }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [initialQuery]);
+
   // Reset results if query changes
   useEffect(() => {
     if (debouncedQuery !== lastQuery) {

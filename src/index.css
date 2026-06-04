@@ -4686,15 +4686,7 @@ body {
   }
 
   .sticky-quick-links {
-    flex-wrap: nowrap;
-    overflow-x: auto;
-    -ms-overflow-style: none;
-    scrollbar-width: none;
     padding-bottom: 2px;
-  }
-
-  .sticky-quick-links::-webkit-scrollbar {
-    display: none;
   }
 }
 

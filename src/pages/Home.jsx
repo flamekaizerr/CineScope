@@ -169,7 +169,7 @@ function Home() {
         setShowStickySearch(!entry.isIntersecting);
       },
       {
-        threshold: 0,
+        threshold: 1,
         rootMargin: `-${navbarHeight}px 0px 0px 0px`,
       }
     );

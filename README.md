@@ -1,16 +1,49 @@
-# React + Vite
+# CineScope
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+A global cinema discovery app — browse movies, TV shows, and anime from around the world, powered by TMDB and Gemini AI.
 
-Currently, two official plugins are available:
+## Features
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+- 🎬 Browse movies and TV shows by genre, region, and popularity
+- 📺 Full anime discovery via Jikan/AniList integration
+- 🔍 Universal search across all media types
+- 🤖 AI-powered recommendations via Google Gemini
+- 📋 Personal watchlist with sync
+- 🌍 Regional cinema filters (19 regions worldwide)
+- 🎨 Light / dark mode
+- ⚡ Deployed on Vercel with serverless API routes
 
-## React Compiler
+## Tech Stack
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+| Layer | Tech |
+|---|---|
+| Frontend | React 18 + Vite |
+| Routing | React Router v6 |
+| Styling | CSS custom properties + fluid type scale |
+| APIs | TMDB, Trakt, Jikan, Google Gemini |
+| Deployment | Vercel (serverless functions) |
 
-## Expanding the ESLint configuration
+## Getting Started
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+```bash
+npm install
+npm run dev
+```
+
+Copy `.env.example` to `.env` and fill in your API keys:
+
+```bash
+cp .env.example .env
+```
+
+## Environment Variables
+
+See `.env.example` for the full list of required keys.
+
+## Deployment
+
+This project is configured for one-click deployment on Vercel. Push to `master` and Vercel will build and deploy automatically.
+
+## License
+
+MIT

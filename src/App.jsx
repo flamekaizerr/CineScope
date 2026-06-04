@@ -19,6 +19,9 @@ import Profile from './pages/Profile';
 import NotFound from './pages/NotFound';
 import Login from './pages/Login';
 import ScrollToTop from './components/common/ScrollToTop';
+import { lazy, Suspense } from 'react';
+
+const Prism = lazy(() => import('./pages/Prism'));
 
 function App() {
   return (
@@ -48,6 +51,11 @@ function App() {
                       <Route path="/watchlist" element={<Watchlist />} />
                       <Route path="/for-you" element={<ForYou />} />
                       <Route path="/profile" element={<Profile />} />
+                      <Route path="/prism" element={
+                        <Suspense fallback={null}>
+                          <Prism />
+                        </Suspense>
+                      } />
                       <Route path="*" element={<NotFound />} />
                     </Routes>
                   </Layout>

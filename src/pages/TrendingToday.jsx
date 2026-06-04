@@ -27,6 +27,7 @@ function TrendingToday() {
         }
         return prev;
       });
+    }
   }, [data, loading, page, setAllTrending]);
 
   return (

@@ -62,6 +62,7 @@ function Search() {
     query,
     setQuery,
     debouncedQuery,
+    setDebouncedQuery,
   } = useDebouncedSearch(initialQuery, 400);
 
   const [page, setPage] = useSessionStorage('search_page', 1);
@@ -73,6 +74,7 @@ function Search() {
   useEffect(() => {
     if (initialQuery !== query) {
       setQuery(initialQuery);
+      setDebouncedQuery(initialQuery);
       setLastQuery(''); // Force a refresh of the search results
     }
   // eslint-disable-next-line react-hooks/exhaustive-deps

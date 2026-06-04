@@ -104,7 +104,7 @@ export function useDebouncedSearch(searchFnOrInitialValue = '', delay = SEARCH_D
     setLoading(false);
   }, []);
 
-  return { query, setQuery, debouncedQuery, results, loading, error, clearResults };
+  return { query, setQuery, debouncedQuery, setDebouncedQuery, results, loading, error, clearResults };
 }
 
 export default useDebouncedSearch;

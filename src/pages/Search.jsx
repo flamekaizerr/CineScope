@@ -73,6 +73,7 @@ function Search() {
   useEffect(() => {
     if (initialQuery !== query) {
       setQuery(initialQuery);
+      setLastQuery(''); // Force a refresh of the search results
     }
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [initialQuery]);

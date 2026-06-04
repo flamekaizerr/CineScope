@@ -127,7 +127,9 @@ function Navbar() {
         {renderNavLinks('stream-nav-links')}
 
         <form className="navbar-search" onSubmit={handleSearch} role="search">
-          <Search size={18} className="navbar-search-icon" aria-hidden="true" />
+          <button type="submit" className="navbar-search-submit" aria-label="Submit search" style={{ background: 'none', border: 'none', padding: 0, display: 'flex', alignItems: 'center', cursor: 'pointer', color: 'inherit' }}>
+            <Search size={18} className="navbar-search-icon" aria-hidden="true" style={{ cursor: 'pointer' }} />
+          </button>
           <input
             type="search"
             className="navbar-search-input"

@@ -43,7 +43,7 @@ function ScrollToTop() {
     if (navigationType === 'POP') {
       const savedScroll = scrollPositions.current[key];
       if (savedScroll !== undefined) {
-        const restore = () => window.scrollTo(0, savedScroll);
+        const restore = () => window.scrollTo({ top: savedScroll, left: 0, behavior: 'instant' });
         restore();
         // Safari needs multiple attempts due to async rendering/layout
         requestAnimationFrame(restore);
@@ -51,7 +51,7 @@ function ScrollToTop() {
         setTimeout(restore, 150);
       }
     } else {
-      window.scrollTo(0, 0);
+      window.scrollTo({ top: 0, left: 0, behavior: 'instant' });
     }
   }, [navigationType, pathname, search, key]);
 

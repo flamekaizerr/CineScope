@@ -29,3 +29,17 @@ dist-ssr
 *.sln
 *.sw?
 
+# AI tooling artifacts - never commit these
+graphify-out/
+.graphify_analysis.json
+.graphify_semantic_marker
+
+# Dev notes and progress tracking
+progress.md
+
+# Screenshots and local QA images
+*.png
+*.jpg
+*.jpeg
+*.gif
+*.webp

@@ -15,6 +15,15 @@ export const WATCH_REGIONS = [
   { key: 'JP', label: 'Japan' },
 ];
 
+export const VOTE_COUNT_OPTIONS = [
+  { key: 'auto', label: 'Auto Votes' },
+  { key: '1000', label: '1000+ Votes' },
+  { key: '500', label: '500+ Votes' },
+  { key: '100', label: '100+ Votes' },
+  { key: '50', label: '50+ Votes' },
+  { key: '10', label: '10+ Votes' },
+];
+
 export const STREAMING_PLATFORMS = [
   { key: 'all', label: 'All Platforms', shortLabel: 'ALL' },
   { key: '8', label: 'Netflix', shortLabel: 'N' },

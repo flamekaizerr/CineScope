@@ -8,7 +8,7 @@ import GenrePill from '../components/common/GenrePill';
 import LoadingSkeleton from '../components/common/LoadingSkeleton';
 import { useSessionStorage } from '../hooks/useSessionStorage';
 
-import { STREAMING_PLATFORMS, TIME_FILTERS, TV_COLLECTIONS, WATCH_REGIONS } from '../utils/discoveryOptions';
+import { STREAMING_PLATFORMS, TIME_FILTERS, TV_COLLECTIONS, WATCH_REGIONS, VOTE_COUNT_OPTIONS } from '../utils/discoveryOptions';
 
 const SORT_OPTIONS = [
   { key: 'popularity.desc', label: 'Most Popular' },
@@ -25,6 +25,7 @@ function TvShows() {
   const [watchRegion, setWatchRegion] = useSessionStorage('tv_region', 'US');
   const [collection, setCollection] = useSessionStorage('tv_collection', 'all');
   const [timeWindow, setTimeWindow] = useSessionStorage('tv_time', 'today');
+  const [minVotes, setMinVotes] = useSessionStorage('tv_min_votes', 'auto');
   const [showSortDropdown, setShowSortDropdown] = useState(false);
   const [page, setPage] = useSessionStorage('tv_page', 1);
   const [allShows, setAllShows] = useSessionStorage('tv_list', []);
@@ -48,8 +49,9 @@ function TvShows() {
       region: watchRegion,
       collection,
       timeWindow,
+      minVotes,
     }),
-    [selectedGenres, sortBy, providerId, watchRegion, collection, timeWindow]
+    [selectedGenres, sortBy, providerId, watchRegion, collection, timeWindow, minVotes]
   );
 
   useEffect(() => {
@@ -155,6 +157,16 @@ function TvShows() {
                 </div>
               )}
             </div>
+
+            {sortBy === 'vote_average.desc' && (
+              <label className="browse-inline-select">
+                <select value={minVotes} onChange={(event) => { setMinVotes(event.target.value); setAllShows([]); setPage(1); }}>
+                  {VOTE_COUNT_OPTIONS.map((option) => (
+                    <option key={option.key} value={option.key}>{option.label}</option>
+                  ))}
+                </select>
+              </label>
+            )}
 
             <label className="browse-inline-select">
               <MonitorPlay size={15} aria-hidden="true" />

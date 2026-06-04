@@ -158,7 +158,11 @@ function shouldUseDiscover(options = {}) {
   );
 }
 
-function getMinVoteCount(sortBy, timeWindow, category, collection, isTv = false) {
+function getMinVoteCount(sortBy, timeWindow, category, collection, isTv = false, manualMinVotes = 'auto') {
+  if (manualMinVotes !== 'auto' && !isNaN(parseInt(manualMinVotes, 10))) {
+    return parseInt(manualMinVotes, 10);
+  }
+
   const isHighestRated = sortBy === 'vote_average.desc' || category === 'top_rated';
   
   if (isHighestRated) {
@@ -603,6 +607,7 @@ export async function getMovies(category = 'popular', {
   region = config.tmdb.defaultRegion,
   collection = 'all',
   timeWindow = 'all',
+  minVotes = 'auto',
 } = {}) {
   try {
     if (isGeneralTrendingBrowse({ genreId, providerId, collection, sortBy, region })) {
@@ -623,7 +628,7 @@ export async function getMovies(category = 'popular', {
         with_watch_monetization_types: providerId && providerId !== 'all' ? 'flatrate' : undefined,
         with_origin_country: collectionParams.with_origin_country,
         with_original_language: collectionParams.with_original_language,
-        'vote_count.gte': getMinVoteCount(sortBy, timeWindow, category, collection, false),
+        'vote_count.gte': getMinVoteCount(sortBy, timeWindow, category, collection, false, minVotes),
         'primary_release_date.gte': windowRange.from,
         'primary_release_date.lte': windowRange.to,
       };
@@ -657,6 +662,7 @@ export async function getTvShows(category = 'popular', {
   region = config.tmdb.defaultRegion,
   collection = 'all',
   timeWindow = 'all',
+  minVotes = 'auto',
 } = {}) {
   try {
     if (isGeneralTrendingBrowse({ genreId, providerId, collection, sortBy, region })) {
@@ -677,7 +683,7 @@ export async function getTvShows(category = 'popular', {
         with_watch_monetization_types: providerId && providerId !== 'all' ? 'flatrate' : undefined,
         with_origin_country: collectionParams.with_origin_country,
         with_original_language: collectionParams.with_original_language,
-        'vote_count.gte': getMinVoteCount(sortBy, timeWindow, category, collection, true),
+        'vote_count.gte': getMinVoteCount(sortBy, timeWindow, category, collection, true, minVotes),
         'first_air_date.gte': windowRange.from,
         'first_air_date.lte': windowRange.to,
       };

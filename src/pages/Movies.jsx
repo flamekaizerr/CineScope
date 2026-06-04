@@ -8,7 +8,7 @@ import GenrePill from '../components/common/GenrePill';
 import LoadingSkeleton from '../components/common/LoadingSkeleton';
 import { useSessionStorage } from '../hooks/useSessionStorage';
 
-import { MOVIE_COLLECTIONS, STREAMING_PLATFORMS, TIME_FILTERS, WATCH_REGIONS } from '../utils/discoveryOptions';
+import { MOVIE_COLLECTIONS, STREAMING_PLATFORMS, TIME_FILTERS, WATCH_REGIONS, VOTE_COUNT_OPTIONS } from '../utils/discoveryOptions';
 
 const SORT_OPTIONS = [
   { key: 'popularity.desc', label: 'Most Popular' },
@@ -25,6 +25,7 @@ function Movies() {
   const [watchRegion, setWatchRegion] = useSessionStorage('movies_region', 'US');
   const [collection, setCollection] = useSessionStorage('movies_collection', 'all');
   const [timeWindow, setTimeWindow] = useSessionStorage('movies_time', 'today');
+  const [minVotes, setMinVotes] = useSessionStorage('movies_min_votes', 'auto');
   const [showSortDropdown, setShowSortDropdown] = useState(false);
   const [page, setPage] = useSessionStorage('movies_page', 1);
   const [allMovies, setAllMovies] = useSessionStorage('movies_list', []);
@@ -48,8 +49,9 @@ function Movies() {
       region: watchRegion,
       collection,
       timeWindow,
+      minVotes,
     }),
-    [selectedGenres, sortBy, providerId, watchRegion, collection, timeWindow]
+    [selectedGenres, sortBy, providerId, watchRegion, collection, timeWindow, minVotes]
   );
 
   useEffect(() => {
@@ -155,6 +157,16 @@ function Movies() {
                 </div>
               )}
             </div>
+
+            {sortBy === 'vote_average.desc' && (
+              <label className="browse-inline-select">
+                <select value={minVotes} onChange={(event) => { setMinVotes(event.target.value); setAllMovies([]); setPage(1); }}>
+                  {VOTE_COUNT_OPTIONS.map((option) => (
+                    <option key={option.key} value={option.key}>{option.label}</option>
+                  ))}
+                </select>
+              </label>
+            )}
 
             <label className="browse-inline-select">
               <MonitorPlay size={15} aria-hidden="true" />

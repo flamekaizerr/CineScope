@@ -22,6 +22,8 @@ function Navbar() {
   const [searchQuery, setSearchQuery] = useState('');
   const [mobileOpen, setMobileOpen] = useState(false);
   const [userMenuOpen, setUserMenuOpen] = useState(false);
+  const [searchOverlayOpen, setSearchOverlayOpen] = useState(false);
+  const [recentSearches, setRecentSearches] = useState([]);
   const userMenuRef = useRef(null);
 
   useEffect(() => {
@@ -36,6 +38,46 @@ function Navbar() {
     }
     return () => document.removeEventListener('mousedown', handleClickOutside);
   }, [userMenuOpen]);
+
+  useEffect(() => {
+    if (searchOverlayOpen) {
+      try {
+        const stored = localStorage.getItem('cinescope_recent_searches');
+        setRecentSearches(stored ? JSON.parse(stored) : []);
+      } catch {
+        setRecentSearches([]);
+      }
+    }
+  }, [searchOverlayOpen]);
+
+  useEffect(() => {
+    if (!searchOverlayOpen) return;
+    const handleKeyDown = (e) => {
+      if (e.key === 'Escape') setSearchOverlayOpen(false);
+    };
+    document.addEventListener('keydown', handleKeyDown);
+    return () => document.removeEventListener('keydown', handleKeyDown);
+  }, [searchOverlayOpen]);
+
+  const handleOverlaySearch = (e) => {
+    e.preventDefault();
+    const query = searchQuery.trim();
+    if (!query) return;
+    navigate(`/search?q=${encodeURIComponent(query)}`);
+    setSearchQuery('');
+    setSearchOverlayOpen(false);
+  };
+
+  const handleRecentTap = (term) => {
+    navigate(`/search?q=${encodeURIComponent(term)}`);
+    setSearchQuery('');
+    setSearchOverlayOpen(false);
+  };
+
+  const handleClearRecent = () => {
+    localStorage.removeItem('cinescope_recent_searches');
+    setRecentSearches([]);
+  };
 
   const handleSearch = useCallback((event) => {
     event.preventDefault();
@@ -109,9 +151,9 @@ function Navbar() {
             <Bookmark size={19} aria-hidden="true" />
           </Link>
 
-          <Link to="/search" className="navbar-icon-btn navbar-search-mobile-btn" aria-label="Search">
+          <button className="navbar-icon-btn navbar-search-mobile-btn" onClick={() => setSearchOverlayOpen(true)} aria-label="Search">
             <Search size={19} aria-hidden="true" />
-          </Link>
+          </button>
 
           {isAuthenticated ? (
             <div className="navbar-avatar-wrapper" ref={userMenuRef}>
@@ -182,6 +224,49 @@ function Navbar() {
                 <LogIn size={17} aria-hidden="true" />
                 Login
               </Link>
+            )}
+          </div>
+        </div>
+      )}
+
+      {searchOverlayOpen && (
+        <div className="search-overlay">
+          <div className="search-overlay-header">
+            <button
+              className="search-overlay-close"
+              onClick={() => setSearchOverlayOpen(false)}
+              aria-label="Close search"
+            >
+              <X size={22} />
+            </button>
+            <form onSubmit={handleOverlaySearch} className="search-overlay-form" role="search">
+              <Search size={18} aria-hidden="true" />
+              <input
+                type="search"
+                autoFocus
+                placeholder="Search movies, shows, anime..."
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                aria-label="Search"
+              />
+            </form>
+          </div>
+
+          <div className="search-overlay-body">
+            {recentSearches.length > 0 && (
+              <div className="search-overlay-section">
+                <div className="search-overlay-section-header">
+                  <span>Recent</span>
+                  <button onClick={handleClearRecent}>Clear</button>
+                </div>
+                <div className="search-overlay-chips">
+                  {recentSearches.map((term) => (
+                    <button key={term} onClick={() => handleRecentTap(term)}>
+                      {term}
+                    </button>
+                  ))}
+                </div>
+              </div>
             )}
           </div>
         </div>

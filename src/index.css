@@ -1,5 +1,5 @@
 /* ============================================================
-   CineScope Design System — Premium Entertainment Hub
+   CineScope Design System â€” Premium Entertainment Hub
    ============================================================ */
 
 /* ---------- Google Fonts ---------- */
@@ -7,7 +7,7 @@
 
 /* ---------- CSS Custom Properties ---------- */
 :root {
-  /* Color palette — Dark mode cinematic theme */
+  /* Color palette â€” Dark mode cinematic theme */
   --bg-primary: #0a0a0f;
   --bg-secondary: #12121a;
   --bg-tertiary: #1a1a2e;
@@ -2034,7 +2034,7 @@ ul, ol {
 }
 
 /* ---------- Login Page ---------- */
-/* ---------- Login Page — fullscreen, no navbar/sidebar ---------- */
+/* ---------- Login Page â€” fullscreen, no navbar/sidebar ---------- */
 .login-page {
   min-height: 100vh;
   display: flex;
@@ -3625,6 +3625,104 @@ body {
   border-radius: 8px;
   background: #111721;
   box-shadow: var(--shadow-xl);
+}
+
+/* ---------- Search Overlay (mobile) ---------- */
+
+.search-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: calc(var(--z-sticky) + 5);
+  display: flex;
+  flex-direction: column;
+  background: var(--bg-primary);
+  animation: overlayFadeIn 0.18s ease-out;
+}
+
+.search-overlay-header {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 12px 14px;
+  border-bottom: 1px solid var(--border-subtle);
+}
+
+.search-overlay-close {
+  background: transparent;
+  border: none;
+  color: var(--text-secondary);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 4px;
+  cursor: pointer;
+}
+
+.search-overlay-form {
+  flex: 1;
+  height: 44px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 0 12px;
+  border: 1px solid var(--border-default);
+  border-radius: 8px;
+  background: rgba(255,255,255,0.065);
+}
+
+.search-overlay-form input {
+  flex: 1;
+  background: transparent;
+  border: none;
+  color: var(--text-primary);
+  font-size: 1rem;
+  outline: none;
+}
+
+.search-overlay-body {
+  flex: 1;
+  padding: 18px 14px;
+  overflow-y: auto;
+}
+
+.search-overlay-section-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 12px;
+  color: var(--text-secondary);
+  font-size: 0.85rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.search-overlay-section-header button {
+  background: transparent;
+  border: none;
+  color: var(--text-tertiary);
+  font-size: 0.8rem;
+  cursor: pointer;
+}
+
+.search-overlay-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.search-overlay-chips button {
+  background: var(--bg-secondary);
+  border: 1px solid var(--border-default);
+  color: var(--text-secondary);
+  padding: 6px 12px;
+  border-radius: 16px;
+  font-size: 0.9rem;
+  cursor: pointer;
+}
+
+@keyframes overlayFadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
 }
 
 .navbar-dropdown-header {
@@ -6006,3 +6104,102 @@ body {
   text-decoration: none;
   font-weight: 600;
 }
+
+/* ---------- Search Overlay (mobile) ---------- */
+
+.search-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: calc(var(--z-sticky) + 5);
+  display: flex;
+  flex-direction: column;
+  background: var(--bg-primary);
+  animation: overlayFadeIn 0.18s ease-out;
+}
+
+.search-overlay-header {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 12px 14px;
+  border-bottom: 1px solid var(--border-subtle);
+}
+
+.search-overlay-close {
+  background: transparent;
+  border: none;
+  color: var(--text-secondary);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 4px;
+  cursor: pointer;
+}
+
+.search-overlay-form {
+  flex: 1;
+  height: 44px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 0 12px;
+  border: 1px solid var(--border-default);
+  border-radius: 8px;
+  background: rgba(255,255,255,0.065);
+}
+
+.search-overlay-form input {
+  flex: 1;
+  background: transparent;
+  border: none;
+  color: var(--text-primary);
+  font-size: 1rem;
+  outline: none;
+}
+
+.search-overlay-body {
+  flex: 1;
+  padding: 18px 14px;
+  overflow-y: auto;
+}
+
+.search-overlay-section-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 12px;
+  color: var(--text-secondary);
+  font-size: 0.85rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.search-overlay-section-header button {
+  background: transparent;
+  border: none;
+  color: var(--text-tertiary);
+  font-size: 0.8rem;
+  cursor: pointer;
+}
+
+.search-overlay-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.search-overlay-chips button {
+  background: var(--bg-secondary);
+  border: 1px solid var(--border-default);
+  color: var(--text-secondary);
+  padding: 6px 12px;
+  border-radius: 16px;
+  font-size: 0.9rem;
+  cursor: pointer;
+}
+
+@keyframes overlayFadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+

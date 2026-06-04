@@ -1,4 +1,5 @@
 import { memo, useCallback, useEffect, useRef, useState } from 'react';
+import { createPortal } from 'react-dom';
 import { Link, NavLink, useNavigate } from 'react-router-dom';
 import { Bookmark, Clapperboard, Compass, Film, LogIn, LogOut, Menu, Moon, Search, Sparkles, Sun, Telescope, Tv, User, Wand2, X } from 'lucide-react';
 import { useAuth } from '../../context/AuthContext';
@@ -229,7 +230,7 @@ function Navbar() {
         </div>
       )}
 
-      {searchOverlayOpen && (
+      {searchOverlayOpen && createPortal(
         <div className="search-overlay">
           <div className="search-overlay-header">
             <button
@@ -269,7 +270,8 @@ function Navbar() {
               </div>
             )}
           </div>
-        </div>
+        </div>,
+        document.body
       )}
     </header>
   );

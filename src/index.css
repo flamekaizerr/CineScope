@@ -4640,6 +4640,64 @@ body {
   }
 }
 
+/* ---------- Sticky Search Clone (mobile only) ---------- */
+
+.sticky-search-clone {
+  display: none; /* hidden on desktop */
+}
+
+@keyframes stickySlideDown {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@media (max-width: 760px) {
+  .sticky-search-clone {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    position: fixed;
+    top: var(--navbar-height);
+    left: 0;
+    right: 0;
+    z-index: calc(var(--z-sticky) - 1);
+    padding: 10px 14px 12px;
+    background: rgba(5, 6, 8, 0.93);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border-bottom: 1px solid var(--border-subtle);
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.35);
+    animation: stickySlideDown 0.22s ease-out;
+  }
+
+  [data-theme="light"] .sticky-search-clone {
+    background: rgba(247, 245, 239, 0.94);
+  }
+
+  .sticky-search-clone .stream-hero-search {
+    width: 100%;
+    min-height: 48px;
+  }
+
+  .sticky-quick-links {
+    flex-wrap: nowrap;
+    overflow-x: auto;
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+    padding-bottom: 2px;
+  }
+
+  .sticky-quick-links::-webkit-scrollbar {
+    display: none;
+  }
+}
+
 @media (max-width: 380px) {
   .stream-hero-copy h1 {
     font-size: 2.05rem;

@@ -1,4 +1,4 @@
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { CalendarDays, ChevronRight, Clapperboard, Flame, Search, Sparkles, Star, Tv, Users } from 'lucide-react';
 import { useApi } from '../hooks/useApi';
@@ -64,6 +64,8 @@ function Home() {
   const navigate = useNavigate();
   const [trendingWindow, setTrendingWindow] = useState('day');
   const [searchQuery, setSearchQuery] = useState('');
+  const [showStickySearch, setShowStickySearch] = useState(false);
+  const searchFormRef = useRef(null);
 
   const { data: trendingAll, loading: trendingAllLoading } = useApi(
     () => tmdb.getTrending('all', trendingWindow),
@@ -150,6 +152,32 @@ function Home() {
     navigate(`/search?q=${encodeURIComponent(query)}`);
   };
 
+  useEffect(() => {
+    const mq = window.matchMedia('(max-width: 760px)');
+    if (!mq.matches) return;
+
+    const el = searchFormRef.current;
+    if (!el) return;
+
+    const navbarHeight = parseInt(
+      getComputedStyle(document.documentElement).getPropertyValue('--navbar-height') || '72',
+      10
+    );
+
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        setShowStickySearch(!entry.isIntersecting);
+      },
+      {
+        threshold: 0,
+        rootMargin: `-${navbarHeight}px 0px 0px 0px`,
+      }
+    );
+
+    observer.observe(el);
+    return () => observer.disconnect();
+  }, []);
+
   const renderSectionHeader = (icon, title, to, label = 'See all') => (
     <div className="section-header">
       <div className="section-title">
@@ -175,7 +203,7 @@ function Home() {
             Movies, shows, anime, ratings, buzz, watch options, and recommendations in one fast place.
           </p>
 
-          <form className="stream-hero-search" onSubmit={handleSearch} role="search">
+          <form className="stream-hero-search" onSubmit={handleSearch} role="search" ref={searchFormRef}>
             <Search size={20} aria-hidden="true" />
             <input
               type="search"
@@ -258,6 +286,27 @@ function Home() {
           </div>
         </aside>
       </section>
+
+      {showStickySearch && (
+        <div className="sticky-search-clone" aria-label="Sticky search bar">
+          <form className="stream-hero-search" onSubmit={handleSearch} role="search">
+            <Search size={20} aria-hidden="true" />
+            <input
+              type="search"
+              value={searchQuery}
+              onChange={(event) => setSearchQuery(event.target.value)}
+              placeholder="Search any title"
+              aria-label="Search movies, shows, and anime"
+            />
+            <button type="submit">Search</button>
+          </form>
+          <div className="stream-quick-links sticky-quick-links" aria-label="Start browsing">
+            {DISCOVERY_LINKS.map((link) => (
+              <Link key={link.to} to={link.to}>{link.label}</Link>
+            ))}
+          </div>
+        </div>
+      )}
 
       <div className="page-content stream-content">
         <section className="section">

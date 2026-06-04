@@ -109,6 +109,10 @@ function Navbar() {
             <Bookmark size={19} aria-hidden="true" />
           </Link>
 
+          <Link to="/search" className="navbar-icon-btn navbar-search-mobile-btn" aria-label="Search">
+            <Search size={19} aria-hidden="true" />
+          </Link>
+
           {isAuthenticated ? (
             <div className="navbar-avatar-wrapper" ref={userMenuRef}>
               <button
@@ -142,7 +146,7 @@ function Navbar() {
               )}
             </div>
           ) : (
-            <Link to="/login" className="navbar-login-btn">
+            <Link to="/login" className="navbar-login-btn navbar-login-desktop">
               <LogIn size={17} aria-hidden="true" />
               Login
             </Link>
@@ -163,22 +167,8 @@ function Navbar() {
 
       {mobileOpen && (
         <div className="navbar-mobile-panel">
-          <form className="navbar-mobile-search-form" onSubmit={handleSearch} role="search">
-            <Search size={18} aria-hidden="true" />
-            <input
-              type="search"
-              placeholder="Search everything"
-              value={searchQuery}
-              onChange={(event) => setSearchQuery(event.target.value)}
-              aria-label="Search movies, TV shows, and anime"
-            />
-          </form>
           {renderNavLinks('stream-nav-links-mobile')}
           <div className="navbar-mobile-actions">
-            <button type="button" onClick={toggleTheme}>
-              {theme === 'dark' ? <Sun size={17} aria-hidden="true" /> : <Moon size={17} aria-hidden="true" />}
-              {theme === 'dark' ? 'Light Mode' : 'Dark Mode'}
-            </button>
             <Link to="/watchlist" onClick={() => setMobileOpen(false)}>
               <Bookmark size={17} aria-hidden="true" />
               Watchlist
@@ -187,6 +177,12 @@ function Navbar() {
               <User size={17} aria-hidden="true" />
               Profile
             </Link>
+            {!isAuthenticated && (
+              <Link to="/login" onClick={() => setMobileOpen(false)}>
+                <LogIn size={17} aria-hidden="true" />
+                Login
+              </Link>
+            )}
           </div>
         </div>
       )}

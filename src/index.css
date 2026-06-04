@@ -3600,6 +3600,10 @@ body {
   display: none;
 }
 
+.navbar-search-mobile-btn {
+  display: none;
+}
+
 .navbar-avatar-wrapper {
   position: relative;
 }
@@ -4490,10 +4494,12 @@ body {
     height: 36px;
   }
 
-  .navbar-login-btn {
-    height: 36px;
-    padding: 0 10px;
-    font-size: 0.82rem;
+  .navbar-login-desktop {
+    display: none;
+  }
+
+  .navbar-search-mobile-btn {
+    display: grid;
   }
 
   .navbar-logo-text {

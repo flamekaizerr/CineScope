@@ -2,8 +2,67 @@
   "communities": {
     "0": [
       "common_contentrow_contentrow",
-      "common_guestprompt_guestprompt",
+      "common_herocarousel_herocarousel",
       "common_loadingskeleton_loadingskeleton",
+      "common_mediacard_mediacard",
+      "common_modal_modal",
+      "common_ratingbadge_ratingbadge",
+      "features_airecommendations_airecommendations",
+      "features_castlist_castlist",
+      "features_trailermodal_trailermodal",
+      "features_wheretowatch_section_labels",
+      "features_wheretowatch_wheretowatch",
+      "pages_animedetail_animedetail",
+      "pages_buzz_buzz",
+      "pages_buzz_content_types",
+      "pages_detail_detail",
+      "pages_home_discovery_links",
+      "pages_home_getimageurl",
+      "pages_home_getmedialabel",
+      "pages_home_getmediatype",
+      "pages_home_gettitle",
+      "pages_home_home",
+      "pages_home_normalizeanime",
+      "pages_home_uniquebyid",
+      "src_components_common_contentrow_jsx",
+      "src_components_common_mediacard_jsx",
+      "src_components_common_modal_jsx",
+      "src_pages_animedetail_jsx",
+      "src_pages_buzz_jsx",
+      "src_pages_detail_jsx",
+      "src_pages_foryou_jsx",
+      "src_pages_home_jsx",
+      "src_utils_constants_js",
+      "src_utils_fallbackdata_js",
+      "src_utils_helpers_js",
+      "utils_constants_anime_genres",
+      "utils_constants_backdrop_sizes",
+      "utils_constants_cache_ttl",
+      "utils_constants_genres",
+      "utils_constants_media_types",
+      "utils_constants_movie_genres",
+      "utils_constants_poster_sizes",
+      "utils_constants_profile_sizes",
+      "utils_constants_sort_options",
+      "utils_constants_time_windows",
+      "utils_constants_tv_genres",
+      "utils_fallbackdata_fallback_animation",
+      "utils_fallbackdata_fallback_movies",
+      "utils_fallbackdata_fallback_trending",
+      "utils_fallbackdata_fallback_tv",
+      "utils_helpers_debounce",
+      "utils_helpers_formatdate",
+      "utils_helpers_formatnumber",
+      "utils_helpers_formatrating",
+      "utils_helpers_formatruntime",
+      "utils_helpers_generateid",
+      "utils_helpers_getmediatype",
+      "utils_helpers_getyearfromdate",
+      "utils_helpers_sleep",
+      "utils_helpers_truncatetext"
+    ],
+    "1": [
+      "common_guestprompt_guestprompt",
       "common_scrolltotop_scrolltotop",
       "context_authcontext_authcontext",
       "context_authcontext_authprovider",
@@ -17,6 +76,9 @@
       "context_userdatacontext_useuserdata",
       "features_watchlistbutton_list_options",
       "features_watchlistbutton_watchlistbutton",
+      "layout_bottomnav_bottomnav",
+      "layout_bottomnav_more_items",
+      "layout_bottomnav_primary_items",
       "layout_layout_layout",
       "layout_navbar_entertainment_items",
       "layout_navbar_nav_items",
@@ -25,7 +87,6 @@
       "layout_sidebar_nav_items_middle",
       "layout_sidebar_nav_items_top",
       "layout_sidebar_sidebar",
-      "pages_animedetail_animedetail",
       "pages_foryou_foryou",
       "pages_login_features",
       "pages_login_login",
@@ -35,68 +96,18 @@
       "pages_watchlist_sort_options",
       "src_app_app",
       "src_app_jsx",
-      "src_components_common_contentrow_jsx",
       "src_components_layout_layout_jsx",
       "src_components_layout_navbar_jsx",
       "src_components_layout_sidebar_jsx",
       "src_context_authcontext_jsx",
       "src_context_themecontext_jsx",
       "src_context_userdatacontext_jsx",
-      "src_pages_animedetail_jsx",
-      "src_pages_foryou_jsx",
       "src_pages_login_jsx",
       "src_pages_notfound_jsx",
       "src_pages_profile_jsx",
+      "src_pages_trendingtoday_jsx",
       "src_pages_watchlist_jsx",
       "utils_constants_list_types"
-    ],
-    "1": [
-      "common_genrepill_genrepill",
-      "hooks_useapi_cache",
-      "hooks_useapi_useapi",
-      "pages_animation_animation",
-      "pages_anime_anime",
-      "pages_anime_anime_genres",
-      "pages_anime_fetchanimebytab",
-      "pages_anime_normalizeanime",
-      "pages_anime_tabs",
-      "pages_home_discovery_links",
-      "pages_home_getimageurl",
-      "pages_home_getmedialabel",
-      "pages_home_getmediatype",
-      "pages_home_gettitle",
-      "pages_home_home",
-      "pages_home_normalizeanime",
-      "pages_home_uniquebyid",
-      "pages_movies_movies",
-      "pages_movies_sort_options",
-      "pages_movies_tabs",
-      "pages_tvshows_sort_options",
-      "pages_tvshows_tabs",
-      "pages_tvshows_tvshows",
-      "src_hooks_useapi_js",
-      "src_hooks_usesessionstorage_js",
-      "src_pages_animation_jsx",
-      "src_pages_anime_jsx",
-      "src_pages_home_jsx",
-      "src_pages_movies_jsx",
-      "src_pages_tvshows_jsx",
-      "src_utils_discoveryoptions_js",
-      "src_utils_fallbackdata_js",
-      "utils_constants_media_types",
-      "utils_discoveryoptions_animation_studios",
-      "utils_discoveryoptions_anime_formats",
-      "utils_discoveryoptions_movie_collections",
-      "utils_discoveryoptions_streaming_platforms",
-      "utils_discoveryoptions_time_filters",
-      "utils_discoveryoptions_tv_collections",
-      "utils_discoveryoptions_vote_count_options",
-      "utils_discoveryoptions_watch_regions",
-      "utils_fallbackdata_fallback_animation",
-      "utils_fallbackdata_fallback_anime",
-      "utils_fallbackdata_fallback_movies",
-      "utils_fallbackdata_fallback_trending",
-      "utils_fallbackdata_fallback_tv"
     ],
     "2": [
       "services_tmdb_buildurl",
@@ -141,32 +152,37 @@
       "src_services_tmdb_js"
     ],
     "3": [
-      "common_herocarousel_herocarousel",
-      "common_mediacard_mediacard",
-      "common_modal_modal",
-      "common_ratingbadge_ratingbadge",
-      "features_castlist_castlist",
-      "features_trailermodal_trailermodal",
-      "features_wheretowatch_section_labels",
-      "features_wheretowatch_wheretowatch",
-      "pages_buzz_buzz",
-      "pages_buzz_content_types",
-      "pages_detail_detail",
-      "src_components_common_mediacard_jsx",
-      "src_components_common_modal_jsx",
-      "src_pages_buzz_jsx",
-      "src_pages_detail_jsx",
-      "src_utils_helpers_js",
-      "utils_helpers_debounce",
-      "utils_helpers_formatdate",
-      "utils_helpers_formatnumber",
-      "utils_helpers_formatrating",
-      "utils_helpers_formatruntime",
-      "utils_helpers_generateid",
-      "utils_helpers_getmediatype",
-      "utils_helpers_getyearfromdate",
-      "utils_helpers_sleep",
-      "utils_helpers_truncatetext"
+      "common_genrepill_genrepill",
+      "hooks_useapi_cache",
+      "hooks_useapi_useapi",
+      "pages_animation_animation",
+      "pages_anime_anime",
+      "pages_anime_anime_genres",
+      "pages_anime_fetchanimebytab",
+      "pages_anime_normalizeanime",
+      "pages_anime_tabs",
+      "pages_movies_movies",
+      "pages_movies_sort_options",
+      "pages_movies_tabs",
+      "pages_tvshows_sort_options",
+      "pages_tvshows_tabs",
+      "pages_tvshows_tvshows",
+      "src_hooks_useapi_js",
+      "src_hooks_usesessionstorage_js",
+      "src_pages_animation_jsx",
+      "src_pages_anime_jsx",
+      "src_pages_movies_jsx",
+      "src_pages_tvshows_jsx",
+      "src_utils_discoveryoptions_js",
+      "utils_discoveryoptions_animation_studios",
+      "utils_discoveryoptions_anime_formats",
+      "utils_discoveryoptions_movie_collections",
+      "utils_discoveryoptions_streaming_platforms",
+      "utils_discoveryoptions_time_filters",
+      "utils_discoveryoptions_tv_collections",
+      "utils_discoveryoptions_vote_count_options",
+      "utils_discoveryoptions_watch_regions",
+      "utils_fallbackdata_fallback_anime"
     ],
     "4": [
       "cinescope_package_dependencies",
@@ -195,29 +211,6 @@
       "package_json"
     ],
     "5": [
-      "common_searchbar_searchbar",
-      "features_airecommendations_airecommendations",
-      "pages_search_clearrecentsearches",
-      "pages_search_filter_tabs",
-      "pages_search_getrecentsearches",
-      "pages_search_saverecentsearch",
-      "pages_search_search",
-      "src_components_common_searchbar_jsx",
-      "src_hooks_usedebouncedsearch_js",
-      "src_pages_search_jsx",
-      "src_utils_constants_js",
-      "utils_constants_anime_genres",
-      "utils_constants_backdrop_sizes",
-      "utils_constants_cache_ttl",
-      "utils_constants_genres",
-      "utils_constants_movie_genres",
-      "utils_constants_poster_sizes",
-      "utils_constants_profile_sizes",
-      "utils_constants_sort_options",
-      "utils_constants_time_windows",
-      "utils_constants_tv_genres"
-    ],
-    "6": [
       "config_api_areallapisconfigured",
       "config_api_config",
       "config_api_isapiconfigured",
@@ -238,7 +231,7 @@
       "src_services_gemini_js",
       "src_services_trakt_js"
     ],
-    "7": [
+    "6": [
       "services_jikan_browseanime",
       "services_jikan_buildurl",
       "services_jikan_enforceratelimit",
@@ -258,7 +251,7 @@
       "services_jikan_searchanime",
       "src_services_jikan_js"
     ],
-    "8": [
+    "7": [
       "public_manifest_background_color",
       "public_manifest_categories",
       "public_manifest_description",
@@ -275,7 +268,7 @@
       "public_manifest_start_url",
       "public_manifest_theme_color"
     ],
-    "9": [
+    "8": [
       "services_google_drive_authheaders",
       "services_google_drive_createfile",
       "services_google_drive_deletefile",
@@ -291,7 +284,7 @@
       "services_google_drive_updatefile",
       "src_services_google_drive_js"
     ],
-    "10": [
+    "9": [
       "services_google_auth_googleauth_constructor",
       "services_google_auth_googleauth_getaccesstoken",
       "services_google_auth_googleauth_getuserprofile",
@@ -306,7 +299,7 @@
       "services_google_auth_googleauth_signout",
       "src_services_google_auth_js"
     ],
-    "11": [
+    "10": [
       "favicon_svg",
       "google_api",
       "google_gsi",
@@ -320,6 +313,17 @@
       "manifest_json",
       "src_main_storedtheme"
     ],
+    "11": [
+      "common_searchbar_searchbar",
+      "pages_search_clearrecentsearches",
+      "pages_search_filter_tabs",
+      "pages_search_getrecentsearches",
+      "pages_search_saverecentsearch",
+      "pages_search_search",
+      "src_components_common_searchbar_jsx",
+      "src_hooks_usedebouncedsearch_js",
+      "src_pages_search_jsx"
+    ],
     "12": [
       "cinescope_home_qa_ui",
       "progress_api_traffic",
@@ -331,89 +335,77 @@
       "progress_tmdb_fallback"
     ],
     "13": [
-      "pages_trendingtoday_alltrending_setalltrending",
-      "pages_trendingtoday_data_loading_error",
-      "pages_trendingtoday_page_setpage",
-      "pages_trendingtoday_timewindow_settimewindow",
-      "src_pages_trendingtoday_jsx"
-    ],
-    "14": [
       "cinescope_vite_config_createapiproxyplugin",
       "cinescope_vite_config_createproxyurl",
       "cinescope_vite_config_env",
       "cinescope_vite_config_sendjson",
       "vite_config_js"
     ],
-    "15": [
+    "14": [
       "public_sw_js",
       "public_sw_responseclone",
       "public_sw_static_assets",
       "public_sw_url"
     ],
-    "16": [
-      "layout_bottomnav_bottomnav",
-      "layout_bottomnav_more_items",
-      "layout_bottomnav_primary_items"
-    ],
-    "17": [
+    "15": [
       "api_gemini_handler",
       "api_gemini_js"
     ],
-    "18": [
+    "16": [
       "api_tmdb_handler",
       "api_tmdb_js"
     ],
-    "19": [
+    "17": [
       "api_trakt_handler",
       "api_trakt_js"
     ],
-    "20": [
+    "18": [
       "cinescope_vercel_rewrites",
       "vercel_json"
     ],
-    "21": [
+    "19": [
       "eslint_config_js"
     ],
-    "22": [
+    "20": [
       "services_jikan_getanimebyid"
     ],
-    "23": [
+    "21": [
       "services_tmdb_searchmulti"
     ],
-    "24": [
+    "22": [
       "readme_md"
     ],
-    "25": [
+    "23": [
       "icons_svg"
     ],
-    "26": [
+    "24": [
       "icon_384x384_png"
     ],
-    "27": [
+    "25": [
       "icon_72x72_png"
     ],
-    "28": [
+    "26": [
       "icon_96x96_png"
     ]
   },
   "cohesion": {
-    "0": 0.09397163120567376,
-    "1": 0.09565217391304348,
+    "0": 0.07071887784921099,
+    "1": 0.08309178743961353,
     "2": 0.11153846153846154,
-    "3": 0.15384615384615385,
+    "3": 0.13548387096774195,
     "4": 0.08333333333333333,
-    "5": 0.11428571428571428,
-    "6": 0.16374269005847952,
-    "7": 0.21568627450980393,
-    "8": 0.13333333333333333,
+    "5": 0.16374269005847952,
+    "6": 0.21568627450980393,
+    "7": 0.13333333333333333,
+    "8": 0.23076923076923078,
     "9": 0.23076923076923078,
-    "10": 0.23076923076923078,
-    "11": 0.16666666666666666,
+    "10": 0.16666666666666666,
+    "11": 0.2777777777777778,
     "12": 0.25,
     "13": 0.4,
-    "14": 0.4,
-    "15": 0.5,
-    "16": 0.6666666666666666,
+    "14": 0.5,
+    "15": 1.0,
+    "16": 1.0,
     "17": 1.0,
     "18": 1.0,
     "19": 1.0,
@@ -423,9 +415,7 @@
     "23": 1.0,
     "24": 1.0,
     "25": 1.0,
-    "26": 1.0,
-    "27": 1.0,
-    "28": 1.0
+    "26": 1.0
   },
   "gods": [
     {

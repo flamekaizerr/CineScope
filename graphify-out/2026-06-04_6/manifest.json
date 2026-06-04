@@ -195,9 +195,9 @@
     "semantic_hash": "44e1c474ed355a1d94dab514b1e5ac80"
   },
   "C:\\my_projects\\CineScope\\src\\pages\\Home.jsx": {
-    "mtime": 1780533902.7989905,
-    "ast_hash": "a3b6c24eeeec5c2aa3b5783f064802ad",
-    "semantic_hash": "a3b6c24eeeec5c2aa3b5783f064802ad"
+    "mtime": 1780533586.7414968,
+    "ast_hash": "a6eabe132269192eb02d6f9ac20cdeba",
+    "semantic_hash": "a6eabe132269192eb02d6f9ac20cdeba"
   },
   "C:\\my_projects\\CineScope\\src\\pages\\Login.jsx": {
     "mtime": 1780420817.3552108,
@@ -215,9 +215,9 @@
     "semantic_hash": "ab95d2faf9593aa42278060f49887353"
   },
   "C:\\my_projects\\CineScope\\src\\pages\\Search.jsx": {
-    "mtime": 1780535106.216936,
-    "ast_hash": "cace08513d29cfdfbed971ce52cdb592",
-    "semantic_hash": "cace08513d29cfdfbed971ce52cdb592"
+    "mtime": 1780533607.2597337,
+    "ast_hash": "554e425765e97e102839ead08bac4143",
+    "semantic_hash": "554e425765e97e102839ead08bac4143"
   },
   "C:\\my_projects\\CineScope\\src\\pages\\TvShows.jsx": {
     "mtime": 1780533639.311162,
@@ -285,9 +285,9 @@
     "semantic_hash": "1c35c54847e26eb008d65f1490039fc9"
   },
   "C:\\my_projects\\CineScope\\src\\components\\common\\ScrollToTop.jsx": {
-    "mtime": 1780535744.5354052,
-    "ast_hash": "bc583d3dfd0ad456e1c75a8770d28164",
-    "semantic_hash": "bc583d3dfd0ad456e1c75a8770d28164"
+    "mtime": 1780511063.7838867,
+    "ast_hash": "bc62b0571cbca0135a51f8104e621b92",
+    "semantic_hash": "bc62b0571cbca0135a51f8104e621b92"
   },
   "C:\\my_projects\\CineScope\\src\\pages\\Animation.jsx": {
     "mtime": 1780533568.557107,
@@ -295,9 +295,9 @@
     "semantic_hash": "92b834201ad665f76da91a6770975a38"
   },
   "C:\\my_projects\\CineScope\\src\\pages\\TrendingToday.jsx": {
-    "mtime": 1780534206.58259,
-    "ast_hash": "0f846657606731d87eb28630253ade39",
-    "semantic_hash": "0f846657606731d87eb28630253ade39"
+    "mtime": 1780533627.7537706,
+    "ast_hash": "43a105e7749bad2d95ffbd7d6b4c4299",
+    "semantic_hash": "43a105e7749bad2d95ffbd7d6b4c4299"
   },
   "C:\\my_projects\\CineScope\\src\\hooks\\useSessionStorage.js": {
     "mtime": 1780525277.627772,

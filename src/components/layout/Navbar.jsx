@@ -13,9 +13,7 @@ const NAV_ITEMS = [
   { to: '/for-you', label: 'For You', icon: Wand2 },
 ];
 
-const ENTERTAINMENT_ITEMS = NAV_ITEMS.filter((item) =>
-  ['/movies', '/tv', '/anime', '/animation', '/buzz'].includes(item.to)
-);
+
 
 function Navbar() {
   const { user, isAuthenticated, logout } = useAuth();
@@ -161,19 +159,7 @@ function Navbar() {
         </div>
       </div>
 
-      <nav className="entertainment-switcher" aria-label="Entertainment sections">
-        {ENTERTAINMENT_ITEMS.map(({ to, label, icon: Icon }) => (
-          <NavLink
-            key={to}
-            to={to}
-            className={({ isActive }) => `entertainment-switcher-link ${isActive ? 'entertainment-switcher-link-active' : ''}`}
-            onClick={() => setMobileOpen(false)}
-          >
-            <Icon size={15} aria-hidden="true" />
-            <span>{label}</span>
-          </NavLink>
-        ))}
-      </nav>
+
 
       {mobileOpen && (
         <div className="navbar-mobile-panel">

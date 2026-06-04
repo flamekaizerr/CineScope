@@ -158,6 +158,22 @@ function shouldUseDiscover(options = {}) {
   );
 }
 
+function getMinVoteCount(sortBy, timeWindow, category, collection, isTv = false) {
+  const isHighestRated = sortBy === 'vote_average.desc' || category === 'top_rated';
+  
+  if (isHighestRated) {
+    if (!timeWindow || timeWindow === 'all') return isTv ? 100 : 300;
+    if (timeWindow === 'year') return 50;
+    if (timeWindow === 'month') return 10;
+    if (timeWindow === 'week') return 2;
+    if (timeWindow === 'today') return 1;
+    return isTv ? 100 : 300;
+  }
+  
+  if (timeWindow && timeWindow !== 'all') return 2;
+  return collection === 'documentary' ? 5 : 10;
+}
+
 function getAnimationStudioCompany(studio) {
   switch (studio) {
     case 'pixar':
@@ -607,7 +623,7 @@ export async function getMovies(category = 'popular', {
         with_watch_monetization_types: providerId && providerId !== 'all' ? 'flatrate' : undefined,
         with_origin_country: collectionParams.with_origin_country,
         with_original_language: collectionParams.with_original_language,
-        'vote_count.gte': (timeWindow && timeWindow !== 'all') ? 2 : (category === 'top_rated' ? 100 : (collection === 'documentary' ? 5 : 10)),
+        'vote_count.gte': getMinVoteCount(sortBy, timeWindow, category, collection, false),
         'primary_release_date.gte': windowRange.from,
         'primary_release_date.lte': windowRange.to,
       };
@@ -661,7 +677,7 @@ export async function getTvShows(category = 'popular', {
         with_watch_monetization_types: providerId && providerId !== 'all' ? 'flatrate' : undefined,
         with_origin_country: collectionParams.with_origin_country,
         with_original_language: collectionParams.with_original_language,
-        'vote_count.gte': (timeWindow && timeWindow !== 'all') ? 2 : (category === 'top_rated' ? 50 : 5),
+        'vote_count.gte': getMinVoteCount(sortBy, timeWindow, category, collection, true),
         'first_air_date.gte': windowRange.from,
         'first_air_date.lte': windowRange.to,
       };

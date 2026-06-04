@@ -1,4 +1,5 @@
 import { useState, useEffect, useCallback } from 'react';
+import { useSessionStorage } from '../hooks/useSessionStorage';
 import { useSearchParams } from 'react-router-dom';
 import { Search as SearchIcon, Clock, TrendingUp, Film, Tv, Sparkles } from 'lucide-react';
 import { useDebouncedSearch } from '../hooks/useDebouncedSearch';
@@ -54,7 +55,7 @@ function clearRecentSearches() {
 function Search() {
   const [searchParams, setSearchParams] = useSearchParams();
   const initialQuery = searchParams.get('q') || '';
-  const [activeFilter, setActiveFilter] = useState('all');
+  const [activeFilter, setActiveFilter] = useSessionStorage('search_filter', 'all');
   const [recentSearches, setRecentSearches] = useState(getRecentSearches);
 
   const {
@@ -63,9 +64,19 @@ function Search() {
     debouncedQuery,
   } = useDebouncedSearch(initialQuery, 400);
 
-  const [page, setPage] = useState(1);
-  const [allResults, setAllResults] = useState([]);
+  const [page, setPage] = useSessionStorage('search_page', 1);
+  const [allResults, setAllResults] = useSessionStorage('search_results', []);
+  const [lastQuery, setLastQuery] = useSessionStorage('search_last_query', initialQuery);
   const [loadingMore, setLoadingMore] = useState(false);
+
+  // Reset results if query changes
+  useEffect(() => {
+    if (debouncedQuery !== lastQuery) {
+      setAllResults([]);
+      setPage(1);
+      setLastQuery(debouncedQuery);
+    }
+  }, [debouncedQuery, lastQuery, setAllResults, setPage, setLastQuery]);
 
   // TMDB multi search
   const {
@@ -148,33 +159,58 @@ function Search() {
       });
     }
 
-    setAllResults(combined);
-    setPage(1);
-  }, [tmdbResults, animeResults, activeFilter, tmdbLoading, animeLoading]);
+    setAllResults((prev) => {
+      if (prev.length === 0 || page === 1) {
+        return combined;
+      }
+      return prev;
+    });
+  }, [tmdbResults, animeResults, activeFilter, tmdbLoading, animeLoading, page, setAllResults]);
 
   const handleLoadMore = useCallback(async () => {
     if (!debouncedQuery) return;
     const nextPage = page + 1;
     setLoadingMore(true);
     try {
-      const data = await tmdb.searchMulti(debouncedQuery, nextPage);
-      if (data?.results) {
-        const newResults = [];
-        data.results.forEach((item) => {
-          if (item.media_type === 'person') return;
-          if (activeFilter === 'all' || activeFilter === item.media_type) {
-            newResults.push(item);
-          }
-        });
-        setAllResults((prev) => [...prev, ...newResults]);
-        setPage(nextPage);
+      const newResults = [];
+
+      if (activeFilter !== 'anime') {
+        const tmdbData = await tmdb.searchMulti(debouncedQuery, nextPage);
+        if (tmdbData?.results) {
+          tmdbData.results.forEach((item) => {
+            if (item.media_type === 'person') return;
+            if (activeFilter === 'all' || activeFilter === item.media_type) {
+              newResults.push(item);
+            }
+          });
+        }
       }
+
+      if (activeFilter === 'all' || activeFilter === 'anime') {
+        const animeData = await jikan.searchAnime(debouncedQuery, nextPage);
+        if (animeData?.data) {
+          animeData.data.forEach((anime) => {
+            newResults.push({
+              id: anime.mal_id,
+              title: anime.title_english || anime.title,
+              poster_path: anime.images?.jpg?.large_image_url,
+              vote_average: anime.score,
+              media_type: 'anime',
+              release_date: anime.aired?.from,
+              overview: anime.synopsis,
+            });
+          });
+        }
+      }
+
+      setAllResults((prev) => [...prev, ...newResults]);
+      setPage(nextPage);
     } catch (err) {
       console.error(err);
     } finally {
       setLoadingMore(false);
     }
-  }, [debouncedQuery, page, activeFilter]);
+  }, [debouncedQuery, page, activeFilter, setAllResults, setPage]);
 
   const isLoading = tmdbLoading || animeLoading;
   const hasError = tmdbError || animeError;
@@ -207,7 +243,13 @@ function Search() {
                 <button
                   key={tab.key}
                   className={`tab ${activeFilter === tab.key ? 'tab-active' : ''}`}
-                  onClick={() => setActiveFilter(tab.key)}
+                  onClick={() => {
+                    if (activeFilter !== tab.key) {
+                      setActiveFilter(tab.key);
+                      setAllResults([]);
+                      setPage(1);
+                    }
+                  }}
                 >
                   {Icon && <Icon size={14} aria-hidden="true" />}
                   {tab.label}
@@ -252,7 +294,8 @@ function Search() {
             </div>
 
             {/* Load More Button */}
-            {tmdbResults && page < tmdbResults.total_pages && activeFilter !== 'anime' && (
+            {((tmdbResults && page < tmdbResults.total_pages && activeFilter !== 'anime') || 
+              (animeResults && animeResults.pagination?.has_next_page && (activeFilter === 'all' || activeFilter === 'anime'))) && (
               <div className="load-more-container">
                 <button
                   className="load-more-btn"

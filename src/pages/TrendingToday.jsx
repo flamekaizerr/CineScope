@@ -8,7 +8,6 @@ import LoadingSkeleton from '../components/common/LoadingSkeleton';
 function TrendingToday() {
   const [page, setPage] = useState(1);
   const [allTrending, setAllTrending] = useState([]);
-  const [loadingMore, setLoadingMore] = useState(false);
   const [timeWindow, setTimeWindow] = useState('day'); // 'day' or 'week'
 
   const {
@@ -28,26 +27,7 @@ function TrendingToday() {
         }
         return prev;
       });
-    }
   }, [data, loading, page, setAllTrending]);
-
-  const handleLoadMore = useCallback(async () => {
-    // Note: getTrending in tmdb.js currently doesn't accept page param, 
-    // but if it did, we'd pass it here. For now, we'll just handle it safely.
-    const nextPage = page + 1;
-    setLoadingMore(true);
-    try {
-      // Mocking pagination since tmdb.getTrending doesn't have page param yet
-      // If we update tmdb.js to support page, we pass it here.
-      setPage(nextPage);
-    } catch (err) {
-      console.error('Failed to load more trending:', err);
-    } finally {
-      setLoadingMore(false);
-    }
-  }, [page, timeWindow]);
-
-  const totalPages = data?.total_pages || 1;
 
   return (
     <div className="page trending-page">

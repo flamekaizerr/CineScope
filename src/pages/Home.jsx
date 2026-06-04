@@ -69,7 +69,7 @@ function Home() {
     [trendingWindow]
   );
 
-  const { data: trendingWeek, loading: trendingWeekLoading } = useApi(
+  const { data: trendingWeek } = useApi(
     () => tmdb.getTrending('all', 'week'),
     []
   );

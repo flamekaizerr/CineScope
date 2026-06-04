@@ -8,7 +8,7 @@ import GenrePill from '../components/common/GenrePill';
 import LoadingSkeleton from '../components/common/LoadingSkeleton';
 import { useSessionStorage } from '../hooks/useSessionStorage';
 
-import { MOVIE_COLLECTIONS, STREAMING_PLATFORMS, TIME_FILTERS, WATCH_REGIONS, VOTE_COUNT_OPTIONS } from '../utils/discoveryOptions';
+import { MOVIE_COLLECTIONS, STREAMING_PLATFORMS, TIME_FILTERS, VOTE_COUNT_OPTIONS } from '../utils/discoveryOptions';
 
 const SORT_OPTIONS = [
   { key: 'popularity.desc', label: 'Most Popular' },
@@ -22,7 +22,7 @@ function Movies() {
   const [selectedGenres, setSelectedGenres] = useSessionStorage('movies_genres', []);
   const [sortBy, setSortBy] = useSessionStorage('movies_sort', 'popularity.desc');
   const [providerId, setProviderId] = useSessionStorage('movies_provider', 'all');
-  const [watchRegion, setWatchRegion] = useSessionStorage('movies_region', 'US');
+  const [watchRegion] = useSessionStorage('movies_region', 'US');
   const [collection, setCollection] = useSessionStorage('movies_collection', 'all');
   const [timeWindow, setTimeWindow] = useSessionStorage('movies_time', 'today');
   const [minVotes, setMinVotes] = useSessionStorage('movies_min_votes', 'auto');
@@ -118,7 +118,6 @@ function Movies() {
   const currentProvider = STREAMING_PLATFORMS.find((p) => p.key === providerId) || STREAMING_PLATFORMS[0];
   const currentProviderLabel = currentProvider.label;
   const currentTimeLabel = TIME_FILTERS.find((t) => t.key === timeWindow)?.label || 'All Time';
-  const currentRegionLabel = WATCH_REGIONS.find((r) => r.key === watchRegion)?.label || watchRegion;
   const displayMovies = allMovies;
 
   return (

@@ -5,14 +5,14 @@ import { useSessionStorage } from '../hooks/useSessionStorage';
 import * as tmdb from '../services/tmdb';
 import MediaCard from '../components/common/MediaCard';
 import LoadingSkeleton from '../components/common/LoadingSkeleton';
-import { ANIMATION_STUDIOS, TIME_FILTERS, WATCH_REGIONS } from '../utils/discoveryOptions';
+import { ANIMATION_STUDIOS, TIME_FILTERS } from '../utils/discoveryOptions';
 import { MEDIA_TYPES } from '../utils/constants';
 
 
 function Animation() {
   const [studio, setStudio] = useSessionStorage('animation_studio', 'all');
   const [timeWindow, setTimeWindow] = useSessionStorage('animation_time', 'year');
-  const [watchRegion, setWatchRegion] = useSessionStorage('animation_region', 'US');
+  const [watchRegion] = useSessionStorage('animation_region', 'US');
   const [page, setPage] = useSessionStorage('animation_page', 1);
   const [allTitles, setAllTitles] = useSessionStorage('animation_list', []);
   const [loadingMore, setLoadingMore] = useState(false);

@@ -3799,48 +3799,11 @@ body {
   background: var(--accent-primary-light);
 }
 
-.stream-sticky-search-nav {
-  display: flex;
-  flex-direction: column;
-  gap: 16px;
-  width: 100%;
-}
-
-@media (max-width: 768px) {
-  .stream-sticky-search-nav {
-    position: sticky;
-    top: var(--navbar-height);
-    z-index: 40;
-    background: rgba(10, 10, 15, 0.95);
-    backdrop-filter: blur(12px);
-    -webkit-backdrop-filter: blur(12px);
-    padding: 12px 16px;
-    margin: 0 -16px; /* Negate hero padding */
-    width: calc(100% + 32px);
-    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
-  }
-}
-
 .stream-quick-links {
   display: flex;
   align-items: center;
   flex-wrap: wrap;
   gap: 9px;
-}
-
-@media (max-width: 768px) {
-  .stream-quick-links {
-    flex-wrap: nowrap;
-    overflow-x: auto;
-    padding-bottom: 4px;
-    scrollbar-width: none; /* Firefox */
-  }
-  .stream-quick-links::-webkit-scrollbar {
-    display: none; /* Chrome/Safari */
-  }
-  .stream-quick-links a {
-    flex-shrink: 0;
-  }
 }
 
 .stream-quick-links a {

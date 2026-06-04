@@ -175,24 +175,22 @@ function Home() {
             Movies, shows, anime, ratings, buzz, watch options, and recommendations in one fast place.
           </p>
 
-          <div className="stream-sticky-search-nav">
-            <form className="stream-hero-search" onSubmit={handleSearch} role="search">
-              <Search size={20} aria-hidden="true" />
-              <input
-                type="search"
-                value={searchQuery}
-                onChange={(event) => setSearchQuery(event.target.value)}
-                placeholder="Search any title"
-                aria-label="Search movies, shows, and anime"
-              />
-              <button type="submit">Search</button>
-            </form>
+          <form className="stream-hero-search" onSubmit={handleSearch} role="search">
+            <Search size={20} aria-hidden="true" />
+            <input
+              type="search"
+              value={searchQuery}
+              onChange={(event) => setSearchQuery(event.target.value)}
+              placeholder="Search any title"
+              aria-label="Search movies, shows, and anime"
+            />
+            <button type="submit">Search</button>
+          </form>
 
-            <div className="stream-quick-links" aria-label="Start browsing">
-              {DISCOVERY_LINKS.map((link) => (
-                <Link key={link.to} to={link.to}>{link.label}</Link>
-              ))}
-            </div>
+          <div className="stream-quick-links" aria-label="Start browsing">
+            {DISCOVERY_LINKS.map((link) => (
+              <Link key={link.to} to={link.to}>{link.label}</Link>
+            ))}
           </div>
 
           <div className="stream-stat-grid" aria-label="Catalog snapshot">

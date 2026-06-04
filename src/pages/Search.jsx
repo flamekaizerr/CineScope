@@ -84,10 +84,8 @@ function Search() {
     loading: tmdbLoading,
     error: tmdbError,
   } = useApi(
-    () => (debouncedQuery && activeFilter !== 'anime'
-      ? tmdb.searchMulti(debouncedQuery)
-      : Promise.resolve(null)),
-    [debouncedQuery, activeFilter]
+    () => (debouncedQuery ? tmdb.searchMulti(debouncedQuery) : Promise.resolve(null)),
+    [debouncedQuery]
   );
 
   // Jikan anime search
@@ -96,10 +94,8 @@ function Search() {
     loading: animeLoading,
     error: animeError,
   } = useApi(
-    () => (debouncedQuery && (activeFilter === 'all' || activeFilter === 'anime')
-      ? jikan.searchAnime(debouncedQuery)
-      : Promise.resolve(null)),
-    [debouncedQuery, activeFilter]
+    () => (debouncedQuery ? jikan.searchAnime(debouncedQuery) : Promise.resolve(null)),
+    [debouncedQuery]
   );
 
   // Trending searches (shown when empty)
@@ -138,9 +134,7 @@ function Search() {
     if (tmdbResults?.results) {
       tmdbResults.results.forEach((item) => {
         if (item.media_type === 'person') return;
-        if (activeFilter === 'all' || activeFilter === item.media_type) {
-          combined.push(item);
-        }
+        combined.push(item);
       });
     }
 
@@ -165,7 +159,7 @@ function Search() {
       }
       return prev;
     });
-  }, [tmdbResults, animeResults, activeFilter, tmdbLoading, animeLoading, page, setAllResults]);
+  }, [tmdbResults, animeResults, tmdbLoading, animeLoading, page, setAllResults]);
 
   const handleLoadMore = useCallback(async () => {
     if (!debouncedQuery) return;
@@ -174,33 +168,27 @@ function Search() {
     try {
       const newResults = [];
 
-      if (activeFilter !== 'anime') {
-        const tmdbData = await tmdb.searchMulti(debouncedQuery, nextPage);
-        if (tmdbData?.results) {
-          tmdbData.results.forEach((item) => {
-            if (item.media_type === 'person') return;
-            if (activeFilter === 'all' || activeFilter === item.media_type) {
-              newResults.push(item);
-            }
-          });
-        }
+      const tmdbData = await tmdb.searchMulti(debouncedQuery, nextPage);
+      if (tmdbData?.results) {
+        tmdbData.results.forEach((item) => {
+          if (item.media_type === 'person') return;
+          newResults.push(item);
+        });
       }
 
-      if (activeFilter === 'all' || activeFilter === 'anime') {
-        const animeData = await jikan.searchAnime(debouncedQuery, nextPage);
-        if (animeData?.data) {
-          animeData.data.forEach((anime) => {
-            newResults.push({
-              id: anime.mal_id,
-              title: anime.title_english || anime.title,
-              poster_path: anime.images?.jpg?.large_image_url,
-              vote_average: anime.score,
-              media_type: 'anime',
-              release_date: anime.aired?.from,
-              overview: anime.synopsis,
-            });
+      const animeData = await jikan.searchAnime(debouncedQuery, nextPage);
+      if (animeData?.data) {
+        animeData.data.forEach((anime) => {
+          newResults.push({
+            id: anime.mal_id,
+            title: anime.title_english || anime.title,
+            poster_path: anime.images?.jpg?.large_image_url,
+            vote_average: anime.score,
+            media_type: 'anime',
+            release_date: anime.aired?.from,
+            overview: anime.synopsis,
           });
-        }
+        });
       }
 
       setAllResults((prev) => [...prev, ...newResults]);
@@ -210,12 +198,16 @@ function Search() {
     } finally {
       setLoadingMore(false);
     }
-  }, [debouncedQuery, page, activeFilter, setAllResults, setPage]);
+  }, [debouncedQuery, page, setAllResults, setPage]);
 
   const isLoading = tmdbLoading || animeLoading;
   const hasError = tmdbError || animeError;
   const hasQuery = (debouncedQuery || '').length > 0;
   const trendingItems = trendingData?.results?.slice(0, 10) || [];
+
+  const displayResults = allResults.filter(
+    (item) => activeFilter === 'all' || item.media_type === activeFilter
+  );
 
   return (
     <div className="page search-page">
@@ -243,13 +235,7 @@ function Search() {
                 <button
                   key={tab.key}
                   className={`tab ${activeFilter === tab.key ? 'tab-active' : ''}`}
-                  onClick={() => {
-                    if (activeFilter !== tab.key) {
-                      setActiveFilter(tab.key);
-                      setAllResults([]);
-                      setPage(1);
-                    }
-                  }}
+                  onClick={() => setActiveFilter(tab.key)}
                 >
                   {Icon && <Icon size={14} aria-hidden="true" />}
                   {tab.label}
@@ -262,7 +248,7 @@ function Search() {
 
       <div className="page-content">
         {/* Loading */}
-        {hasQuery && isLoading && (
+        {hasQuery && isLoading && allResults.length === 0 && (
           <div className="media-grid">
             {Array.from({ length: 8 }).map((_, i) => (
               <LoadingSkeleton key={i} type="card" />
@@ -271,20 +257,20 @@ function Search() {
         )}
 
         {/* Error */}
-        {hasQuery && hasError && !isLoading && (
+        {hasQuery && hasError && !isLoading && allResults.length === 0 && (
           <div className="error-state">
             <p>Something went wrong with your search. Please try again.</p>
           </div>
         )}
 
         {/* Results */}
-        {hasQuery && !isLoading && !hasError && allResults.length > 0 && (
+        {hasQuery && !hasError && allResults.length > 0 && (
           <>
             <p className="search-result-count">
-              Found {allResults.length} result{allResults.length !== 1 ? 's' : ''} for "{debouncedQuery}"
+              Found {displayResults.length} result{displayResults.length !== 1 ? 's' : ''} for "{debouncedQuery}"
             </p>
             <div className="media-grid">
-              {allResults.map((item, index) => (
+              {displayResults.map((item, index) => (
                 <MediaCard
                   key={`${item.media_type}-${item.id}-${index}`}
                   item={item}
@@ -294,8 +280,8 @@ function Search() {
             </div>
 
             {/* Load More Button */}
-            {((tmdbResults && page < tmdbResults.total_pages && activeFilter !== 'anime') || 
-              (animeResults && animeResults.pagination?.has_next_page && (activeFilter === 'all' || activeFilter === 'anime'))) && (
+            {((tmdbResults && page < tmdbResults.total_pages) || 
+              (animeResults && animeResults.pagination?.has_next_page)) && (
               <div className="load-more-container">
                 <button
                   className="load-more-btn"
@@ -310,6 +296,14 @@ function Search() {
         )}
 
         {/* No Results */}
+        {hasQuery && !isLoading && !hasError && displayResults.length === 0 && allResults.length > 0 && (
+          <div className="empty-state">
+            <SearchIcon size={48} />
+            <h3>No results for {activeFilter}</h3>
+            <p>Try switching to a different category or refining your search.</p>
+          </div>
+        )}
+
         {hasQuery && !isLoading && !hasError && allResults.length === 0 && (
           <div className="empty-state">
             <SearchIcon size={48} />
